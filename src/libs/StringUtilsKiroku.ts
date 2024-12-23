@@ -50,8 +50,13 @@ function cleanStringForFirebaseKey(rawStr: string): string {
     : cleanedStr.replace(/_+$/, '');
 }
 
+/** Determine whether a number should be pluralized. */
+function shouldUsePlural(input: number): boolean {
+  return input !== 1;
+}
+
 function getPlural(input: number): string {
-  return input !== 1 ? 's' : '';
+  return shouldUsePlural(input) ? 's' : '';
 }
 
 /** If a string is equal to 00:00, return a dash. Otherwise return the string. */
@@ -100,10 +105,11 @@ function UCFirst(str: string) {
 }
 
 export {
-  nonMidnightString,
-  cleanStringForFirebaseKey,
-  getPlural,
-  generateRandomString,
-  copyToClipboard,
   UCFirst,
+  cleanStringForFirebaseKey,
+  copyToClipboard,
+  generateRandomString,
+  getPlural,
+  nonMidnightString,
+  shouldUsePlural,
 };

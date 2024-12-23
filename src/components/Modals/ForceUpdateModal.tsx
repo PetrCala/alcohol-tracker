@@ -37,7 +37,7 @@ function ForceUpdateModal() {
                 styles.p5,
                 styles.textPlainColor,
               ]}>
-              {translate('forceUpdate.text', currentPlatform)}
+              {translate('forceUpdate.text', {platform: currentPlatform})}
             </Text>
             {storeLink && (
               <Text

@@ -287,7 +287,9 @@ function StartSessionButtonAndPopover(
         ...getBaseSessionType(session.type),
         label: translate('startSession.ongoingSessions'),
         icon: DSUtils.getIconForSession(userStatusData?.latest_session?.type!),
-        description: translate('startSession.sessionFrom', sessionStartTime),
+        description: translate('startSession.sessionFrom', {
+          startTime: sessionStartTime,
+        }),
       },
     ];
   }, [userStatusData, translate]);

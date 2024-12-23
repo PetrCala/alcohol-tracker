@@ -24,7 +24,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@src/DBPATHS';
 import ROUTES from '@src/ROUTES';
 import useFetchData from '@hooks/useFetchData';
-import {getPlural} from '@libs/StringUtilsKiroku';
+import {shouldUsePlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -72,10 +72,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   const statsData: StatData = [
     {
-      header: translate(
-        'profileScreen.drinkingSessions',
-        getPlural(drinkingSessionsCount),
-      ),
+      header: translate('profileScreen.drinkingSessions', {
+        shouldUsePlural: shouldUsePlural(drinkingSessionsCount),
+      }),
       content: String(drinkingSessionsCount),
     },
     {
@@ -85,10 +84,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
   ];
 
   const friendCountLabel = useMemo((): string => {
-    return `${translate(
-      'profileScreen.commonFriendsLabel',
-      user?.uid !== userID && commonFriendCount > 0,
-    )}`;
+    return `${translate('profileScreen.commonFriendsLabel', {
+      hasCommonFriends: user?.uid !== userID && commonFriendCount > 0,
+    })}`;
   }, [translate, user?.uid, userID, commonFriendCount]);
 
   const friendCountText = useMemo((): string => {
@@ -210,10 +208,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
           <View style={[styles.borderTop, styles.borderRadiusXLarge]}>
             <Text
               style={[styles.textNormal, styles.textAlignCenter, styles.mt4]}>
-              {translate(
-                'profileScreen.noDrinkingSessions',
-                user?.uid === userID,
-              )}
+              {translate('profileScreen.noDrinkingSessions', {
+                isSelf: user?.uid === userID,
+              })}
             </Text>
           </View>
         )}

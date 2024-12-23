@@ -167,10 +167,9 @@ function DrinkingSessionWindow({
     try {
       setDiscardModalVisible(false);
       await App.setLoadingText(
-        translate(
-          'liveSessionScreen.discardingSession',
-          sessionIsLive ? 'Discarding' : 'Deleting',
-        ),
+        translate('liveSessionScreen.discardingSession', {
+          discardWord: sessionIsLive ? 'Discarding' : 'Deleting',
+        }),
       );
       await DS.removeDrinkingSessionData(
         db,
@@ -331,10 +330,9 @@ function DrinkingSessionWindow({
       <View style={[styles.bottomTabBarContainer, styles.gap4]}>
         <Button
           large
-          text={translate(
-            'liveSessionScreen.discardSession',
-            deleteSessionWording,
-          )}
+          text={translate('liveSessionScreen.discardSession', {
+            discardWord: deleteSessionWording,
+          })}
           textStyles={styles.buttonText}
           innerStyles={styles.bottomTabButton}
           onPress={handleDiscardSession}

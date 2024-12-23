@@ -1,12 +1,24 @@
 import CONST from '@src/CONST';
-import type Platform from '@libs/getPlatform/types';
-import type {DrinkingSessionId} from '@src/types/onyx';
 import type {
   CharacterLimitParams,
   TranslationBase,
   UntilTimeParams,
 } from './types';
-import type {SignUpNewAccountCodeParams} from './params';
+import type {
+  CommonFriendsLabelParams,
+  DiscardSessionParams,
+  DrinkingSessionsParams,
+  ForceUpdateTextParams,
+  ForgotPasswordSuccessParams,
+  FriendRequestsCountParams,
+  NoDrinkingSessionsParams,
+  SessionConfirmTimezoneChangeParams,
+  SessionStartTimeParams,
+  SessionWindowIdParams,
+  SignUpNewAccountCodeParams,
+  UpdateEmailSentEmailParams,
+  VerifyEmailScreenEmailParmas,
+} from './params';
 
 /* eslint-disable max-len */
 export default {
@@ -352,9 +364,10 @@ export default {
     noUsersFound: 'There are no users with this nickname.',
   },
   friendRequestScreen: {
-    requestsReceived: (requestsCount: number) =>
+    requestsReceived: ({requestsCount}: FriendRequestsCountParams) =>
       `Requests Received (${requestsCount})`,
-    requestsSent: (requestsCount: number) => `Requests Sent (${requestsCount})`,
+    requestsSent: ({requestsCount}: FriendRequestsCountParams) =>
+      `Requests Sent (${requestsCount})`,
     lookingForNewFriends: 'Looking for new friends?',
     trySearchingHere: 'Try searching here',
     accept: 'Accept',
@@ -524,7 +537,8 @@ export default {
     startNewSession: 'Start a new session',
     newSession: 'Start a session',
     newSessionExplained: 'Start a session (Floating action)',
-    sessionFrom: (startTime: string) => `A session from ${startTime}`,
+    sessionFrom: ({startTime}: SessionStartTimeParams) =>
+      `A session from ${startTime}`,
   },
   userNameScreen: {
     headerTitle: 'User name',
@@ -595,7 +609,7 @@ export default {
     submit: 'Update email',
     sent: 'Email updated successfully!',
     sending: 'Updating email...',
-    success: (email: string) =>
+    success: ({email}: UpdateEmailSentEmailParams) =>
       `An email with instructions to change your email address has been sent to ${email}. Please reload the app after changing your email.`,
     enterPasswordToConfirm:
       'Please enter your password to confirm your identity.',
@@ -603,7 +617,7 @@ export default {
   },
   verifyEmailScreen: {
     youAreNotVerified: "Let's verify your email!",
-    wouldYouLikeToVerify: (email: string) =>
+    wouldYouLikeToVerify: ({email}: VerifyEmailScreenEmailParmas) =>
       `Would you like to verify ${email ?? 'your email'} now?`,
     illDoItLater: "I'll do it later",
     verifyEmail: 'Verify email',
@@ -657,15 +671,16 @@ export default {
   profileScreen: {
     title: 'Profile',
     titleNotSelf: 'Friend Overview',
-    noDrinkingSessions: (isSelf: boolean) =>
+    noDrinkingSessions: ({isSelf}: NoDrinkingSessionsParams) =>
       `${isSelf ? 'You have not' : 'This user has not'} added any drinking sessions yet.`,
     seeAllFriends: 'See all friends',
-    drinkingSessions: (plural: string) => `Drinking Session${plural}`,
+    drinkingSessions: ({shouldUsePlural}: DrinkingSessionsParams) =>
+      `Drinking ${shouldUsePlural ? 'Sessions' : 'Session'}`,
     unitsConsumed: 'Units Consumed',
     manageFriend: 'Manage Friend',
     unfriendPrompt: 'Do you really want to unfriend this user?',
     unfriend: 'Unfriend',
-    commonFriendsLabel: (hasCommonFriends: boolean) =>
+    commonFriendsLabel: ({hasCommonFriends}: CommonFriendsLabelParams) =>
       `${hasCommonFriends ? 'Common friends:' : 'Friends:'}`,
   },
   statisticsScreen: {
@@ -681,7 +696,7 @@ export default {
     exitEditMode: 'Exit Edit Mode',
     noDrinkingSessions: 'No drinking sessions',
     addSessionExplained: 'Add a session (Floating action)',
-    sessionWindow: (sessionId: DrinkingSessionId) =>
+    sessionWindow: ({sessionId}: SessionWindowIdParams) =>
       `Drinking session: ${sessionId}`,
     ongoing: 'Ongoing',
     loadingDate: 'Loading date...',
@@ -714,9 +729,10 @@ export default {
     unsavedChangesWarning:
       'You have unsaved changes. Are you sure you want to go back?',
     sessionDetails: 'Session details',
-    discardSession: (discardWord: string) => `${discardWord} Session`,
+    discardSession: ({discardWord}: DiscardSessionParams) =>
+      `${discardWord} Session`,
     saveSession: 'Save Session',
-    discardingSession: (discardWord: string) =>
+    discardingSession: ({discardWord}: DiscardSessionParams) =>
       `${discardWord} this session...`,
   },
   sessionDateScreen: {
@@ -741,7 +757,7 @@ export default {
     description:
       'Please choose the timezone you were in when you started the session.',
     note: 'Note: Each time the details of this session are viewed, its timestamps will be displayed in the selected timezone.',
-    confirmPrompt: (newTimezone: string) =>
+    confirmPrompt: ({newTimezone}: SessionConfirmTimezoneChangeParams) =>
       `Setting the timezone to ${newTimezone} will change the date of this session. Are you sure you'd like to proceed?`,
     error: {
       generic: 'Failed to modify the session timezone.',
@@ -773,7 +789,7 @@ export default {
   },
   forceUpdate: {
     heading: 'App Update Required',
-    text: (platform: Platform) =>
+    text: ({platform}: ForceUpdateTextParams) =>
       `This version of the app is now discontinued. Please update to the latest version using the link below${platform === CONST.PLATFORM.IOS ? ' or from within the TestFlight app' : ''}.`,
     link: 'Update Now',
   },
@@ -871,7 +887,7 @@ export default {
     sending: 'Sending you an email...',
     submit: 'Reset your password',
     enterEmail: 'Enter your email here',
-    success: (email: string) =>
+    success: ({email}: ForgotPasswordSuccessParams) =>
       `An email with password reset instructions has been sent to ${email}.`,
     error: {
       generic: 'There was an error when attempting to reset your password.',
