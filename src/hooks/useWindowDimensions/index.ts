@@ -1,7 +1,8 @@
 import {useContext, useEffect, useRef} from 'react';
 // eslint-disable-next-line no-restricted-imports
 import {Dimensions, useWindowDimensions} from 'react-native';
-// import {FullScreenContext} from '@components/VideoPlayerContexts/FullScreenContext';
+import type {ResponsiveLayoutProperties} from '@components/FullScreenContext';
+import {FullScreenContext} from '@components/FullScreenContext';
 import useDebouncedState from '@hooks/useDebouncedState';
 import * as Browser from '@libs/Browser';
 import variables from '@styles/variables';
@@ -14,7 +15,7 @@ const tagNamesOpenKeyboard = ['INPUT', 'TEXTAREA'];
 const isMobile = Browser.isMobile();
 
 /**
- * A convenience wrapper around React Native's useWindowDimensions hook that also provides booleans for our breakpoints.
+ * A wrapper around React Native's useWindowDimensions hook.
  */
 export default function (useCachedViewportHeight = false): WindowDimensions {
   const {
@@ -22,10 +23,9 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     lockedWindowDimensionsRef,
     lockWindowDimensions,
     unlockWindowDimensions,
-  } = {
-    // } = useContext(FullScreenContext) ?? {
+  } = useContext(FullScreenContext) ?? {
     isFullScreenRef: useRef(false),
-    lockedWindowDimensionsRef: useRef<WindowDimensions | null>(null),
+    lockedWindowDimensionsRef: useRef<ResponsiveLayoutProperties | null>(null),
     lockWindowDimensions: () => {},
     unlockWindowDimensions: () => {},
   };
@@ -35,6 +35,7 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
   const cachedViewportHeightWithKeyboardRef = useRef(initalViewportHeight);
   const {width: windowWidth, height: windowHeight} = useWindowDimensions();
 
+  // These are the same as the ones in useResponsiveLayout, but we need to redefine them here to avoid cyclic dependency.
   // When the soft keyboard opens on mWeb, the window height changes. Use static screen height instead to get real screenHeight.
   const screenHeight = Dimensions.get('screen').height;
   const isExtraSmallScreenHeight =
@@ -48,10 +49,18 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     windowWidth > variables.tabletResponsiveWidthBreakpoint;
   const isExtraSmallScreenWidth =
     windowWidth <= variables.extraSmallMobileResponsiveWidthBreakpoint;
-
   const lowerScreenDimmension = Math.min(windowWidth, windowHeight);
   const isSmallScreen =
     lowerScreenDimmension <= variables.mobileResponsiveWidthBreakpoint;
+
+  const responsiveLayoutResults = {
+    isSmallScreenWidth,
+    isExtraSmallScreenHeight,
+    isExtraSmallScreenWidth,
+    isMediumScreenWidth,
+    isLargeScreenWidth,
+    isSmallScreen,
+  };
 
   const [, cachedViewportHeight, setCachedViewportHeight] = useDebouncedState(
     windowHeight,
@@ -69,10 +78,11 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     if (!isCachedViewportHeight) {
       return;
     }
-    window.addEventListener('focusin', handleFocusIn.current);
+
+    const handleFocusInValue = handleFocusIn.current;
+    window.addEventListener('focusin', handleFocusInValue);
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      window.removeEventListener('focusin', handleFocusIn.current);
+      window.removeEventListener('focusin', handleFocusInValue);
     };
   }, [isCachedViewportHeight]);
 
@@ -87,10 +97,11 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     if (!isCachedViewportHeight) {
       return;
     }
-    window.addEventListener('focusout', handleFocusOut.current);
+
+    const handleFocusOutValue = handleFocusOut.current;
+    window.addEventListener('focusout', handleFocusOutValue);
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      window.removeEventListener('focusout', handleFocusOut.current);
+      window.removeEventListener('focusout', handleFocusOutValue);
     };
   }, [isCachedViewportHeight]);
 
@@ -102,7 +113,7 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
       return;
     }
     setCachedViewportHeight(windowHeight);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, [windowHeight, isCachedViewportHeight]);
 
   useEffect(() => {
@@ -119,12 +130,7 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
   const windowDimensions = {
     windowWidth,
     windowHeight: isCachedViewportHeight ? cachedViewportHeight : windowHeight,
-    isExtraSmallScreenHeight,
-    isSmallScreenWidth,
-    isMediumScreenWidth,
-    isLargeScreenWidth,
-    isExtraSmallScreenWidth,
-    isSmallScreen,
+    responsiveLayoutResults,
   };
 
   if (!lockedWindowDimensionsRef.current && !isFullScreenRef.current) {
@@ -135,12 +141,16 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     isMobile &&
     lockedWindowDimensionsRef.current &&
     isExtraSmallScreenWidth ===
-      lockedWindowDimensionsRef.current.isExtraSmallScreenWidth &&
-    isSmallScreenWidth === lockedWindowDimensionsRef.current.isSmallScreen &&
+      lockedWindowDimensionsRef.current.responsiveLayoutResults
+        .isExtraSmallScreenHeight &&
+    isSmallScreenWidth ===
+      lockedWindowDimensionsRef.current.responsiveLayoutResults.isSmallScreen &&
     isMediumScreenWidth ===
-      lockedWindowDimensionsRef.current.isMediumScreenWidth &&
+      lockedWindowDimensionsRef.current.responsiveLayoutResults
+        .isMediumScreenWidth &&
     isLargeScreenWidth ===
-      lockedWindowDimensionsRef.current.isLargeScreenWidth &&
+      lockedWindowDimensionsRef.current.responsiveLayoutResults
+        .isLargeScreenWidth &&
     lockedWindowDimensionsRef.current.windowWidth !== windowWidth &&
     lockedWindowDimensionsRef.current.windowHeight !== windowHeight;
 
@@ -150,20 +160,18 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     return windowDimensions;
   }
 
-  const didScreenReturnToOriginalSize =
-    lockedWindowDimensionsRef.current.windowWidth === windowWidth &&
-    lockedWindowDimensionsRef.current.windowHeight === windowHeight;
-
   // if video exits fullscreen mode, unlock the window dimensions
-  if (
-    lockedWindowDimensionsRef.current &&
-    !isFullScreenRef.current &&
-    didScreenReturnToOriginalSize
-  ) {
+  if (lockedWindowDimensionsRef.current && !isFullScreenRef.current) {
     const lastLockedWindowDimensions = {...lockedWindowDimensionsRef.current};
     unlockWindowDimensions();
-    return lastLockedWindowDimensions;
+    return {
+      windowWidth: lastLockedWindowDimensions.windowWidth,
+      windowHeight: lastLockedWindowDimensions.windowHeight,
+    };
   }
 
-  return lockedWindowDimensionsRef.current;
+  return {
+    windowWidth: lockedWindowDimensionsRef.current.windowWidth,
+    windowHeight: lockedWindowDimensionsRef.current.windowHeight,
+  };
 }

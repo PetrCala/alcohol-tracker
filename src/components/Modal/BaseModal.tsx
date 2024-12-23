@@ -26,6 +26,7 @@ import CONST from '@src/CONST';
 import ModalContent from './ModalContent';
 import ModalContext from './ModalContext';
 import type BaseModalProps from './types';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 function BaseModal(
   {
@@ -64,7 +65,10 @@ function BaseModal(
   const theme = useTheme();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
-  const {isSmallScreenWidth, windowWidth, windowHeight} = useWindowDimensions();
+  const {windowWidth, windowHeight} = useWindowDimensions();
+  // We need to use isSmallScreenWidth instead of shouldUseNarrowLayout to apply correct modal width
+  // eslint-disable-next-line rulesdir/prefer-shouldUseNarrowLayout-instead-of-isSmallScreenWidth
+  const {isSmallScreenWidth} = useResponsiveLayout();
   const keyboardStateContextValue = useKeyboardState();
 
   const safeAreaInsets = useSafeAreaInsets();

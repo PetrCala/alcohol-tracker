@@ -21,6 +21,7 @@ import Modal from '@components/Modal';
 import Button from '@components/Button';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import useStyleUtils from '@hooks/useStyleUtils';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type MenuItem = {
   translationKey: TranslationPaths;
@@ -43,7 +44,8 @@ function AppShareScreen({route}: AppShareScreenProps) {
   const {translate} = useLocalize();
   const StyleUtils = useStyleUtils();
   const popoverAnchor = useRef<View | null>(null);
-  const {isSmallScreenWidth, windowWidth, windowHeight} = useWindowDimensions();
+  const {windowWidth, windowHeight} = useWindowDimensions();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
   const [isQrModalVisible, setIsQrModalVisible] = useState(false);
 
   const onClose = () => setIsQrModalVisible(false);
@@ -124,7 +126,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
                 source={KirokuIcons.QrCodeWithLogo}
                 style={[
                   StyleUtils.getQrCodeSizeStyle(
-                    isSmallScreenWidth,
+                    shouldUseNarrowLayout,
                     windowWidth,
                     windowHeight,
                   ),

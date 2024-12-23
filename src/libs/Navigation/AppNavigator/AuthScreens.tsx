@@ -3,10 +3,8 @@ import {View} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 // import OptionsListContextProvider from '@components/OptionListContextProvider';
-// import useOnboardingLayout from '@hooks/useOnboardingLayout';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import type {AuthScreensParamList} from '@libs/Navigation/types';
 // import PusherConnectionManager from '@libs/PusherConnectionManager';
 import getTzFixModalScreenOptions from '@libs/Navigation/getTzFixModalScreenOptions';
@@ -25,6 +23,7 @@ import NAVIGATORS from '@src/NAVIGATORS';
 import ONYXKEYS from '@src/ONYXKEYS';
 // import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
+import getOnboardingModalScreenOptions from '@libs/Navigation/getOnboardingModalScreenOptions';
 import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {auth} from '@libs/Firebase/FirebaseApp';
@@ -38,6 +37,7 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
 import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 // eslint-disable-next-line rulesdir/no-negated-variables
@@ -111,12 +111,40 @@ const modalScreenListeners = {
 function AuthScreens() {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
-  const {isSmallScreenWidth} = useWindowDimensions();
-  // const {shouldUseNarrowLayout} = useOnboardingLayout();
+  // We need to use isSmallScreenWidth for the root stack navigator
+  // eslint-disable-next-line rulesdir/prefer-shouldUseNarrowLayout-instead-of-isSmallScreenWidth
+  const {
+    shouldUseNarrowLayout,
+    onboardingIsMediumOrLargerScreenWidth,
+    isSmallScreenWidth,
+  } = useResponsiveLayout();
   const screenOptions = getRootNavigatorScreenOptions(
     isSmallScreenWidth,
     styles,
     StyleUtils,
+  );
+
+  const onboardingModalScreenOptions = useMemo(
+    () =>
+      screenOptions.onboardingModalNavigator(
+        onboardingIsMediumOrLargerScreenWidth,
+      ),
+    [screenOptions, onboardingIsMediumOrLargerScreenWidth],
+  );
+  const onboardingScreenOptions = useMemo(
+    () =>
+      getOnboardingModalScreenOptions(
+        shouldUseNarrowLayout,
+        styles,
+        StyleUtils,
+        onboardingIsMediumOrLargerScreenWidth,
+      ),
+    [
+      StyleUtils,
+      shouldUseNarrowLayout,
+      onboardingIsMediumOrLargerScreenWidth,
+      styles,
+    ],
   );
   const isInitialRender = useRef(true);
 
@@ -246,7 +274,7 @@ function AuthScreens() {
   return (
     // <ComposeProviders components={[OptionsListContextProvider, SearchContextProvider]}>
     <DatabaseDataProvider>
-      <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
+      <View style={styles.rootNavigatorContainerStyles(shouldUseNarrowLayout)}>
         <RootStack.Navigator
           screenOptions={screenOptions.centralPaneNavigator}
           isSmallScreenWidth={isSmallScreenWidth}>
@@ -293,6 +321,19 @@ function AuthScreens() {
           options={screenOptions.fullScreen}
           component={DesktopSignInRedirectPage}
         /> */}
+          {/* {isOnboardingCompleted === false && (
+                        <RootStack.Screen
+                            name={NAVIGATORS.ONBOARDING_MODAL_NAVIGATOR}
+                            options={onboardingScreenOptions}
+                            component={OnboardingModalNavigator}
+                            listeners={{
+                                focus: () => {
+                                    Modal.setDisableDismissOnEscape(true);
+                                },
+                                beforeRemove: () => Modal.setDisableDismissOnEscape(false),
+                            }}
+                        />
+                    )} */}
           {/* {Object.entries(CENTRAL_PANE_SCREENS).map(
             ([screenName, componentGetter]) => {
               const centralPaneName = screenName as CentralPaneName;

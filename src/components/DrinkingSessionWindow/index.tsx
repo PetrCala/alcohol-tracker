@@ -23,7 +23,6 @@ import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as App from '@userActions/App';
@@ -51,7 +50,6 @@ function DrinkingSessionWindow({
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {preferences} = useDatabaseData();
-  const {windowWidth} = useWindowDimensions();
   const sessionRef = useRef<DrinkingSession | undefined>(session);
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);

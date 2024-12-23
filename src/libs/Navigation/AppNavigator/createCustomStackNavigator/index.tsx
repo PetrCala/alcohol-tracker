@@ -13,7 +13,7 @@ import type {
 } from '@react-navigation/stack';
 import {StackView} from '@react-navigation/stack';
 import React, {useEffect, useMemo} from 'react';
-import useWindowDimensions from '@hooks/useWindowDimensions';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import navigationRef from '@libs/Navigation/navigationRef';
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import CustomRouter from './CustomRouter';
@@ -44,7 +44,7 @@ function reduceCentralPaneRoutes(routes: Routes): Routes {
 }
 
 function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
-  const {isSmallScreenWidth} = useWindowDimensions();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
 
   const {navigation, state, descriptors, NavigationContent} =
     useNavigationBuilder<
@@ -64,7 +64,7 @@ function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
       return;
     }
     navigationRef.resetRoot(navigationRef.getRootState());
-  }, [isSmallScreenWidth]);
+  }, [shouldUseNarrowLayout]);
 
   const {stateToRender} = useMemo(() => {
     const routes = reduceCentralPaneRoutes(state.routes);

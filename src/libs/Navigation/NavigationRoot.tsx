@@ -6,7 +6,6 @@ import {
 } from '@react-navigation/native';
 import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import useTheme from '@hooks/useTheme';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import Log from '@libs/Log';
 import {getPathFromURL} from '@libs/Url';
 import {updateLastVisitedPath} from '@userActions/App';
@@ -20,6 +19,7 @@ import customGetPathFromState from './linkingConfig/customGetPathFromState';
 import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
 import Navigation, {navigationRef} from './Navigation';
 import setupCustomAndroidBackHandler from './setupCustomAndroidBackHandler';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */
@@ -75,7 +75,7 @@ function NavigationRoot({
   const firstRenderRef = useRef(true);
   const theme = useTheme();
   const {cleanStaleScrollOffsets} = useContext(ScrollOffsetContext);
-  const {isSmallScreenWidth} = useWindowDimensions();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
   const {auth} = useFirebase();
   const user = auth.currentUser;
   // const [user] = useOnyx(ONYXKEYS.USER);
@@ -141,8 +141,8 @@ function NavigationRoot({
       firstRenderRef.current = false;
       return;
     }
-    Navigation.setShouldPopAllStateOnUP(!isSmallScreenWidth);
-  }, [isSmallScreenWidth]);
+    Navigation.setShouldPopAllStateOnUP(!shouldUseNarrowLayout);
+  }, [shouldUseNarrowLayout]);
 
   const handleStateChange = (state: NavigationState | undefined) => {
     if (!state) {

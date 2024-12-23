@@ -1,5 +1,4 @@
 import React from 'react';
-import type {ReactNode} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import type {ValueOf} from 'type-fest';
@@ -7,10 +6,10 @@ import type {MenuItemWithLink} from '@components/MenuItemList';
 import MenuItemList from '@components/MenuItemList';
 import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
 import type IconAsset from '@src/types/utils/IconAsset';
 import IconSection from './IconSection';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 const CARD_LAYOUT = {
   ICON_ON_TOP: 'iconOnTop',
@@ -54,6 +53,9 @@ type SectionProps = ChildrenProps & {
 
   /** Whether the section is in the central pane of the layout */
   isCentralPane?: boolean;
+
+  /** Padding for content on large screens */
+  contentPaddingOnLargeScreens?: {padding: number};
 };
 
 function Section({
@@ -70,9 +72,10 @@ function Section({
   title,
   titleStyles,
   isCentralPane = false,
+  contentPaddingOnLargeScreens,
 }: SectionProps) {
   const styles = useThemeStyles();
-  const {isSmallScreenWidth} = useWindowDimensions();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
 
   return (
     <View
@@ -95,7 +98,10 @@ function Section({
       <View
         style={[
           styles.w100,
-          isCentralPane && (isSmallScreenWidth ? styles.p5 : styles.p8),
+          isCentralPane &&
+            (shouldUseNarrowLayout
+              ? styles.p5
+              : contentPaddingOnLargeScreens ?? styles.p8),
         ]}>
         <View
           style={[
