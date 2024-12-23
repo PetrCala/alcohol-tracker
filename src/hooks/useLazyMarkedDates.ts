@@ -167,7 +167,7 @@ function useLazyMarkedDates(
         Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
       }
     }
-  }, [isFocused, user?.uid, userID]);
+  }, [isFocused]);
 
   useEffect(() => {
     // Calculate only upon refocus
@@ -187,15 +187,7 @@ function useLazyMarkedDates(
 
     loadMoreMonths(newMonthsToLoad, true);
     setIsLoading(false);
-  }, [
-    sessions,
-    preferences,
-    userID,
-    isFocused,
-    loadMoreMonths,
-    monthsLoaded,
-    user?.uid,
-  ]);
+  }, [sessions, preferences, userID, isFocused]);
 
   return {
     markedDates,
