@@ -1,17 +1,8 @@
 import type {ParamListBase, RouteProp} from '@react-navigation/native';
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, {createContext, useCallback, useMemo, useRef} from 'react';
 import {withOnyx} from 'react-native-onyx';
-import usePrevious from '@hooks/usePrevious';
 import type {NavigationPartialRoute, State} from '@libs/Navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
-import ONYXKEYS from '@src/ONYXKEYS';
-import SCREENS from '@src/SCREENS';
 
 type ScrollOffsetContextValue = {
   /** Save scroll offset of flashlist on given screen */

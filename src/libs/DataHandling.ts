@@ -565,6 +565,7 @@ function objVals(obj: any): string[] {
 export {
   formatDate,
   timestampToDate,
+  timestampToDateString,
   dateToDateData,
   getTimestampAtMidnight,
   getTimestampAtNoon,
