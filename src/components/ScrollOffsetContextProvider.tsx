@@ -1,6 +1,5 @@
 import type {ParamListBase, RouteProp} from '@react-navigation/native';
 import React, {createContext, useCallback, useMemo, useRef} from 'react';
-import {withOnyx} from 'react-native-onyx';
 import type {NavigationPartialRoute, State} from '@libs/Navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
 
@@ -18,9 +17,7 @@ type ScrollOffsetContextValue = {
   cleanStaleScrollOffsets: (state: State) => void;
 };
 
-type ScrollOffsetContextProviderOnyxProps = {};
-
-type ScrollOffsetContextProviderProps = ScrollOffsetContextProviderOnyxProps & {
+type ScrollOffsetContextProviderProps = {
   /** Actual content wrapped by this component */
   children: React.ReactNode;
 };
@@ -38,38 +35,13 @@ const ScrollOffsetContext =
 function getKey(
   route: RouteProp<ParamListBase> | NavigationPartialRoute,
 ): string {
-  if (
-    route.params &&
-    'policyID' in route.params &&
-    typeof route.params.policyID === 'string'
-  ) {
-    return `${route.name}-${route.params.policyID}`;
-  }
   return `${route.name}-global`;
 }
 
 function ScrollOffsetContextProvider({
   children,
-  //   priorityMode,
 }: ScrollOffsetContextProviderProps) {
   const scrollOffsetsRef = useRef<Record<string, number>>({});
-  //   const previousPriorityMode = usePrevious(priorityMode);
-
-  //   useEffect(() => {
-  //     if (
-  //       previousPriorityMode === null ||
-  //       previousPriorityMode === priorityMode
-  //     ) {
-  //       return;
-  //     }
-
-  //     // If the priority mode changes, we need to clear the scroll offsets for the home screens because it affects the size of the elements and scroll positions wouldn't be correct.
-  //     for (const key of Object.keys(scrollOffsetsRef.current)) {
-  //       if (key.includes(SCREENS.HOME)) {
-  //         delete scrollOffsetsRef.current[key];
-  //       }
-  //     }
-  //   }, [priorityMode, previousPriorityMode]);
 
   const saveScrollOffset: ScrollOffsetContextValue['saveScrollOffset'] =
     useCallback((route, scrollOffset) => {
@@ -117,15 +89,7 @@ function ScrollOffsetContextProvider({
     </ScrollOffsetContext.Provider>
   );
 }
-
-export default withOnyx<
-  ScrollOffsetContextProviderProps,
-  ScrollOffsetContextProviderOnyxProps
->({
-  //   priorityMode: {
-  //     key: ONYXKEYS.NVP_PRIORITY_MODE,
-  //   },
-})(ScrollOffsetContextProvider);
+export default ScrollOffsetContextProvider;
 
 export {ScrollOffsetContext};
 
