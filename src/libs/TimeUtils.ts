@@ -51,8 +51,8 @@ function numberToVerboseString(
   }
 
   const fullNamePath: TranslationPaths = shouldUsePlural(count)
-    ? `timePeriods.fullSingle.${unit}`
-    : `timePeriods.fullPlural.${unit}`;
+    ? `timePeriods.fullPlural.${unit}`
+    : `timePeriods.fullSingle.${unit}`;
 
   const unitTranslationKey: TranslationPaths = useAbbreviation
     ? `timePeriods.abbreviated.${unit}`
@@ -61,7 +61,7 @@ function numberToVerboseString(
   const unitsString = Localize.translateLocal(unitTranslationKey);
   const agoString = addAgo ? ` ${Localize.translateLocal('common.ago')}` : '';
 
-  return `${count}${unitsString}${agoString}`;
+  return `${count} ${unitsString}${agoString}`;
 }
 
 function getTimestampAge(
