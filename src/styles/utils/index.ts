@@ -1330,7 +1330,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {
       ...styles.textMicro,
       ...styles.alignSelfStart,
-      ...styles.ml1,
       color: isDisabled
         ? theme.textSupporting
         : isToday
