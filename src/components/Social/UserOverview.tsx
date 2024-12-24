@@ -39,7 +39,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   const sessionEndTimeVerbose = getTimestampAge(
     lastSessionEndTime,
     false,
-    false,
+    true,
   );
   const shouldDisplaySessionInfo =
     inSession && !DSUtils.sessionIsExpired(latest_session);
