@@ -380,6 +380,13 @@ export default {
       requiredDisplayName: 'Nickname cannot be empty',
     },
   },
+  searchResult: {
+    self: 'You',
+    friend: 'Already a friend',
+    sent: 'Awaiting a response',
+    accept: 'Accept friend request',
+    add: 'Send a request',
+  },
   socialScreen: {
     title: 'Friends',
     friendList: 'Friend List',

@@ -382,6 +382,13 @@ export default {
       requiredDisplayName: 'Přezdívka nesmí být prázdná',
     },
   },
+  searchResult: {
+    self: 'To jsem já',
+    friend: 'Přítel',
+    sent: 'Žádost odeslána',
+    accept: 'Přijmout',
+    add: 'Poslat žádost',
+  },
   socialScreen: {
     title: 'Přátelé',
     friendList: 'Seznam přátel',
