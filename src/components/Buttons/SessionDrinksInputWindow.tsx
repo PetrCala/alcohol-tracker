@@ -35,6 +35,7 @@ function SessionDrinksInputWindow({
   const styles = useThemeStyles();
   const theme = useTheme();
   const {preferences} = useDatabaseData();
+  const [shouldHighlight, setShouldHighlight] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(
     sumDrinksOfSingleType(drinks, drinkKey).toString(),
   );
@@ -143,6 +144,14 @@ function SessionDrinksInputWindow({
     setInputValue(newInputValue);
   }, [drinks, drinkKey]);
 
+  useEffect(() => {
+    if (sumDrinksOfSingleType(drinks, drinkKey) > 0) {
+      setShouldHighlight(true);
+    } else {
+      setShouldHighlight(false);
+    }
+  }, [drinks, drinkKey]);
+
   if (!preferences) {
     return;
   }
@@ -156,10 +165,7 @@ function SessionDrinksInputWindow({
         style={[
           localStyles.drinksInputButton,
           {
-            backgroundColor:
-              sumDrinksOfSingleType(drinks, drinkKey) > 0
-                ? theme.appColor
-                : theme.cardBG,
+            backgroundColor: shouldHighlight ? theme.appColor : theme.cardBG,
           },
         ]}>
         <TextInput
@@ -167,9 +173,9 @@ function SessionDrinksInputWindow({
           ref={inputRef}
           style={[
             styles.textLarge,
-            styles.textStrong,
-            styles.textNormalThemeText,
             styles.textAlignCenter,
+            styles.textBold,
+            shouldHighlight ? styles.textBlack : styles.textPlainColor,
           ]}
           value={inputValue}
           onKeyPress={handleKeyPress}
