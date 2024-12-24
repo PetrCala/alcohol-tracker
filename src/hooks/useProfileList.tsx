@@ -48,7 +48,7 @@ const useProfileList = (userArray: UserArray) => {
     } finally {
       setLoadingDisplayData(false);
     }
-  }, [userArray, profileList, db]);
+  }, [userArray, db]); // including the profileList causes an infinite loop
 
   useEffect(() => {
     updateDisplayData();
