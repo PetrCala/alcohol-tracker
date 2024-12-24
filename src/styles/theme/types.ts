@@ -99,6 +99,7 @@ type ThemeColors = {
   skeletonLHNIn: Color;
   skeletonLHNOut: Color;
   QRLogo: Color;
+  appLogo: Color;
   starDefaultBG: Color;
   loungeAccessOverlay: Color;
   mapAttributionText: Color;

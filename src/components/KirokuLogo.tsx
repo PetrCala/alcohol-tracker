@@ -13,6 +13,7 @@ import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import ImageSVG from './ImageSVG';
+import useTheme from '@hooks/useTheme';
 
 type KirokuLogoProps = {
   /** Additional styles to add to the component */
@@ -34,6 +35,7 @@ const logoComponents = {
 
 function KirokuLogo({style}: KirokuLogoProps) {
   const styles = useThemeStyles();
+  const theme = useTheme();
   const StyleUtils = useStyleUtils();
   const {environment} = useEnvironment();
   // PascalCase is required for React components, so capitalize the const here
@@ -51,14 +53,13 @@ function KirokuLogo({style}: KirokuLogoProps) {
             : variables.signInLogoSize,
         ),
         shouldUseNarrowLayout &&
-          // Possible offset for staging/dev environments
-          // (environment === CONST.ENVIRONMENT.DEV ||
-          //   environment === CONST.ENVIRONMENT.STAGING)
-          //   ? styles.ml3
-          //   : {},
-          style,
+        (environment === CONST.ENVIRONMENT.DEV ||
+          environment === CONST.ENVIRONMENT.STAGING)
+          ? styles.mr3
+          : {},
+        style,
       ]}>
-      <ImageSVG contentFit="contain" src={LogoComponent} />
+      <ImageSVG contentFit="contain" src={LogoComponent} fill={theme.appLogo} />
     </View>
   );
 }

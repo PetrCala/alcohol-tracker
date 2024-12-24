@@ -91,6 +91,7 @@ const lightTheme = {
   skeletonLHNIn: colors.productLight400,
   skeletonLHNOut: colors.productLight600,
   QRLogo: colors.yellow,
+  appLogo: colors.productLight100,
   starDefaultBG: 'rgb(254, 228, 94)',
   loungeAccessOverlay: colors.blue800,
   mapAttributionText: colors.black,
