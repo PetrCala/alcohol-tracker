@@ -278,33 +278,6 @@ async function sendUpdateEmailLink(
   await verifyBeforeUpdateEmail(user, newEmail);
 }
 
-/** Update the user's preferred theme */
-async function updateTheme(db: Database, user: User | null, theme: Theme) {
-  if (!user) {
-    throw new Error(Localize.translateLocal('common.error.userNull'));
-  }
-  // const optimisticData: OnyxUpdate[] = [
-  //   {
-  //     onyxMethod: Onyx.METHOD.SET,
-  //     key: ONYXKEYS.PREFERRED_THEME,
-  //     value: theme,
-  //   },
-  // ];
-
-  // const parameters: UpdateThemeParams = {
-  //   value: theme,
-  // };
-
-  // API.write(WRITE_COMMANDS.UPDATE_THEME, parameters, {optimisticData});
-
-  const dbPath = DBPATHS.USER_PREFERENCES_USER_ID_THEME;
-
-  await set(ref(db, dbPath.getRoute(user.uid)), theme);
-  await Onyx.set(ONYXKEYS.PREFERRED_THEME, theme);
-
-  Navigation.goBack();
-}
-
 async function updatePassword(
   user: User | null,
   currentPassword: string,
@@ -679,7 +652,6 @@ export {
   updateAgreedToTermsAt,
   updateAutomaticTimezone,
   updatePassword,
-  updateTheme,
   userExistsInDatabase,
   logIn,
   signUp,

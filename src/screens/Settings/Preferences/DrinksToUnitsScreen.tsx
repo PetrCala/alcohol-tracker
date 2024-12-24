@@ -1,232 +1,244 @@
-// import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-// import {Alert, BackHandler, View} from 'react-native';
-// import {useUserConnection} from '@context/global/UserConnectionContext';
-// import {useFirebase} from '@context/global/FirebaseContext';
-// import UserOffline from '@components/UserOfflineModal';
-// import {savePreferencesData} from '@database/preferences';
-// import {getDefaultPreferences} from '@userActions/User';
-// import type {Preferences} from '@src/types/onyx';
-// import {useDatabaseData} from '@context/global/DatabaseDataContext';
-// import type {StackScreenProps} from '@react-navigation/stack';
-// import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
-// import type SCREENS from '@src/SCREENS';
-// import Navigation from '@libs/Navigation/Navigation';
-// import ROUTES from '@src/ROUTES';
-// import type {TranslationPaths} from '@src/languages/types';
-// import type {Route} from '@src/ROUTES';
-// import {isEqual} from 'lodash';
-// import ScreenWrapper from '@components/ScreenWrapper';
-// import HeaderWithBackButton from '@components/HeaderWithBackButton';
-// import useLocalize from '@hooks/useLocalize';
-// import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-// import ConfirmModal from '@components/ConfirmModal';
-// import Button from '@components/Button';
-// import useThemeStyles from '@hooks/useThemeStyles';
-// import useWaitForNavigation from '@hooks/useWaitForNavigation';
-// import useSingleExecution from '@hooks/useSingleExecution';
-// import ScrollView from '@components/ScrollView';
-// import MenuItemGroup from '@components/MenuItemGroup';
-// import Section from '@components/Section';
-// import MenuItem from '@components/MenuItem';
-// import type {NumericSliderProps} from '@components/Popups/NumericSlider';
-// import NumericSlider from '@components/Popups/NumericSlider';
-// import CONST from '@src/CONST';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {Alert, View} from 'react-native';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {getDefaultPreferences} from '@userActions/User';
+import type {DrinksToUnits} from '@src/types/onyx';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import Navigation from '@libs/Navigation/Navigation';
+import {isEqual} from 'lodash';
+import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ConfirmModal from '@components/ConfirmModal';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
+import ScrollView from '@components/ScrollView';
+import Section from '@components/Section';
+import MenuItem from '@components/MenuItem';
+import * as Preferences from '@userActions/Preferences';
+import type {NumericSliderProps} from '@components/Popups/NumericSlider';
+import NumericSlider from '@components/Popups/NumericSlider';
+import CONST from '@src/CONST';
 
-// type PreferencesSliderConfig = NumericSliderProps & {
-//   list: string;
-//   key: string;
-// };
+type MenuItem = {
+  title?: string;
+  key: string;
+  currentValue: number;
+};
 
-function DrinksToUnitsScreen() {}
+type PreferencesSliderConfig = NumericSliderProps & {
+  list: string;
+  key: string;
+};
 
-// const initialPreferences = useRef(preferences);
-// const [saving, setSaving] = useState<boolean>(false);
-// // Deconstruct the preferences
-// const defaultPreferences = getDefaultPreferences();
-// const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
-//   preferences ?? defaultPreferences,
-// );
-// const havePreferencesChanged = useCallback(() => {
-//   return !isEqual(initialPreferences.current, currentPreferences);
-// }, [currentPreferences]);
+function DrinksToUnitsScreen() {
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
+  const {auth, db} = useFirebase();
+  const user = auth.currentUser;
+  const {preferences} = useDatabaseData();
+  const initialValues = useRef(preferences?.drinks_to_units);
+  const [saving, setSaving] = useState<boolean>(false);
+  const [currentValues, setCurrentValues] = useState<DrinksToUnits>(
+    preferences?.drinks_to_units ?? getDefaultPreferences().drinks_to_units,
+  );
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
 
-// const handleGoBack = useCallback(() => {
-//   if (havePreferencesChanged()) {
-//     setShowLeaveConfirmation(true); // Unsaved changes
-//   } else {
-//     Navigation.goBack();
-//   }
-// }, [havePreferencesChanged]);
+  const [sliderConfig, setSliderConfig] = useState<PreferencesSliderConfig>({
+    visible: false,
+    heading: '',
+    value: 0,
+    maxValue: 3,
+    step: 0.1,
+    onRequestClose: () => {},
+    onSave: () => {},
+    list: 'drinks_to_units',
+    key: '',
+  });
 
-// const handleSavePreferences = () => {
-//   (async () => {
-//     if (!user) {
-//       return;
-//     }
-//     try {
-//       setSaving(true);
-//       await savePreferencesData(db, user.uid, currentPreferences);
-//       Navigation.navigate(ROUTES.SETTINGS);
-//     } catch (error) {
-//       const errorMessage = error instanceof Error ? error.message : '';
-//       Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
-//     } finally {
-//       setSaving(false);
-//     }
-//   })();
-// };
+  const haveValuesChanged = useCallback(() => {
+    return !isEqual(initialValues.current, currentValues);
+  }, [currentValues]);
 
-// const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const handleGoBack = useCallback(() => {
+    if (haveValuesChanged()) {
+      setShowLeaveConfirmation(true); // Unsaved changes
+    } else {
+      Navigation.goBack();
+    }
+  }, [haveValuesChanged]);
 
-// /** A helper function to generate the preference set buttons */
-// const setPreferencesButton = useCallback(
-//   (
-//     key: string,
-//     label: string,
-//     value: number,
-//     sliderListKey: string,
-//     sliderMinValue: number,
-//     sliderMaxValue: number,
-//   ) => {
-//     return (
-//       <Button
-//         text={value.toString()}
-//         style={styles.settingValueButton}
-//         onPress={() =>
-//           setSliderConfig(prev => ({
-//             ...prev,
-//             visible: true,
-//             heading: label,
-//             step: sliderMinValue,
-//             value,
-//             maxValue: sliderMaxValue,
-//             list: sliderListKey,
-//             key,
-//           }))
-//         }
-//       />
-//     );
-//   },
-//   [styles.settingValueButton],
-// );
+  const handleSaveValues = () => {
+    (async () => {
+      try {
+        setSaving(true);
+        await Preferences.updatePreferences(db, user, {
+          drinks_to_units: currentValues,
+        });
+        Navigation.goBack();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
+      } finally {
+        setSaving(false);
+      }
+    })();
+  };
 
-// const [sliderConfig, setSliderConfig] = useState<PreferencesSliderConfig>({
-//   visible: false,
-//   heading: '',
-//   step: 1,
-//   value: 0,
-//   maxValue: 5,
-//   onRequestClose: () => {},
-//   onSave: () => {},
-//   list: '',
-//   key: '',
-// });
+  const drinksToUnitsMenuItems = useMemo(() => {
+    const drinksHelperData: MenuItem[] = [
+      {
+        title: translate('drinks.smallBeer'),
+        key: CONST.DRINKS.KEYS.SMALL_BEER,
+        currentValue: currentValues.small_beer,
+      },
+      {
+        title: translate('drinks.beer'),
+        key: CONST.DRINKS.KEYS.BEER,
+        currentValue: currentValues.beer,
+      },
+      {
+        title: translate('drinks.wine'),
+        key: CONST.DRINKS.KEYS.WINE,
+        currentValue: currentValues.wine,
+      },
+      {
+        title: translate('drinks.weakShot'),
+        key: CONST.DRINKS.KEYS.WEAK_SHOT,
+        currentValue: currentValues.weak_shot,
+      },
+      {
+        title: translate('drinks.strongShot'),
+        key: CONST.DRINKS.KEYS.STRONG_SHOT,
+        currentValue: currentValues.strong_shot,
+      },
+      {
+        title: translate('drinks.cocktail'),
+        key: CONST.DRINKS.KEYS.COCKTAIL,
+        currentValue: currentValues.cocktail,
+      },
+      {
+        title: translate('drinks.other'),
+        key: CONST.DRINKS.KEYS.OTHER,
+        currentValue: currentValues.other,
+      },
+    ];
 
-// const havePreferencesChanged = useCallback(() => {
-//   return !isEqual(initialPreferences.current, currentPreferences);
-// }, [currentPreferences]);
+    return drinksHelperData.map((detail, index) => (
+      <MenuItem
+        // eslint-disable-next-line react/no-array-index-key
+        key={`${detail.title}_${index}`}
+        title={detail.title}
+        titleStyle={styles.plainSectionTitle}
+        wrapperStyle={styles.sectionMenuItemTopDescription}
+        disabled
+        shouldGreyOutWhenDisabled={false}
+        shouldUseRowFlexDirection
+        shouldShowRightIcon={false}
+        shouldShowRightComponent={true}
+        rightComponent={
+          <Button
+            text={detail.currentValue.toString()}
+            style={styles.settingValueButton}
+            onPress={() => {
+              setSliderConfig(prev => ({
+                ...prev,
+                visible: true,
+                heading: detail.title ?? '',
+                value: detail.currentValue ?? 0,
+                key: detail.key ?? '',
+                onSave: (value: number) => {
+                  setCurrentValues(prev => ({...prev, [detail.key]: value}));
+                },
+              }));
+            }}
+          />
+        }
+      />
+    ));
+  }, [
+    currentValues.beer,
+    currentValues.cocktail,
+    currentValues.other,
+    currentValues.small_beer,
+    currentValues.strong_shot,
+    currentValues.weak_shot,
+    currentValues.wine,
+    sliderConfig,
+    styles.plainSectionTitle,
+    styles.sectionMenuItemTopDescription,
+    styles.settingValueButton,
+    translate,
+  ]);
 
-// const drinksToUnitsMenuItems = useMemo(
-//   () => getMenuItemsSection(drinksToColorsItemsData),
-//   [drinksToColorsItemsData, getMenuItemsSection],
-// );
+  if (saving) {
+    return (
+      <FullScreenLoadingIndicator
+        loadingText={translate('preferencesScreen.saving')}
+      />
+    );
+  }
 
-// const drinksToColorsItemsData: Menu = useMemo(() => {
-//   const drinksHelperData = [
-//     {
-//       title: translate('drinks.smallBeer'),
-//       key: CONST.DRINKS.KEYS.SMALL_BEER,
-//       currentValue: currentPreferences.drinks_to_units.small_beer,
-//     },
-//     {
-//       title: translate('drinks.beer'),
-//       key: CONST.DRINKS.KEYS.BEER,
-//       currentValue: currentPreferences.drinks_to_units.beer,
-//     },
-//     {
-//       title: translate('drinks.wine'),
-//       key: CONST.DRINKS.KEYS.WINE,
-//       currentValue: currentPreferences.drinks_to_units.wine,
-//     },
-//     {
-//       title: translate('drinks.weakShot'),
-//       key: CONST.DRINKS.KEYS.WEAK_SHOT,
-//       currentValue: currentPreferences.drinks_to_units.weak_shot,
-//     },
-//     {
-//       title: translate('drinks.strongShot'),
-//       key: CONST.DRINKS.KEYS.STRONG_SHOT,
-//       currentValue: currentPreferences.drinks_to_units.strong_shot,
-//     },
-//     {
-//       title: translate('drinks.cocktail'),
-//       key: CONST.DRINKS.KEYS.COCKTAIL,
-//       currentValue: currentPreferences.drinks_to_units.cocktail,
-//     },
-//     {
-//       title: translate('drinks.other'),
-//       key: CONST.DRINKS.KEYS.OTHER,
-//       currentValue: currentPreferences.drinks_to_units.other,
-//     },
-//   ];
+  return (
+    <ScreenWrapper testID={DrinksToUnitsScreen.displayName}>
+      <HeaderWithBackButton
+        title={translate('drinksToUnitsScreen.title')}
+        shouldShowBackButton
+        onBackButtonPress={handleGoBack}
+        onCloseButtonPress={() => Navigation.dismissModal()}
+      />
+      <ScrollView style={[styles.flexGrow1, styles.mnw100]}>
+        <Section
+          title={translate('drinksToUnitsScreen.title')}
+          titleStyles={styles.generalSectionTitle}
+          subtitle={translate('drinksToUnitsScreen.description')}
+          subtitleMuted
+          isCentralPane
+          childrenStyles={styles.pt3}>
+          {drinksToUnitsMenuItems}
+        </Section>
+      </ScrollView>
+      <View style={[styles.bottomTabBarContainer, styles.p5]}>
+        <Button
+          large
+          success
+          text={translate('common.save')}
+          onPress={handleSaveValues}
+          style={styles.bottomTabButton}
+        />
+      </View>
+      <NumericSlider
+        visible={sliderConfig.visible}
+        value={sliderConfig.value}
+        heading={sliderConfig.heading}
+        step={sliderConfig.step}
+        maxValue={sliderConfig.maxValue}
+        onRequestClose={() => {
+          setSliderConfig(prev => ({...prev, visible: false}));
+        }}
+        onSave={newValue => {
+          setCurrentValues(prev => ({
+            ...prev,
+            [sliderConfig.key]: newValue,
+          }));
+          setSliderConfig(prev => ({...prev, visible: false}));
+        }}
+      />
+      <ConfirmModal
+        isVisible={showLeaveConfirmation}
+        title={translate('common.areYouSure')}
+        prompt={translate('preferencesScreen.unsavedChanges')}
+        onConfirm={() => {
+          setSliderConfig(prev => ({...prev, visible: false}));
+          setShowLeaveConfirmation(false);
+          Navigation.goBack();
+        }}
+        onCancel={() => setShowLeaveConfirmation(false)}
+      />
+    </ScreenWrapper>
+  );
+}
 
-//   return {
-//     sectionTranslationKey: 'preferencesScreen.drinksToUnitsSection.title',
-//     subtitle: translate('preferencesScreen.drinksToUnitsSection.description'),
-//     items: drinksHelperData.map(item => ({
-//       title: item.title,
-//       disabled: true,
-//       rightComponent: setPreferencesButton(
-//         item.key,
-//         item.title,
-//         item.currentValue,
-//         'drinks_to_units',
-//         0.1, // Min value
-//         3, // Max value
-//       ),
-//     })),
-//   };
-// }, [currentPreferences, setPreferencesButton, translate]);
-
-// // const updateDrinksToUnits = (DrinkKey: typeof DrinkTypesKeys[number], value: number) => {
-// const updateDrinksToUnits = (DrinkKey: string, value: number) => {
-//   setCurrentPreferences(prev => ({
-//     ...prev,
-//     drinks_to_units: {
-//       ...prev.drinks_to_units,
-//       [DrinkKey]: value,
-//     },
-//   }));
-// };
-
-// if (saving) {
-//   return (
-//     <FullScreenLoadingIndicator
-//       loadingText={translate('preferencesScreen.saving')}
-//     />
-//   );
-// }
-
-// <ConfirmModal
-//   isVisible={showLeaveConfirmation}
-//   title={translate('common.areYouSure')}
-//   prompt={translate('preferencesScreen.unsavedChanges')}
-//   onConfirm={() => {
-//     setSliderConfig(prev => ({...prev, visible: false}));
-//     setShowLeaveConfirmation(false);
-//     Navigation.goBack();
-//   }}
-//   onCancel={() => setShowLeaveConfirmation(false)}
-// />
-
-// <View style={[styles.bottomTabBarContainer, styles.p5]}>
-//   <Button
-//     large
-//     success
-//     text={translate('preferencesScreen.save')}
-//     onPress={handleSavePreferences}
-//     style={styles.bottomTabButton}
-//   />
-// </View>
-
+DrinksToUnitsScreen.displayName = 'DrinksToUnitsScreen';
 export default DrinksToUnitsScreen;
