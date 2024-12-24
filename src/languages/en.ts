@@ -411,7 +411,7 @@ export default {
     description:
       'Set cutoff points where session colors change; each is the maximum value up to which the session retains that color',
   },
-  drinksToUnitsSscreen: {
+  drinksToUnitsScreen: {
     title: 'Drinks to Units',
     description: 'Choose how many units each drink is worth',
   },

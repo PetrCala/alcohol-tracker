@@ -10,7 +10,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as User from '@userActions/User';
+import * as Preferences from '@userActions/Preferences';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Theme} from '@src/types/onyx';
@@ -36,7 +36,7 @@ function ThemeScreen() {
     (async () => {
       try {
         setIsLoading(true);
-        await User.updateTheme(db, auth.currentUser, theme);
+        await Preferences.updateTheme(db, auth.currentUser, theme);
       } catch (error) {
         ErrorUtils.raiseAppError(ERRORS.USER.THEME_UPDATE_FAILED, error);
       } finally {
@@ -46,9 +46,7 @@ function ThemeScreen() {
   };
 
   return (
-    <ScreenWrapper
-      includeSafeAreaPaddingBottom={false}
-      testID={ThemeScreen.displayName}>
+    <ScreenWrapper testID={ThemeScreen.displayName}>
       <HeaderWithBackButton
         title={translate('themeScreen.theme')}
         shouldShowBackButton
