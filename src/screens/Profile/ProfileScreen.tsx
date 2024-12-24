@@ -24,7 +24,6 @@ import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@src/DBPATHS';
 import ROUTES from '@src/ROUTES';
 import useFetchData from '@hooks/useFetchData';
-import {shouldUsePlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -73,7 +72,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const statsData: StatData = [
     {
       header: translate('profileScreen.drinkingSessions', {
-        shouldUsePlural: shouldUsePlural(drinkingSessionsCount),
+        sessionsCount: drinkingSessionsCount,
       }),
       content: String(drinkingSessionsCount),
     },

@@ -10,7 +10,7 @@ type DiscardSessionParams = {
 };
 
 type DrinkingSessionsParams = {
-  shouldUsePlural: boolean;
+  sessionsCount: number;
 };
 
 type ForceUpdateTextParams = {
