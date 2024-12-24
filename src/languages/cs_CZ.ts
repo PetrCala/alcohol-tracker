@@ -539,7 +539,7 @@ export default {
       aboutKiroku: 'O Kiroku',
       description:
         'Kiroku je mobilní aplikace, která vám pomáhá sledovat konzumaci alkoholu.',
-      joinDiscord: 'Připojte se na náš Discord server',
+      joinDiscord: 'Připojte se na náš Discord',
       versionLetter: 'v',
       readTheTermsAndPrivacy: {
         phrase1: 'Přečtěte si',
