@@ -45,7 +45,9 @@ export default {
     previous: 'Předchozí',
     goBack: 'Jít zpět',
     logIn: 'Přihlásit se',
+    logInHere: 'Přihlaste se zde,',
     signUp: 'Zaregistrovat se',
+    signUpHere: 'Zaregistrujte se zde,',
     create: 'Vytvořit',
     add: 'Přidat',
     resend: 'Odeslat znovu',
@@ -931,7 +933,7 @@ export default {
   },
   signUpScreen: {
     signingIn: 'Přihlašuji...',
-    chooseAnotherMethod: 'Zvolit jiný způsob přihlášení',
+    chooseAnotherMethod: 'Zvolte jiný způsob přihlášení',
     error: {
       generic: 'Při vytváření účtu došlo k chybě. Zkuste to prosím znovu.',
     },

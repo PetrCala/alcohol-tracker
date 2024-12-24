@@ -38,8 +38,8 @@ function ChangeSignUpScreenLink({
       : translate('login.noAccount');
   const buttonText =
     navigatesTo === ROUTES.LOG_IN
-      ? translate('common.logIn')
-      : translate('common.signUp');
+      ? translate('common.logInHere')
+      : translate('common.signUpHere');
 
   return (
     <View style={styles.changeSignUpScreenLinkContainer}>
