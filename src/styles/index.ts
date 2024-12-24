@@ -1922,10 +1922,11 @@ const styles = (theme: ThemeColors) =>
       color: theme.appColor,
     },
 
-    statItemHeaderText: {
+    statItemLabelText: {
       fontSize: variables.fontSizeNormal,
       textAlign: 'center',
       width: variables.statItemTextMaxWidth,
+      flexWrap: 'wrap',
     },
 
     startSessionPlusButton: (screenWidth: number) =>
