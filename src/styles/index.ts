@@ -2396,6 +2396,10 @@ const styles = (theme: ThemeColors) =>
       color: theme.textLight,
     },
 
+    textBlack: {
+      color: theme.textDark,
+    },
+
     textBlue: {
       color: theme.link,
     },

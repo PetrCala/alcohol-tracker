@@ -63,7 +63,7 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
             <View key={drink.key} style={localStyles.sessionDrinkContainer}>
               <View style={localStyles.iconContainer}>
                 <Icon
-                  fill={theme.textDark}
+                  fill={theme.text}
                   src={iconSource}
                   height={iconSize}
                   width={iconSize}
@@ -74,7 +74,7 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
                 style={[styles.bgTransparent, styles.p1]}
                 onPress={() => handleRemoveDrinks(drinkKey, 1)}
                 icon={KirokuIcons.Minus}
-                iconFill={theme.textDark}
+                iconFill={theme.text}
               />
               <SessionDrinksInputWindow
                 drinks={session?.drinks}
@@ -85,7 +85,7 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
                 style={[styles.bgTransparent, styles.p1]}
                 onPress={() => handleAddDrinks(drinkKey, 1)}
                 icon={KirokuIcons.Plus}
-                iconFill={theme.textDark}
+                iconFill={theme.text}
               />
             </View>
           );
