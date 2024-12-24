@@ -694,7 +694,7 @@ export default {
   },
   reportBugScreen: {
     title: 'Nahlásit chybu',
-    prompt: 'Co se stalo? Prosím popište chybu podrobně.',
+    prompt: 'Co se stalo? Prosím podrobně popište vzniklou chybu níže.',
     describeBug: 'Popište chybu zde',
     submit: 'Odeslat hlášení',
     sent: 'Hlášení chyby bylo odesláno!',
