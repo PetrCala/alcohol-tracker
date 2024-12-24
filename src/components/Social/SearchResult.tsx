@@ -1,10 +1,10 @@
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import type {Database} from 'firebase/database';
-import ProfileImage from '@components/ProfileImage';
 import type {FirebaseStorage} from 'firebase/storage';
-import React from 'react';
-import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
+import ProfileImage from '@components/ProfileImage';
+import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -12,14 +12,6 @@ import Text from '@components/Text';
 import {acceptFriendRequest, sendFriendRequest} from '@src/database/friends';
 import ERRORS from '@src/ERRORS';
 import useLocalize from '@hooks/useLocalize';
-
-const statusToTextMap: {[key in FriendRequestStatus]: string} = {
-  self: 'You',
-  friend: 'Already a friend',
-  sent: 'Awaiting a response',
-  received: 'Accept friend request',
-  undefined: 'Send a request',
-};
 
 type SendFriendRequestButtonProps = {
   db: Database;
@@ -37,6 +29,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   alreadyAFriend,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const {translate} = useLocalize();
   const styles = useThemeStyles();
 
   const handleSendRequestPress = async (
@@ -74,15 +67,15 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     <View style={localStyles.sendFriendRequestContainer}>
       {userFrom === userTo ? (
         <Text numberOfLines={1} style={styles.textNormalThemeText}>
-          {statusToTextMap.self}
+          {translate('searchResult.self')}
         </Text>
       ) : alreadyAFriend ? (
         <Text numberOfLines={1} style={styles.textNormalThemeText}>
-          {statusToTextMap.friend}
+          {translate('searchResult.friend')}
         </Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
         <Text numberOfLines={1} style={styles.textNormalThemeText}>
-          {statusToTextMap.sent}
+          {translate('searchResult.sent')}
         </Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
         <Button
@@ -90,7 +83,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
           onPress={() => {
             handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading);
           }}
-          text={statusToTextMap.received}
+          text={translate('searchResult.accept')}
           isLoading={isLoading}
         />
       ) : (
@@ -99,7 +92,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
           onPress={() => {
             handleSendRequestPress(db, userFrom, userTo, setIsLoading);
           }}
-          text={statusToTextMap.undefined}
+          text={translate('searchResult.add')}
           isLoading={isLoading}
         />
       )}
