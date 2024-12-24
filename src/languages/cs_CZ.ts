@@ -245,6 +245,10 @@ export default {
     blackout: 'Výpadek paměti',
     timezone: 'Časové pásmo',
   },
+  textInput: {
+    accessibilityLabel: 'Textové pole',
+    resetSearch: 'Resetovat hledání',
+  },
   bottomTabBar: {
     home: 'Domů',
     friends: 'Přátelé',
@@ -398,6 +402,7 @@ export default {
   friendSearchScreen: {
     title: 'Vyhledat nové přátele',
     noUsersFound: 'Neexistují žádní uživatelé s touto přezdívkou.',
+    searchWindow: 'Vyhledejte uživatele podle jejich přezdívky',
   },
   friendRequestScreen: {
     requestsReceived: ({requestsCount}: FriendRequestsCountParams) =>

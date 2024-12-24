@@ -133,7 +133,7 @@ function FriendSearchScreen() {
       />
       <SearchWindow
         ref={searchInputRef}
-        windowText="Search for new friends"
+        windowText={translate('friendSearchScreen.searchWindow')}
         onSearch={dbSearch}
         onResetSearch={resetSearch}
       />
