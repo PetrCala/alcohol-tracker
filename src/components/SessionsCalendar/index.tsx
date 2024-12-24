@@ -118,7 +118,7 @@ function SessionsCalendar({
       disableAllTouchEventsForDisabledDays
       renderArrow={(direction: Direction) => CalendarArrow(direction)}
       style={styles.sessionsCalendarContainer}
-      theme={StyleUtils.getSessionsCalendarHeaderStyle()}
+      theme={StyleUtils.getSessionsCalendarStyle()}
     />
   );
 }

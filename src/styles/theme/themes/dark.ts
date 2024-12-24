@@ -8,6 +8,7 @@ const darkTheme = {
   appBG: colors.productDark100,
   splashBG: colors.yellow,
   highlightBG: colors.productDark200,
+  darkBG: colors.productLight900,
   appColor: colors.yellowStrong,
   border: colors.productDark400,
   borderLighter: colors.productDark400,

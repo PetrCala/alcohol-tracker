@@ -404,7 +404,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     bgDark: {
-      backgroundColor: theme.inverse,
+      backgroundColor: theme.darkBG,
     },
 
     border: {
@@ -795,6 +795,7 @@ const styles = (theme: ThemeColors) =>
       right: 10,
       padding: 10,
       zIndex: 10,
+      backgroundColor: theme.transparent,
     },
 
     colorMutedReversed: {
@@ -1489,6 +1490,7 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
       borderTopWidth: 1,
       borderBottomWidth: 1,
+      backgroundColor: theme.componentBG,
     },
 
     sessionColorMarker: (sessionColor: CalendarColors) =>

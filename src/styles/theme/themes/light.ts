@@ -8,6 +8,7 @@ const lightTheme = {
   appBG: colors.productLight100,
   splashBG: colors.yellow,
   highlightBG: colors.productLight200,
+  darkBG: colors.productLight900,
   appColor: colors.yellowStrong,
   border: colors.productLight400,
   borderLighter: colors.productLight400,

@@ -1295,12 +1295,17 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {};
   },
 
-  getSessionsCalendarHeaderStyle: (): CalendarHeaderProps => {
+  getSessionsCalendarStyle: (): CalendarHeaderProps => {
     return {
+      backgroundColor: theme.componentBG,
+      calendarBackground: theme.componentBG,
       textDayHeaderFontWeight: 'bold',
+      textSectionTitleColor: theme.textSupporting,
+
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'stylesheet.calendar.header': {
         header: {
+          backgroundColor: theme.componentBG,
           height: variables.calendarHeaderHeight,
           marginLeft: -5,
           flexDirection: 'row',
@@ -1316,6 +1321,22 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
         },
       },
     } as CalendarHeaderProps;
+  },
+
+  getSessionsCalendarDayLabelStyle: (
+    isDisabled: boolean,
+    isToday: boolean,
+  ): TextStyle => {
+    return {
+      ...styles.textMicro,
+      ...styles.alignSelfStart,
+      ...styles.ml1,
+      color: isDisabled
+        ? theme.textSupporting
+        : isToday
+          ? theme.link
+          : theme.text,
+    };
   },
 
   /**

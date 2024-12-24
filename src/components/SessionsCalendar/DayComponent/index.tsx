@@ -1,8 +1,6 @@
-import type {StyleProp, TextStyle} from 'react-native';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import type {DateData} from 'react-native-calendars';
 import {hasDecimalPoint} from '@libs/DataHandling';
-import type {DayState} from 'react-native-calendars/src/types';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import {endOfDay} from 'date-fns';
@@ -11,6 +9,8 @@ import type {
   DayComponentProps,
 } from '@components/SessionsCalendar/types';
 import Text from '@components/Text';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useStyleUtils from '@hooks/useStyleUtils';
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',
@@ -29,21 +29,13 @@ function DayComponent({
   theme,
   onPress,
 }: DayComponentProps) {
+  const StyleUtils = useStyleUtils();
+  const isDisabled = state === 'disabled';
+  const isToday = state === 'today';
+
   if (!date) {
     return null;
   }
-
-  const getTextStyle = (state: DayState | undefined): StyleProp<TextStyle> => {
-    let textStyle = localStyles.dayText;
-    if (state === 'disabled') {
-      textStyle = {...textStyle, ...localStyles.dayTextDisabled};
-    } else if (state === 'today') {
-      textStyle = {...textStyle, ...localStyles.dayTextToday};
-    } else {
-      textStyle = {...textStyle, ...{color: theme?.dayTextColor || 'black'}};
-    }
-    return textStyle;
-  };
 
   const getMarkingContainerStyle = (date: DateData, marking?: MarkingProps) => {
     const baseStyle = localStyles.daySessionsMarkingContainer;
@@ -101,10 +93,17 @@ function DayComponent({
       style={localStyles.dayContainer}
       onPress={() => onPress && date && onPress(date)} // Guard against undefined onPress
     >
-      <Text style={getTextStyle(state)}>{date?.day}</Text>
+      <Text
+        style={StyleUtils.getSessionsCalendarDayLabelStyle(
+          isDisabled,
+          isToday,
+        )}>
+        {date?.day}
+      </Text>
+      {/* // TODO rewrite this using global styles */}
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
-          {state === 'disabled' ? '' : units}
+          {isDisabled ? '' : units}
         </Text>
       </View>
     </TouchableOpacity>
@@ -119,19 +118,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%', // Give explicit width and height
     height: 50,
-  },
-  dayText: {
-    marginTop: 1,
-    marginLeft: 2,
-    fontSize: 10,
-    alignSelf: 'flex-start',
-    color: 'black' as string, // allow overrides
-  },
-  dayTextDisabled: {
-    color: '#D3D3D3',
-  },
-  dayTextToday: {
-    color: 'blue', // Blue text for the current day
   },
   daySessionsMarkingContainer: {
     marginTop: 0,

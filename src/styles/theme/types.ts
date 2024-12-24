@@ -15,6 +15,7 @@ type ThemeColors = {
   appBG: Color;
   splashBG: Color;
   highlightBG: Color;
+  darkBG: Color;
   appColor: Color;
   border: Color;
   borderLighter: Color;
