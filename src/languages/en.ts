@@ -1175,6 +1175,3 @@ export default {
     },
   },
 } satisfies TranslationBase;
-
-// Example of how to pluralize strings
-// deleteRates: ({count}: DistanceRateOperationsParams) => `Delete ${Str.pluralize('rate', 'rates', count)}`,
