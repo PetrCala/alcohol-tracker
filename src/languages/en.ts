@@ -17,6 +17,7 @@ import type {
   SessionStartTimeParams,
   SessionWindowIdParams,
   SignUpNewAccountCodeParams,
+  UnitCountParams,
   UpdateEmailSentEmailParams,
   VerifyEmailScreenEmailParmas,
 } from './params';
@@ -688,7 +689,8 @@ export default {
     seeAllFriends: 'See all friends',
     drinkingSessions: ({sessionsCount}: DrinkingSessionsParams) =>
       `Drinking ${Str.pluralize('Session', 'Sessions', sessionsCount)}`,
-    unitsConsumed: 'Units Consumed',
+    unitsConsumed: ({unitCount}: UnitCountParams) =>
+      `${Str.pluralize('Units', 'Unit', unitCount)} Consumed`,
     manageFriend: 'Manage Friend',
     unfriendPrompt: 'Do you really want to unfriend this user?',
     unfriend: 'Unfriend',

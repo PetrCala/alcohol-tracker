@@ -45,6 +45,10 @@ type SignUpNewAccountCodeParams = {
   login: string;
 };
 
+type UnitCountParams = {
+  unitCount: number;
+};
+
 type UpdateEmailSentEmailParams = {
   email: string;
 };
@@ -65,6 +69,7 @@ export type {
   SessionStartTimeParams,
   SessionWindowIdParams,
   SignUpNewAccountCodeParams,
+  UnitCountParams,
   UpdateEmailSentEmailParams,
   VerifyEmailScreenEmailParmas,
 };
