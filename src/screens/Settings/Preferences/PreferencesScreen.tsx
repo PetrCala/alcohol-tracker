@@ -1,8 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {BackHandler} from 'react-native';
-import {useUserConnection} from '@context/global/UserConnectionContext';
-import {useFirebase} from '@context/global/FirebaseContext';
-import UserOffline from '@components/UserOfflineModal';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
@@ -19,9 +16,9 @@ import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import useSingleExecution from '@hooks/useSingleExecution';
 import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
+import LocaleUtils from '@libs/LocaleUtils';
 import Section from '@components/Section';
 import MenuItem from '@components/MenuItem';
-import type {NumericSliderProps} from '@components/Popups/NumericSlider';
 import CONST from '@src/CONST';
 
 type MenuData = {
@@ -45,7 +42,7 @@ type PreferencesScreenProps = StackScreenProps<
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PreferencesScreen({route}: PreferencesScreenProps) {
-  const {translate} = useLocalize();
+  const {translate, preferredLocale} = useLocalize();
   const styles = useThemeStyles();
   const {singleExecution} = useSingleExecution();
   const {preferences} = useDatabaseData();
@@ -65,11 +62,11 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
         //   description: 'Monday',
         //   pageRoute: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
         // },
-        // {
-        //   title: translate('languageScreen.language'),
-        //   description: `${translate(`languageScreen.languages.${LocaleUtils.getLanguageFromLocale(preferences?.locale ?? CONST.LOCALES.DEFAULT)}.label`)}`,
-        //   pageRoute: ROUTES.SETTINGS_LANGUAGE,
-        // },
+        {
+          title: translate('languageScreen.language'),
+          description: `${translate(`languageScreen.languages.${LocaleUtils.getLanguageFromLocale(preferredLocale)}.label`)}`,
+          pageRoute: ROUTES.SETTINGS_LANGUAGE,
+        },
         {
           title: translate('themeScreen.theme'),
           description: `${translate(
