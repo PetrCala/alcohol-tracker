@@ -1,4 +1,5 @@
 import CONST from '@src/CONST';
+import Str from '@libs/common/str';
 import type {
   CharacterLimitParams,
   TranslationBase,
@@ -685,8 +686,8 @@ export default {
     noDrinkingSessions: ({isSelf}: NoDrinkingSessionsParams) =>
       `${isSelf ? 'You have not' : 'This user has not'} added any drinking sessions yet.`,
     seeAllFriends: 'See all friends',
-    drinkingSessions: ({shouldUsePlural}: DrinkingSessionsParams) =>
-      `Drinking ${shouldUsePlural ? 'Sessions' : 'Session'}`,
+    drinkingSessions: ({sessionsCount}: DrinkingSessionsParams) =>
+      `Drinking ${Str.pluralize('Session', 'Sessions', sessionsCount)}`,
     unitsConsumed: 'Units Consumed',
     manageFriend: 'Manage Friend',
     unfriendPrompt: 'Do you really want to unfriend this user?',
