@@ -17,6 +17,7 @@ import type {
   SessionStartTimeParams,
   SessionWindowIdParams,
   SignUpNewAccountCodeParams,
+  UnitCountParams,
   UpdateEmailSentEmailParams,
   VerifyEmailScreenEmailParmas,
 } from './params';
@@ -486,7 +487,7 @@ export default {
     improvementThoughts: 'Co byste chtěli zlepšit?',
     general: 'Obecné',
     reportBug: 'Nahlásit chybu',
-    giveFeedback: 'Dejte nám zpětnou vazbu',
+    giveFeedback: 'Zpětná vazba',
     signOut: 'Odhlásit se',
     shareTheApp: 'Sdílet aplikaci',
     about: 'O aplikaci',
@@ -684,11 +685,12 @@ export default {
     title: 'Profil',
     titleNotSelf: 'Přehled uživatele',
     noDrinkingSessions: ({isSelf}: NoDrinkingSessionsParams) =>
-      `${isSelf ? 'Zatím jste' : 'Tento uživatel zatím'} nepřidal(a) žádné relace s pitím alkoholu.`,
+      `${isSelf ? 'Zatím jste' : 'Tento uživatel zatím'} nepřidal(a) žádné alkoholové relace.`,
     seeAllFriends: 'Zobrazit všechny přátele',
     drinkingSessions: ({sessionsCount}: DrinkingSessionsParams) =>
-      `Relace ${Str.pluralize('Session', 'Sessions', sessionsCount)}`,
-    unitsConsumed: 'Zkonzumované jednotky',
+      `${Str.pluralize('Alkoholová Relace', 'Alkoholových Relací', sessionsCount)}`,
+    unitsConsumed: ({unitCount}: UnitCountParams) =>
+      `${Str.pluralize('Zkonzumovaná Jednotka', 'Zkomzumovaných Jednotek', unitCount)}`,
     manageFriend: 'Spravovat přítele',
     unfriendPrompt: 'Opravdu chcete tohoto uživatele odebrat z přátel?',
     unfriend: 'Odebrat z přátel',
@@ -706,7 +708,7 @@ export default {
   dayOverviewScreen: {
     enterEditMode: 'Režim úprav',
     exitEditMode: 'Ukončit úpravy',
-    noDrinkingSessions: 'Žádné relace s pitím alkoholu',
+    noDrinkingSessions: 'Žádné alkoholové relace',
     addSessionExplained: 'Přidat relaci (plovoucí tlačítko)',
     sessionWindow: ({sessionId}: SessionWindowIdParams) =>
       `Relace pití: ${sessionId}`,

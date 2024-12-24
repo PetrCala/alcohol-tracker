@@ -23,7 +23,6 @@ import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
-import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -70,11 +69,15 @@ function HomeScreen({route}: HomeScreenProps) {
 
   const statsData: StatData = [
     {
-      header: `Drinking Session${getPlural(drinkingSessionsCount)}`,
+      header: translate('profileScreen.drinkingSessions', {
+        sessionsCount: drinkingSessionsCount,
+      }),
       content: String(drinkingSessionsCount),
     },
     {
-      header: 'Units Consumed',
+      header: translate('profileScreen.unitsConsumed', {
+        unitCount: roundToTwoDecimalPlaces(unitsConsumed),
+      }),
       content: String(roundToTwoDecimalPlaces(unitsConsumed)),
     },
   ];
