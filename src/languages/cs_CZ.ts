@@ -259,6 +259,7 @@ export default {
     menu: 'Menu',
   },
   drinks: {
+    // The keys are in snake_case to match the API
     smallBeer: 'Malé pivo',
     beer: 'Pivo',
     wine: 'Víno',
