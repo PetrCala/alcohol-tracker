@@ -1671,7 +1671,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     signUpScreen: {
-      backgroundColor: theme.highlightBG,
+      backgroundColor: theme.appBG,
       minHeight: '100%',
       flex: 1,
     },

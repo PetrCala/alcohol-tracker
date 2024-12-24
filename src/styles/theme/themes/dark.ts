@@ -41,7 +41,7 @@ const darkTheme = {
   addHover: colors.orange300,
   addPressed: colors.orange800,
   transparent: colors.transparent,
-  signInPage: colors.green800,
+  signInPage: colors.appBG,
   darkSupportingText: colors.productDark800,
   searchBarBG: colors.productDark300,
 
@@ -52,7 +52,7 @@ const darkTheme = {
   componentBG: colors.productDark100,
   hoverComponentBG: colors.productDark300,
   activeComponentBG: colors.productDark400,
-  signInSidebar: colors.green800,
+  signInSidebar: colors.appBG,
   sidebar: colors.productDark100,
   sidebarHover: colors.productDark300,
   heading: colors.productDark900,
