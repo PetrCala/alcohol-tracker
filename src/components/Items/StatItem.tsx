@@ -12,16 +12,19 @@ const StatItem: React.FC<StatItemProps> = ({header, content}) => {
   const styles = useThemeStyles();
 
   return (
-    <View style={styles.flexRow}>
-      <View style={[styles.alignItemsCenter, styles.justifyContentCenter]}>
-        <Text style={[styles.statItemText]}>{content}</Text>
-        <Text
-          style={styles.statItemHeaderText}
-          numberOfLines={2}
-          ellipsizeMode="tail">
-          {header}
-        </Text>
-      </View>
+    <View
+      style={[
+        styles.flexColumn,
+        styles.alignItemsCenter,
+        styles.justifyContentCenter,
+      ]}>
+      <Text style={[styles.statItemText]}>{content}</Text>
+      <Text
+        style={styles.statItemLabelText}
+        numberOfLines={2}
+        ellipsizeMode="tail">
+        {header}
+      </Text>
     </View>
   );
 };
