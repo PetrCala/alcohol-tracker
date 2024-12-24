@@ -1,226 +1,214 @@
-// import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-// import {Alert, BackHandler, View} from 'react-native';
-// import {useUserConnection} from '@context/global/UserConnectionContext';
-// import {useFirebase} from '@context/global/FirebaseContext';
-// import UserOffline from '@components/UserOfflineModal';
-// import {savePreferencesData} from '@database/preferences';
-// import {getDefaultPreferences} from '@userActions/User';
-// import type {Preferences} from '@src/types/onyx';
-// import {useDatabaseData} from '@context/global/DatabaseDataContext';
-// import type {StackScreenProps} from '@react-navigation/stack';
-// import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
-// import type SCREENS from '@src/SCREENS';
-// import Navigation from '@libs/Navigation/Navigation';
-// import ROUTES from '@src/ROUTES';
-// import type {TranslationPaths} from '@src/languages/types';
-// import type {Route} from '@src/ROUTES';
-// import {isEqual} from 'lodash';
-// import ScreenWrapper from '@components/ScreenWrapper';
-// import HeaderWithBackButton from '@components/HeaderWithBackButton';
-// import useLocalize from '@hooks/useLocalize';
-// import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-// import ConfirmModal from '@components/ConfirmModal';
-// import Button from '@components/Button';
-// import useThemeStyles from '@hooks/useThemeStyles';
-// import useWaitForNavigation from '@hooks/useWaitForNavigation';
-// import useSingleExecution from '@hooks/useSingleExecution';
-// import ScrollView from '@components/ScrollView';
-// import MenuItemGroup from '@components/MenuItemGroup';
-// import Section from '@components/Section';
-// import MenuItem from '@components/MenuItem';
-// import type {NumericSliderProps} from '@components/Popups/NumericSlider';
-// import NumericSlider from '@components/Popups/NumericSlider';
-// import CONST from '@src/CONST';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {Alert, View} from 'react-native';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {getDefaultPreferences} from '@userActions/User';
+import type {UnitsToColors} from '@src/types/onyx';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import Navigation from '@libs/Navigation/Navigation';
+import {isEqual} from 'lodash';
+import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ConfirmModal from '@components/ConfirmModal';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
+import ScrollView from '@components/ScrollView';
+import Section from '@components/Section';
+import MenuItem from '@components/MenuItem';
+import * as Preferences from '@userActions/Preferences';
+import type {NumericSliderProps} from '@components/Popups/NumericSlider';
+import NumericSlider from '@components/Popups/NumericSlider';
+import {CalendarColors} from '@components/SessionsCalendar/types';
 
-// type PreferencesSliderConfig = NumericSliderProps & {
-//   list: string;
-//   key: string;
-// };
+type MenuItem = {
+  title?: string;
+  key: CalendarColors;
+  currentValue: number;
+};
 
-function UnitsToColorsScreen() {}
+type PreferencesSliderConfig = NumericSliderProps & {
+  list: string;
+  key: string;
+};
 
-// const initialPreferences = useRef(preferences);
-// const [saving, setSaving] = useState<boolean>(false);
-// // Deconstruct the preferences
-// const defaultPreferences = getDefaultPreferences();
-// const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
-//   preferences ?? defaultPreferences,
-// );
-// const havePreferencesChanged = useCallback(() => {
-//   return !isEqual(initialPreferences.current, currentPreferences);
-// }, [currentPreferences]);
+function UnitsToColorsScreen() {
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
+  const {auth, db} = useFirebase();
+  const user = auth.currentUser;
+  const {preferences} = useDatabaseData();
+  const initialValues = useRef(preferences?.units_to_colors);
+  const [saving, setSaving] = useState<boolean>(false);
+  const [currentValues, setCurrentValues] = useState<UnitsToColors>(
+    preferences?.units_to_colors ?? getDefaultPreferences().units_to_colors,
+  );
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
 
-// const handleGoBack = useCallback(() => {
-//   if (havePreferencesChanged()) {
-//     setShowLeaveConfirmation(true); // Unsaved changes
-//   } else {
-//     Navigation.goBack();
-//   }
-// }, [havePreferencesChanged]);
+  const [sliderConfig, setSliderConfig] = useState<PreferencesSliderConfig>({
+    visible: false,
+    heading: '',
+    value: 0,
+    maxValue: 15,
+    step: 1,
+    onRequestClose: () => {},
+    onSave: () => {},
+    list: 'units_to_colors',
+    key: '',
+  });
 
-// const handleSavePreferences = () => {
-//   (async () => {
-//     if (!user) {
-//       return;
-//     }
-//     try {
-//       setSaving(true);
-//       await savePreferencesData(db, user.uid, currentPreferences);
-//       Navigation.navigate(ROUTES.SETTINGS);
-//     } catch (error) {
-//       const errorMessage = error instanceof Error ? error.message : '';
-//       Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
-//     } finally {
-//       setSaving(false);
-//     }
-//   })();
-// };
+  const haveValuesChanged = useCallback(() => {
+    return !isEqual(initialValues.current, currentValues);
+  }, [currentValues]);
 
-// const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const handleGoBack = useCallback(() => {
+    if (haveValuesChanged()) {
+      setShowLeaveConfirmation(true); // Unsaved changes
+    } else {
+      Navigation.goBack();
+    }
+  }, [haveValuesChanged]);
 
-// /** A helper function to generate the preference set buttons */
-// const setPreferencesButton = useCallback(
-//   (
-//     key: string,
-//     label: string,
-//     value: number,
-//     sliderListKey: string,
-//     sliderMinValue: number,
-//     sliderMaxValue: number,
-//   ) => {
-//     return (
-//       <Button
-//         text={value.toString()}
-//         style={styles.settingValueButton}
-//         onPress={() =>
-//           setSliderConfig(prev => ({
-//             ...prev,
-//             visible: true,
-//             heading: label,
-//             step: sliderMinValue,
-//             value,
-//             maxValue: sliderMaxValue,
-//             list: sliderListKey,
-//             key,
-//           }))
-//         }
-//       />
-//     );
-//   },
-//   [styles.settingValueButton],
-// );
+  const handleSaveValues = () => {
+    (async () => {
+      try {
+        setSaving(true);
+        await Preferences.updatePreferences(db, user, {
+          units_to_colors: currentValues,
+        });
+        Navigation.goBack();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
+      } finally {
+        setSaving(false);
+      }
+    })();
+  };
 
-// const [sliderConfig, setSliderConfig] = useState<PreferencesSliderConfig>({
-//   visible: false,
-//   heading: '',
-//   step: 1,
-//   value: 0,
-//   maxValue: 5,
-//   onRequestClose: () => {},
-//   onSave: () => {},
-//   list: '',
-//   key: '',
-// });
+  const unitsToColorsMenuItems = useMemo(() => {
+    const unitsHelperData: MenuItem[] = [
+      {
+        title: translate('units.yellow'),
+        key: 'yellow',
+        currentValue: currentValues.yellow,
+      },
+      {
+        title: translate('units.orange'),
+        key: 'orange',
+        currentValue: currentValues.orange,
+      },
+    ];
 
-// const havePreferencesChanged = useCallback(() => {
-//   return !isEqual(initialPreferences.current, currentPreferences);
-// }, [currentPreferences]);
+    return unitsHelperData.map((detail, index) => (
+      <MenuItem
+        // eslint-disable-next-line react/no-array-index-key
+        key={`${detail.title}_${index}`}
+        title={detail.title}
+        titleStyle={styles.plainSectionTitle}
+        wrapperStyle={styles.sectionMenuItemTopDescription}
+        disabled
+        shouldGreyOutWhenDisabled={false}
+        shouldUseRowFlexDirection
+        shouldShowRightIcon={false}
+        shouldShowRightComponent={true}
+        rightComponent={
+          <Button
+            text={detail.currentValue.toString()}
+            style={styles.settingValueButton}
+            onPress={() => {
+              setSliderConfig(prev => ({
+                ...prev,
+                visible: true,
+                heading: detail.title ?? '',
+                value: detail.currentValue ?? 0,
+                key: detail.key ?? '',
+                onSave: (value: number) => {
+                  setCurrentValues(prev => ({...prev, [detail.key]: value}));
+                },
+              }));
+            }}
+          />
+        }
+      />
+    ));
+  }, [
+    currentValues.orange,
+    currentValues.yellow,
+    sliderConfig,
+    styles.plainSectionTitle,
+    styles.sectionMenuItemTopDescription,
+    styles.settingValueButton,
+    translate,
+  ]);
 
-// const unitsToColorsMenuItems = useMemo(
-//   () => getMenuItemsSection(unitsToColorsMenuItemsData),
-//   [unitsToColorsMenuItemsData, getMenuItemsSection],
-// );
+  if (saving) {
+    return (
+      <FullScreenLoadingIndicator
+        loadingText={translate('preferencesScreen.saving')}
+      />
+    );
+  }
 
-// const unitsToColorsMenuItemsData: Menu = useMemo(() => {
-//   const unitsHelperData = [
-//     {
-//       title: 'Yellow',
-//       key: 'yellow',
-//       currentValue: currentPreferences.units_to_colors.yellow,
-//     },
-//     {
-//       title: 'Orange',
-//       key: 'orange',
-//       currentValue: currentPreferences.units_to_colors.orange,
-//     },
-//   ];
+  return (
+    <ScreenWrapper testID={UnitsToColorsScreen.displayName}>
+      <HeaderWithBackButton
+        title={translate('unitsToColorsScreen.title')}
+        shouldShowBackButton
+        onBackButtonPress={handleGoBack}
+        onCloseButtonPress={() => Navigation.dismissModal()}
+      />
+      <ScrollView style={[styles.flexGrow1, styles.mnw100]}>
+        <Section
+          title={translate('unitsToColorsScreen.title')}
+          titleStyles={styles.generalSectionTitle}
+          subtitle={translate('unitsToColorsScreen.description')}
+          subtitleMuted
+          isCentralPane
+          childrenStyles={styles.pt3}>
+          {unitsToColorsMenuItems}
+        </Section>
+      </ScrollView>
+      <View style={[styles.bottomTabBarContainer, styles.p5]}>
+        <Button
+          large
+          success
+          text={translate('common.save')}
+          onPress={handleSaveValues}
+          style={styles.bottomTabButton}
+        />
+      </View>
+      <NumericSlider
+        visible={sliderConfig.visible}
+        value={sliderConfig.value}
+        heading={sliderConfig.heading}
+        step={sliderConfig.step}
+        maxValue={sliderConfig.maxValue}
+        onRequestClose={() => {
+          setSliderConfig(prev => ({...prev, visible: false}));
+        }}
+        onSave={newValue => {
+          setCurrentValues(prev => ({
+            ...prev,
+            [sliderConfig.key]: newValue,
+          }));
+          setSliderConfig(prev => ({...prev, visible: false}));
+        }}
+      />
+      <ConfirmModal
+        isVisible={showLeaveConfirmation}
+        title={translate('common.areYouSure')}
+        prompt={translate('preferencesScreen.unsavedChanges')}
+        onConfirm={() => {
+          setSliderConfig(prev => ({...prev, visible: false}));
+          setShowLeaveConfirmation(false);
+          Navigation.goBack();
+        }}
+        onCancel={() => setShowLeaveConfirmation(false)}
+      />
+    </ScreenWrapper>
+  );
+}
 
-//   return {
-//     sectionTranslationKey: 'preferencesScreen.unitColorsSection.title',
-//     subtitle: translate('preferencesScreen.unitColorsSection.description'),
-//     items: unitsHelperData.map(item => ({
-//       title: item.title,
-//       disabled: true,
-//       rightComponent: setPreferencesButton(
-//         item.key,
-//         item.title,
-//         item.currentValue,
-//         'units_to_colors',
-//         1, // Min value
-//         15, // Max value
-//       ),
-//     })),
-//   };
-// }, [currentPreferences, setPreferencesButton, translate]);
-
-// const updateUnitsToColors = (colorKey: string, value: number) => {
-//   // const updateUnitsToColors = (colorKey: keyof UnitsToColorsData, value: number) => {
-//   setCurrentPreferences(prev => ({
-//     ...prev,
-//     units_to_colors: {
-//       ...prev.units_to_colors,
-//       [colorKey]: value,
-//     },
-//   }));
-// };
-
-// if (saving) {
-//   return (
-//     <FullScreenLoadingIndicator
-//       loadingText={translate('preferencesScreen.saving')}
-//     />
-//   );
-// }
-
-// <NumericSlider
-//   visible={sliderConfig.visible}
-//   value={sliderConfig.value}
-//   heading={sliderConfig.heading}
-//   step={sliderConfig.step}
-//   maxValue={sliderConfig.maxValue}
-//   onRequestClose={() => {
-//     setSliderConfig(prev => ({...prev, visible: false}));
-//   }}
-//   onSave={newValue => {
-//     if (sliderConfig.list === 'units_to_colors') {
-//       updateUnitsToColors(sliderConfig.key, newValue);
-//     } else if (sliderConfig.list === 'drinks_to_units') {
-//       updateDrinksToUnits(sliderConfig.key, newValue);
-//     }
-//     setSliderConfig(prev => ({...prev, visible: false}));
-//   }}
-// />
-
-// <ConfirmModal
-//   isVisible={showLeaveConfirmation}
-//   title={translate('common.areYouSure')}
-//   prompt={translate('preferencesScreen.unsavedChanges')}
-//   onConfirm={() => {
-//     setSliderConfig(prev => ({...prev, visible: false}));
-//     setShowLeaveConfirmation(false);
-//     Navigation.goBack();
-//   }}
-//   onCancel={() => setShowLeaveConfirmation(false)}
-// />
-
-// <View style={[styles.bottomTabBarContainer, styles.p5]}>
-//   <Button
-//     large
-//     success
-//     text={translate('preferencesScreen.save')}
-//     onPress={handleSavePreferences}
-//     style={styles.bottomTabButton}
-//   />
-// </View>
-
+UnitsToColorsScreen.displayName = 'UnitsToColorsScreen';
 export default UnitsToColorsScreen;

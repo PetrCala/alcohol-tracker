@@ -259,6 +259,10 @@ export default {
     cocktail: 'Cocktail',
     other: 'Other',
   },
+  units: {
+    yellow: 'Yellow',
+    orange: 'Orange',
+  },
   timePeriods: {
     never: 'Never',
     thirtyMinutes: '30 minutes',
