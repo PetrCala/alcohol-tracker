@@ -249,7 +249,12 @@ function DrinkingSessionWindow({
                   ? 'liveSessionScreen.exitMonkeMode'
                   : 'liveSessionScreen.enterMonkeMode',
               )}
-              style={!!monkeMode && styles.buttonSuccessPressed}
+              style={
+                (styles.buttonMedium,
+                !!monkeMode
+                  ? styles.buttonSuccessPressed
+                  : styles.buttonSuccess)
+              }
             />
           )
         }
