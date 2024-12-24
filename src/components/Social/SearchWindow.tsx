@@ -10,6 +10,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
 import useStyleUtils from '@hooks/useStyleUtils';
 import {PressableWithFeedback} from '@components/Pressable';
+import useLocalize from '@hooks/useLocalize';
 
 type SearchWindowProps = {
   windowText: string;
@@ -22,6 +23,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
     const styles = useThemeStyles();
     const {db} = useFirebase();
+    const {translate} = useLocalize();
     const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
@@ -69,7 +71,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               additionalStyles={[styles.alignSelfCenter, styles.mh3]}
             />
             <TextInput
-              accessibilityLabel="Text input field"
+              accessibilityLabel={translate('textInput.accessibilityLabel')}
               placeholder={windowText}
               placeholderTextColor="#a8a8a8"
               value={searchText}
@@ -83,7 +85,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
           {searchText !== '' ||
             (searchCount > 0 && (
               <PressableWithFeedback
-                accessibilityLabel="Reset search"
+                accessibilityLabel={translate('textInput.resetSearch')}
                 onPress={handleResetSearch}
                 style={localStyles.searchTextResetContainer}>
                 <Icon
@@ -103,7 +105,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             ]}>
             <Button
               onPress={() => handleDoSearch(searchText, db)}
-              text="Search"
+              text={translate('common.search')}
               style={[styles.borderRadiusSmall, styles.buttonSuccess]}
             />
           </View>

@@ -244,6 +244,10 @@ export default {
     blackout: 'Blackout',
     timezone: 'Timezone',
   },
+  textInput: {
+    accessibilityLabel: 'Text input',
+    resetSearch: 'Reset search',
+  },
   bottomTabBar: {
     home: 'Home',
     friends: 'Friends',
@@ -396,6 +400,7 @@ export default {
   friendSearchScreen: {
     title: 'Search For New Friends',
     noUsersFound: 'There are no users with this nickname.',
+    searchWindow: "Search for a user's nickname",
   },
   friendRequestScreen: {
     requestsReceived: ({requestsCount}: FriendRequestsCountParams) =>
