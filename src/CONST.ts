@@ -196,6 +196,16 @@ const CONST = {
     ORDINAL_DAY_OF_MONTH: 'do',
   },
 
+  TIME_UNITS: {
+    SECOND: 'second',
+    MINUTE: 'minute',
+    HOUR: 'hour',
+    DAY: 'day',
+    WEEK: 'week',
+    MONTH: 'month',
+    YEAR: 'year',
+  },
+
   DATE_BIRTH: {
     MIN_AGE: 18,
     MAX_AGE: 150,

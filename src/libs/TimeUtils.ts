@@ -1,4 +1,8 @@
-import {getPlural} from './StringUtilsKiroku';
+import {getPlural, shouldUsePlural} from './StringUtilsKiroku';
+import CONST from '@src/CONST';
+import {TranslationPaths} from '@src/languages/types';
+import * as Localize from '@libs/Localize';
+import type {TimeUnit} from '@src/types/onyx/OnyxCommon';
 
 function isRecent(timestamp: number): boolean {
   const now = Date.now();
@@ -13,58 +17,60 @@ function isRecent(timestamp: number): boolean {
  * @returns The verbose string representation of the number's age.
  */
 function numberToVerboseString(
-  number: number,
+  duration: number,
   addAgo = true,
   useAbbreviation = false,
 ): string {
   // Format the number into human-readable form based on its age
   let count: number;
-  let unit: string;
-  switch (true) {
-    case number < 60 * 1000:
-      count = Math.floor(number / 1000);
-      unit = 'second';
-      break;
-    case number < 60 * 60 * 1000:
-      count = Math.floor(number / (60 * 1000));
-      unit = 'minute';
-      break;
-    case number < 24 * 60 * 60 * 1000:
-      count = Math.floor(number / (60 * 60 * 1000));
-      unit = 'hour';
-      break;
-    case number < 2 * 7 * 24 * 60 * 60 * 1000: // 2 weeks
-      count = Math.floor(number / (24 * 60 * 60 * 1000));
-      unit = 'day';
-      break;
-    case number < 2 * 30 * 24 * 60 * 60 * 1000: // 2 months
-      count = Math.floor(number / (7 * 24 * 60 * 60 * 1000));
-      unit = 'week';
-      break;
-    case number < 365 * 24 * 60 * 60 * 1000:
-      count = Math.floor(number / (30 * 24 * 60 * 60 * 1000));
-      unit = 'Month';
-      break;
-    default:
-      count = Math.floor(number / (365 * 24 * 60 * 60 * 1000));
-      unit = 'Year';
+  let unit: TimeUnit;
+
+  if (duration < 60 * 1000) {
+    count = Math.floor(duration / 1000);
+    unit = CONST.TIME_UNITS.SECOND;
+  } else if (duration < 60 * 60 * 1000) {
+    count = Math.floor(duration / (60 * 1000));
+    unit = CONST.TIME_UNITS.MINUTE;
+  } else if (duration < 24 * 60 * 60 * 1000) {
+    count = Math.floor(duration / (60 * 60 * 1000));
+    unit = CONST.TIME_UNITS.HOUR;
+  } else if (duration < 2 * 7 * 24 * 60 * 60 * 1000) {
+    // 2 weeks
+    count = Math.floor(duration / (24 * 60 * 60 * 1000));
+    unit = CONST.TIME_UNITS.DAY;
+  } else if (duration < 2 * 30 * 24 * 60 * 60 * 1000) {
+    // 2 months
+    count = Math.floor(duration / (7 * 24 * 60 * 60 * 1000));
+    unit = CONST.TIME_UNITS.WEEK;
+  } else if (duration < 365 * 24 * 60 * 60 * 1000) {
+    count = Math.floor(duration / (30 * 24 * 60 * 60 * 1000));
+    unit = CONST.TIME_UNITS.MONTH;
+  } else {
+    count = Math.floor(duration / (365 * 24 * 60 * 60 * 1000));
+    unit = CONST.TIME_UNITS.YEAR;
   }
 
-  const unitInfo = useAbbreviation
-    ? unit.charAt(0)
-    : `
-     ${unit}${getPlural(count)}
-    `;
-  return `${count}${unitInfo}${addAgo ? ' ago' : ''}`;
+  const fullNamePath: TranslationPaths = shouldUsePlural(count)
+    ? `timePeriods.fullSingle.${unit}`
+    : `timePeriods.fullPlural.${unit}`;
+
+  const unitTranslationKey: TranslationPaths = useAbbreviation
+    ? `timePeriods.abbreviated.${unit}`
+    : fullNamePath;
+
+  const unitsString = Localize.translateLocal(unitTranslationKey);
+  const agoString = addAgo ? ` ${Localize.translateLocal('common.ago')}` : '';
+
+  return `${count}${unitsString}${agoString}`;
 }
 
 function getTimestampAge(
   timestamp: number | null | undefined,
   addAgo = true,
   useAbbreviation = false,
-): string | null | undefined {
+): string {
   if (!timestamp) {
-    return null;
+    return '';
   }
   const now = Date.now();
   const difference = now - timestamp;
