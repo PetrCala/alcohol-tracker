@@ -1,6 +1,7 @@
 import type {ValueOf} from 'type-fest';
 import type {AvatarSource} from '@libs/UserUtils';
 import type CONST from '@src/CONST';
+import DeepValueOf from '../utils/DeepValueOf';
 
 /** A pending action */
 type PendingAction = ValueOf<typeof CONST.RED_BRICK_ROAD_PENDING_ACTION> | null;
@@ -81,6 +82,9 @@ type Semver = string;
 /** A UNIX timestamp */
 type Timestamp = number;
 
+/** A unit of time, e.g. 'hour', 'minute',... */
+type TimeUnit = DeepValueOf<typeof CONST.TIME_UNITS>;
+
 export type {
   AvatarType,
   ErrorFields,
@@ -91,6 +95,7 @@ export type {
   PendingAction,
   Semver,
   Timestamp,
+  TimeUnit,
   UserArray,
   UserID,
   UserList,

@@ -77,7 +77,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
       content: String(drinkingSessionsCount),
     },
     {
-      header: translate('profileScreen.unitsConsumed'),
+      header: translate('profileScreen.unitsConsumed', {
+        unitCount: unitsConsumed,
+      }),
       content: String(roundToTwoDecimalPlaces(unitsConsumed)),
     },
   ];
