@@ -3,8 +3,8 @@ import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
 import {Image, TouchableOpacity, Animated, Dimensions} from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import type ImageLayout from '@src/types/various/ImageLayout';
-import commonStyles from '@src/styles/commonStyles';
 import useThemeStyles from '@hooks/useThemeStyles';
+import useTheme from '@hooks/useTheme';
 
 type EnlargableImageProps = {
   imageSource: ImageSourcePropType;
@@ -18,6 +18,7 @@ const ScreenHeight = Dimensions.get('window').height;
 
 const EnlargableImage: React.FC<EnlargableImageProps> = props => {
   const styles = useThemeStyles();
+  const theme = useTheme();
   const {imageSource, imageStyle, imageLayout, onImageLayout} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
@@ -74,6 +75,7 @@ const EnlargableImage: React.FC<EnlargableImageProps> = props => {
         accessibilityRole="button"
         style={imageStyle}
         onPress={handlePress}>
+        {/* // TODO rewrite this using Avatar */}
         <Image
           onLayout={handleOnLayout}
           source={imageSource}
