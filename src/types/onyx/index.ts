@@ -55,7 +55,7 @@ import type StartSession from './StartSession';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
-import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
+import type {DrinkKey, DrinksList, DrinksTimestamp} from './Drinks';
 import type User from './User';
 import type UserIsTyping from './UserIsTyping';
 import type UserLocation from './UserLocation';
@@ -93,7 +93,6 @@ export type {
   Drinks,
   DrinkKey,
   DrinksList,
-  DrinkName,
   DrinksTimestamp,
   DrinksToUnits,
   Feedback,

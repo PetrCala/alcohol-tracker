@@ -13,7 +13,6 @@ import type {
   DrinksToUnits,
   DrinksList,
   DrinkKey,
-  DrinkName,
   Drinks,
 } from '@src/types/onyx';
 import CONST from '@src/CONST';
@@ -21,6 +20,7 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import _ from 'lodash';
 import * as DSUtils from './DrinkingSessionUtils';
 import {getRandomInt} from './Choice';
+import {TranslationPaths} from '@src/languages/types';
 
 function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -500,14 +500,18 @@ function convertUnitsToColors(
  *
  * @returns The verbose name of that drink.
  */
-const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
-  const drinkIdx = Object.values(CONST.DRINKS.KEYS).findIndex(
-    type => type === key,
-  );
-  if (drinkIdx === -1) {
-    return undefined;
-  }
-  return Object.values(CONST.DRINKS.NAMES)[drinkIdx];
+const findDrinkNameTranslationKey = (key: DrinkKey): TranslationPaths => {
+  const drinkKeyToTranslationKey: Record<DrinkKey, string> = {
+    [CONST.DRINKS.KEYS.SMALL_BEER]: 'smallBeer',
+    [CONST.DRINKS.KEYS.BEER]: 'beer',
+    [CONST.DRINKS.KEYS.WINE]: 'wine',
+    [CONST.DRINKS.KEYS.WEAK_SHOT]: 'weakShot',
+    [CONST.DRINKS.KEYS.STRONG_SHOT]: 'strongShot',
+    [CONST.DRINKS.KEYS.COCKTAIL]: 'cocktail',
+    [CONST.DRINKS.KEYS.OTHER]: 'other',
+  };
+  const translationKey = drinkKeyToTranslationKey[key];
+  return `drinks.${translationKey}` as TranslationPaths;
 };
 
 /**
@@ -571,7 +575,7 @@ export {
   getRandomDrinksList,
   getZeroDrinksList,
   convertUnitsToColors,
-  findDrinkName,
+  findDrinkNameTranslationKey,
   hasDecimalPoint,
   toPercentageVerbose,
   objKeys,

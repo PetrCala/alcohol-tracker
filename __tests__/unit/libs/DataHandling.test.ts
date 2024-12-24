@@ -4,7 +4,6 @@ import {
   // calculateThisMonthDrinks,
   changeDateBySomeDays,
   dateToDateData,
-  findDrinkName,
   formatDate,
   getLastDrinkAddedTime,
   getNextMonth,
@@ -755,22 +754,5 @@ describe('unitsToColors', () => {
   it('should return red for units above the orange limit', () => {
     expect(convertUnitsToColors(5, mockUnitsToColors)).toBe('red');
     expect(convertUnitsToColors(6, mockUnitsToColors)).toBe('red');
-  });
-});
-
-describe('findDrinkName', () => {
-  it('should return the verbose name for each drink key', () => {
-    const verboseNames = Object.values(CONST.DRINKS.NAMES);
-
-    for (const DrinkKey of Object.values(CONST.DRINKS.KEYS)) {
-      const verboseName = findDrinkName(DrinkKey);
-      expect(verboseNames).toContain(verboseName);
-    }
-  });
-
-  it('should return undefined for an invalid drink key', () => {
-    const invalidDrinkKey = 'invalid_key'; // This key doesn't exist in DrinkType object
-    const result = findDrinkName(invalidDrinkKey as any); // Type cast here to any to bypass TypeScript's type checking for the purpose of this test
-    expect(result).toBeUndefined();
   });
 });

@@ -938,15 +938,6 @@ const CONST = {
       WEAK_SHOT: 'weak_shot',
       WINE: 'wine',
     },
-    NAMES: {
-      SMALL_BEER: 'Small Beer',
-      BEER: 'Beer',
-      COCKTAIL: 'Cocktail',
-      OTHER: 'Other',
-      STRONG_SHOT: 'Strong Shot',
-      WEAK_SHOT: 'Weak Shot',
-      WINE: 'Wine',
-    },
     ACTIONS: {
       ADD: 'add',
       REMOVE: 'remove',

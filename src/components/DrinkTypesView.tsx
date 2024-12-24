@@ -4,7 +4,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import useLocalize from '@hooks/useLocalize';
 import DrinkData from '@libs/DrinkData';
 import * as DS from '@userActions/DrinkingSession';
-import {findDrinkName} from '@libs/DataHandling';
+import {findDrinkNameTranslationKey} from '@libs/DataHandling';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
 import useTheme from '@hooks/useTheme';
@@ -56,7 +56,7 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
         {DrinkData.map(drink => {
           const drinkKey = drink.key;
           const iconSource = drink.icon;
-          const drinkName = findDrinkName(drinkKey);
+          const drinkName = translate(findDrinkNameTranslationKey(drinkKey));
           const iconSize = drinkKey === CONST.DRINKS.KEYS.SMALL_BEER ? 22 : 28;
 
           return (
