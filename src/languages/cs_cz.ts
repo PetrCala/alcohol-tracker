@@ -834,7 +834,7 @@ export default {
   },
   userOverview: {
     inSession: 'V relaci',
-    from: 'Z',
+    from: 'Od',
     sober: 'Bez pití',
     sessionStarted: 'Relace zahájena',
     noSessionsYet: 'Zatím žádné relace',
