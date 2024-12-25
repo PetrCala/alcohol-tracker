@@ -36,6 +36,7 @@ function InitialScreen() {
   const StyleUtils = useStyleUtils();
   const [signUpForm] = useOnyx(ONYXKEYS.FORMS.SIGN_UP_FORM);
   const [closeAccount] = useOnyx(ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM);
+  console.log('closeAccount', closeAccount);
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<InitialScreenLayoutRef>(null);
