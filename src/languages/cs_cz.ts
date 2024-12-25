@@ -493,6 +493,12 @@ export default {
     chooseThemeBelowOrSync:
       'Vyberte motiv níže, nebo jej synchronizujte s nastavením vašeho zařízení.',
   },
+  adminScreen: {
+    title: 'Nástroje pro administrátory',
+    generalSection: 'Obecné',
+    seeFeedback: 'Zobrazit zpětnou vazbu',
+    seeBugReports: 'Zobrazit hlášení chyb',
+  },
   sessionSummaryScreen: {
     title: 'Souhrn relace',
     generalSection: {
@@ -533,6 +539,7 @@ export default {
     giveFeedback: 'Zpětná vazba',
     signOut: 'Odhlásit se',
     shareTheApp: 'Sdílet aplikaci',
+    adminTools: 'Nástroje pro administrátory',
     about: 'O aplikaci',
     signOutConfirmationText: 'Opravdu se chcete odhlásit?',
     signingOut: 'Odhlašuji...',

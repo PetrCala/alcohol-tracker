@@ -124,6 +124,9 @@ const ROUTES = {
   SETTINGS_REPORT_BUG: 'settings/report-bug',
   SETTINGS_FEEDBACK: 'settings/feedback',
   SETTINGS_DELETE: 'settings/delete',
+  SETTINGS_ADMIN: 'settings/admin',
+  SETTINGS_ADMIN_FEEDBACK: 'settings/admin/feedback',
+  SETTINGS_ADMIN_BUGS: 'settings/admin/bugs',
 
   PROFILE: {
     route: 'profile/:userID',

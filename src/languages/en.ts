@@ -492,6 +492,12 @@ export default {
     chooseThemeBelowOrSync:
       'Choose a theme below, or sync with your device settings.',
   },
+  adminScreen: {
+    title: 'Admin Tools',
+    generalSection: 'General',
+    seeFeedback: 'See feedback',
+    seeBugReports: 'See bug reports',
+  },
   sessionSummaryScreen: {
     title: 'Session Summary',
     generalSection: {
@@ -532,6 +538,7 @@ export default {
     giveFeedback: 'Give use a feedback',
     signOut: 'Sign out',
     shareTheApp: 'Share the app',
+    adminTools: 'Admin tools',
     about: 'About',
     // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
     signOutConfirmationText: 'Do you really want to sign out?',
