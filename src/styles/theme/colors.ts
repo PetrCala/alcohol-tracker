@@ -23,9 +23,9 @@ const colors: Record<string, Color> = {
 
   // Dark Mode Theme Colors
   // productDark100: '#010409', // black
-  productDark100: '#0D1117', // lighter black
+  productDark100: '#0D1117', // appBG
   productDark200: '#151B23', // card
-  productDark300: '#212830', // light card card
+  productDark300: '#212830', // search
   productDark400: '#3D444D', // border
   productDark500: '#1E2329', // button hovered
   productDark600: '#23282D', // button pressed
@@ -34,15 +34,15 @@ const colors: Record<string, Color> = {
   productDark900: '#F0F6FC', // text
 
   // Light Mode Theme Colors
-  productLight100: '#FCFBF9', // lighter black
-  productLight200: '#F8F4F0', // card
-  productLight300: '#F2EDE7', // light card card
-  productLight400: '#E6E1DA', // border
-  productLight500: '#D8D1C7', // button hovered
-  productLight600: '#C7BFB3', // button pressed
-  productLight700: '#A9A9A3', // icon
-  productLight800: '#84847E', // text supporting
-  productLight900: '#2C2E22', // text
+  productLight100: '#FFFFFF', // appBG
+  productLight200: '#F6F8FA', // card
+  productLight300: '#F6F8FA', // search // TODO
+  productLight400: '#D0D9E0', // border
+  productLight500: '#F2F3F4', // button hovered
+  productLight600: '#EDEEEF', // button pressed
+  productLight700: '#59636E', // icon
+  productLight800: '#2F3339', // text supporting
+  productLight900: '#1F2329', // text
 
   // Brand Colors from Figma
   blue100: '#B0D9FF',
