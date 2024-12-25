@@ -22,7 +22,7 @@ const DBPATHS = {
     getRoute: (device_id: DeviceId, user_id: UserID) =>
       `account_creations/${device_id}/${user_id}` as const,
   },
-  BUGS: 'bug',
+  BUGS: 'bugs',
   BUGS_BUG_ID: {
     route: '/bugs/:bug_id',
     getRoute: (bugId: BugId) => `bugs/${bugId}` as const,
