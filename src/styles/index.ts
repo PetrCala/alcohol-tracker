@@ -1253,7 +1253,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     shadowStrong: {
-      textShadowColor: theme.textDark,
+      textShadowColor: theme.shadow,
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 8,
       elevation: 5,
@@ -1696,7 +1696,7 @@ const styles = (theme: ThemeColors) =>
 
     sessionTypeTooltipSubtitle: {
       fontSize: variables.fontSizeLabel,
-      color: theme.textDark,
+      color: theme.text,
     },
 
     signUpScreen: {
