@@ -1941,7 +1941,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     settingValueButton: {
-      backgroundColor: theme.componentBG,
+      backgroundColor: theme.buttonDefaultBG,
       borderRadius: variables.componentBorderRadiusNormal,
       minWidth: variables.componentSizeNormal,
     },
