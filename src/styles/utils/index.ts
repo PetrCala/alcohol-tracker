@@ -1428,44 +1428,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
       ? {...styles.offlineFeedback.text, color: styles.formError.color}
       : {...styles.offlineFeedback.text},
 
-  getEmojiReactionBubbleStyle: (
-    isHovered: boolean,
-    hasUserReacted: boolean,
-    isContextMenu = false,
-  ): ViewStyle => {
-    let backgroundColor = theme.border;
-
-    if (isHovered) {
-      backgroundColor = theme.buttonHoveredBG;
-    }
-
-    if (hasUserReacted) {
-      backgroundColor = theme.reactionActiveBackground;
-    }
-
-    if (isContextMenu) {
-      return {
-        paddingVertical: 3,
-        paddingHorizontal: 12,
-        backgroundColor,
-      };
-    }
-
-    return {
-      paddingVertical: 2,
-      paddingHorizontal: 8,
-      backgroundColor,
-    };
-  },
-
-  getEmojiReactionCounterTextStyle: (hasUserReacted: boolean): TextStyle => {
-    if (hasUserReacted) {
-      return {color: theme.reactionActiveText};
-    }
-
-    return {color: theme.text};
-  },
-
   getErrorScreenContainerStyle: (safeAreaPaddingBottom = 0): ViewStyle => ({
     backgroundColor: theme.componentBG,
     paddingBottom: 40 + safeAreaPaddingBottom,
@@ -1501,24 +1463,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
         return theme.icon;
     }
   },
-
-  /**
-   * Returns style object for the user mention component based on whether the mention is ours or not.
-   */
-  getMentionStyle: (isOurMention: boolean): TextStyle => {
-    const backgroundColor = isOurMention ? theme.ourMentionBG : theme.mentionBG;
-    return {
-      backgroundColor,
-      borderRadius: variables.componentBorderRadiusSmall,
-      paddingHorizontal: 2,
-    };
-  },
-
-  /**
-   * Returns text color for the user mention text based on whether the mention is ours or not.
-   */
-  getMentionTextColor: (isOurMention: boolean): string =>
-    isOurMention ? theme.ourMentionText : theme.mentionText,
 
   /**
    * Determines the theme color for a modal based on the app's background color,

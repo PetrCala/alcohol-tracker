@@ -1106,6 +1106,10 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.success,
     },
 
+    imageCropBG: {
+      backgroundColor: theme.imageCropBackgroundColor,
+    },
+
     invisiblePopover: {
       position: 'absolute',
       opacity: 0,

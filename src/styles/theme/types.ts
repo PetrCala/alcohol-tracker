@@ -27,10 +27,8 @@ type ThemeColors = {
   iconMenuHovered: Color;
   iconSuccessFill: Color;
   iconReversed: Color;
-  iconColorfulBackground: Color;
   textSupporting: Color;
   text: Color;
-  textColorfulBackground: Color;
   syntax: Color;
   link: Color;
   linkHover: Color;
@@ -79,19 +77,11 @@ type ThemeColors = {
   placeholderText: Color;
   heroCard: Color;
   uploadPreviewActivityIndicator: Color;
-  dropUIBG: Color;
-  receiptDropUIBG: Color;
   checkBox: Color;
   imageCropBackgroundColor: Color;
   fallbackIconColor: Color;
-  reactionActiveBackground: Color;
-  reactionActiveText: Color;
   badgeAdHoc: Color;
   badgeAdHocHover: Color;
-  mentionText: Color;
-  mentionBG: Color;
-  ourMentionText: Color;
-  ourMentionBG: Color;
   tooltipHighlightBG: Color;
   tooltipHighlightText: Color;
   tooltipSupportingText: Color;
@@ -100,11 +90,7 @@ type ThemeColors = {
   skeletonLHNOut: Color;
   QRLogo: Color;
   appLogo: Color;
-  starDefaultBG: Color;
-  loungeAccessOverlay: Color;
-  mapAttributionText: Color;
   white: Color;
-  videoPlayerBG: Color;
   transparentWhite: Color;
 
   PAGE_THEMES: Record<

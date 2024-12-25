@@ -9,7 +9,6 @@ const colors: Record<string, Color> = {
   // Brand Colors
   black: '#000000',
   white: '#FFFFFF',
-  ivory: '#fffaf0',
   yellow: '#FFFF99',
   // yellowHover: '#FFFF66',
   // yellowPressed: '#FFFF7A',
@@ -53,15 +52,6 @@ const colors: Record<string, Color> = {
   blue600: '#0164BF',
   blue700: '#003C73',
   blue800: '#002140',
-
-  green100: '#B1F2D6',
-  green200: '#8EECC4',
-  green300: '#5BE3AA',
-  green400: '#03D47C',
-  green500: '#00B268',
-  green600: '#008C59',
-  green700: '#085239',
-  green800: '#002E22',
 
   yellow100: '#FFF2B2',
   yellow200: '#FFED8F',
