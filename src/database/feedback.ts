@@ -109,4 +109,16 @@ async function reportABug(
   await update(ref(db), updates);
 }
 
-export {submitFeedback, removeFeedback, reportABug};
+/**
+ * Remove a bug item from the database
+ *
+ * @param db The database object
+ * @param bugKey bug ID
+ */
+async function removeBug(db: Database, bugKey: string): Promise<void> {
+  const updates: Record<string, null> = {};
+  updates[bugItemRef.getRoute(bugKey)] = null;
+  await update(ref(db), updates);
+}
+
+export {submitFeedback, removeFeedback, reportABug, removeBug};
