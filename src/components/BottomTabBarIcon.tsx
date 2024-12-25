@@ -60,7 +60,7 @@ function BottomTabBarIcon({
         <View>
           <Icon
             src={src}
-            fill={theme.textSupporting}
+            fill={theme.icon}
             // fill={isSelected ? theme.iconMenu : theme.icon}
             width={width ?? variables.iconBottomBar}
             height={height ?? variables.iconBottomBar}

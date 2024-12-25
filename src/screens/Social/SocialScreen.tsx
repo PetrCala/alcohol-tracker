@@ -57,7 +57,7 @@ function SocialFooterButton({
           src={source}
           height={25}
           width={25}
-          fill={currentIndex === index ? theme.appColor : theme.textSupporting}
+          fill={currentIndex === index ? theme.appColor : theme.icon}
         />
         {!!infoNumberValue && infoNumberValue > 0 && (
           <View style={localStyles.friendRequestCounter}>
