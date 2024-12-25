@@ -168,6 +168,18 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
               path: ROUTES.SETTINGS_TIMEZONE_SELECT,
               exact: true,
             },
+            [SCREENS.SETTINGS.ADMIN.ROOT]: {
+              path: ROUTES.SETTINGS_ADMIN,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ADMIN.FEEDBACK]: {
+              path: ROUTES.SETTINGS_ADMIN_FEEDBACK,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ADMIN.BUGS]: {
+              path: ROUTES.SETTINGS_ADMIN_BUGS,
+              exact: true,
+            },
             [SCREENS.SETTINGS.APP_SHARE]: ROUTES.SETTINGS_APP_SHARE,
             [SCREENS.SETTINGS.PRIVACY_POLICY]: ROUTES.SETTINGS_PRIVACY_POLICY,
             [SCREENS.SETTINGS.TERMS_OF_SERVICE]:

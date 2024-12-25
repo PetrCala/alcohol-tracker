@@ -134,6 +134,15 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.PREFERENCES.DRINKS_TO_UNITS]: () =>
       require<ReactComponentModule>('@screens/Settings/Preferences/DrinksToUnitsScreen')
         .default,
+    [SCREENS.SETTINGS.ADMIN.ROOT]: () =>
+      require<ReactComponentModule>('@screens/Settings/Admin/AdminScreen')
+        .default,
+    [SCREENS.SETTINGS.ADMIN.FEEDBACK]: () =>
+      require<ReactComponentModule>('@screens/Settings/Admin/SeeFeedbackScreen')
+        .default,
+    [SCREENS.SETTINGS.ADMIN.BUGS]: () =>
+      require<ReactComponentModule>('@screens/Settings/Admin/SeeBugsScreen')
+        .default,
     [SCREENS.SETTINGS.APP_SHARE]: () =>
       require<ReactComponentModule>('@screens/Settings/AppShareScreen').default,
     [SCREENS.SETTINGS.TERMS_OF_SERVICE]: () =>

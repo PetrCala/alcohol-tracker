@@ -79,6 +79,12 @@ const SCREENS = {
       DRINKS_TO_UNITS: 'Settings_Preferences_DrinksToUnits',
     },
 
+    ADMIN: {
+      ROOT: 'Settings_Admin',
+      FEEDBACK: 'Settings_Admin_Feedback',
+      BUGS: 'Settings_Admin_Bugs',
+    },
+
     ABOUT: 'Settings_About',
     TERMS_OF_SERVICE: 'Settings_TermsOfService',
     PRIVACY_POLICY: 'Settings_PrivacyPolicy',

@@ -2,6 +2,7 @@ import {useRoute} from '@react-navigation/native';
 import React, {
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -39,6 +40,7 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type MenuData = {
   translationKey: TranslationPaths;
@@ -64,6 +66,7 @@ function SettingsScreen() {
   const network = useNetwork();
   const {auth} = useFirebase();
   const styles = useThemeStyles();
+  const {userData} = useDatabaseData();
   const {isExecuting, singleExecution} = useSingleExecution();
   const waitForNavigate = useWaitForNavigation();
   const popoverAnchor = useRef(null);
@@ -71,6 +74,7 @@ function SettingsScreen() {
   const activeCentralPaneRoute = useActiveCentralPaneRoute();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
+  const userIsAdmin = userData && userData.role === 'admin';
 
   const [shouldShowSignoutConfirmModal, setShouldShowSignoutConfirmModal] =
     useState(false);
@@ -175,9 +179,18 @@ function SettingsScreen() {
           icon: KirokuIcons.Delete,
           routeName: ROUTES.SETTINGS_DELETE,
         },
+        ...(!!userIsAdmin
+          ? [
+              {
+                translationKey: 'settingsScreen.adminTools',
+                icon: KirokuIcons.Logo,
+                routeName: ROUTES.SETTINGS_ADMIN,
+              } as MenuData,
+            ]
+          : []),
       ],
     };
-  }, [styles.pt4, onSignOut]);
+  }, [styles.pt4, onSignOut, userIsAdmin]);
 
   /**
    * Retuns JSX.Element with menu items
