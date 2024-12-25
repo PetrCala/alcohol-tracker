@@ -1331,10 +1331,10 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
       ...styles.textMicro,
       ...styles.alignSelfStart,
       color: isDisabled
-        ? theme.textSupporting
+        ? theme.textMutedReversed
         : isToday
           ? theme.link
-          : theme.text,
+          : theme.textSupporting,
     };
   },
 
