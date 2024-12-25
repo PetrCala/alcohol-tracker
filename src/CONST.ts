@@ -146,6 +146,18 @@ const CONST = {
     PROFILE_PICTURE_KEY: 'profilePicture',
   },
 
+  CALENDAR_COLORS: {
+    LIGHT: {
+      YELLOW: 'yellow',
+      ORANGE: 'orange',
+    },
+    DARK: {
+      RED: 'red',
+      BLACK: 'black',
+      GREEN: 'green',
+    },
+  },
+
   CALENDAR_PICKER: {
     // Numbers were arbitrarily picked.
     MIN_YEAR: CURRENT_YEAR - 100,

@@ -1,24 +1,7 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import type {DateData} from 'react-native-calendars';
-import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
-import {hasDecimalPoint} from '@libs/DataHandling';
-import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
-import {endOfDay} from 'date-fns';
-import type {
-  CalendarColors,
-  DayComponentProps,
-} from '@components/SessionsCalendar/types';
+import type {DayComponentProps} from '@components/SessionsCalendar/types';
 import Text from '@components/Text';
-import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
-
-const colorToTextColorMap: Record<CalendarColors, string> = {
-  yellow: 'black',
-  red: 'white',
-  orange: 'black',
-  black: 'white',
-  green: 'white',
-};
 
 // Custom Day Component
 function DayComponent({
@@ -32,31 +15,6 @@ function DayComponent({
   const StyleUtils = useStyleUtils();
   const isDisabled = state === 'disabled';
   const isToday = state === 'today';
-
-  const getMarkingTextStyle = (marking?: MarkingProps) => {
-    let baseStyle = localStyles.daySessionMarkingText;
-
-    if (units) {
-      units = roundToTwoDecimalPlaces(units);
-    }
-
-    if (units && hasDecimalPoint(units) && units >= 10) {
-      baseStyle = {...baseStyle, fontSize: 15}; // Handle overflow
-    }
-
-    if (
-      marking?.color &&
-      (marking.color as CalendarColors) in colorToTextColorMap &&
-      units != 0
-    ) {
-      return {
-        ...baseStyle,
-        color: colorToTextColorMap[marking.color as CalendarColors],
-      };
-    }
-
-    return {...baseStyle, fontSize: 0, color: 'transparent'}; // Default case
-  };
 
   return (
     <TouchableOpacity
@@ -76,7 +34,8 @@ function DayComponent({
           marking,
           isDisabled,
         )}>
-        <Text style={getMarkingTextStyle(marking)}>
+        <Text
+          style={StyleUtils.getSessionsCalendarDayMarkingTextStyle(marking)}>
           {isDisabled ? '' : units}
         </Text>
       </View>

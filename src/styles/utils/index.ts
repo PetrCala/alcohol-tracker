@@ -20,6 +20,7 @@ import CONST from '@src/CONST';
 import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
 import type {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import type {LightCalendarColors} from '@components/SessionsCalendar/DayComponent/types';
 import {defaultStyles} from '..';
 import type {ThemeStyles} from '..';
 import containerComposeStyles from './containerComposeStyles';
@@ -1296,6 +1297,9 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {};
   },
 
+  /**
+   * Returns the style for the sessions calendar main component
+   */
   getSessionsCalendarStyle: (): CalendarHeaderProps => {
     return {
       backgroundColor: theme.componentBG,
@@ -1324,6 +1328,9 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     } as CalendarHeaderProps;
   },
 
+  /**
+   * Returns the style for the sessions calendar month day label, e.g. 1, 2, 3, etc.
+   */
   getSessionsCalendarDayLabelStyle: (
     isDisabled: boolean,
     isToday: boolean,
@@ -1339,6 +1346,9 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     };
   },
 
+  /**
+   * Returns the style for the sessions calendar day marking container
+   */
   getSessionsCalendarDayMarkingContainerStyle: (
     marking: MarkingProps | undefined,
     isDisabled: boolean,
@@ -1352,6 +1362,23 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
       ...baseStyles,
       ...(isDisabled ? styles.noBorder : styles.border),
       ...(!isDisabled && {backgroundColor: marking?.color ?? 'green'}),
+    };
+  },
+
+  /** Returns styles for the session calendar day marking (units) */
+  getSessionsCalendarDayMarkingTextStyle: (
+    marking: MarkingProps | undefined,
+  ): TextStyle => {
+    const isLightColor =
+      marking?.color &&
+      Object.values(CONST.CALENDAR_COLORS.LIGHT).includes(
+        marking.color as LightCalendarColors,
+      );
+    const textColor = isLightColor ? theme.textDark : theme.textLight;
+    return {
+      ...styles.textNormal,
+      ...styles.textAlignCenter,
+      color: textColor,
     };
   },
 
