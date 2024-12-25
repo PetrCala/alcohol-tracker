@@ -733,7 +733,7 @@ export default {
     drinkingSessions: ({sessionsCount}: DrinkingSessionsParams) =>
       `Drinking ${Str.pluralize('Session', 'Sessions', sessionsCount)}`,
     unitsConsumed: ({unitCount}: UnitCountParams) =>
-      `${Str.pluralize('Units', 'Unit', unitCount)} Consumed`,
+      `${Str.pluralize('Unit', 'Units', unitCount)} Consumed`,
     manageFriend: 'Manage Friend',
     unfriendPrompt: 'Do you really want to unfriend this user?',
     unfriend: 'Unfriend',
