@@ -1,9 +1,8 @@
-import en from './en';
-import cs_cz from './cs_cz';
+import nonFlattenedTranslations from './nonFlattenedTranslations';
 import type {TranslationBase, TranslationFlatObject} from './types';
 
 /**
- * Converts an object to it's flattened version.
+ * Converts an object to its flattened version.
  *
  * Ex:
  * Input: { common: { yes: "Yes", no: "No" }}
@@ -15,9 +14,7 @@ export function flattenObject(obj: TranslationBase): TranslationFlatObject {
   const result: Record<string, unknown> = {};
 
   const recursive = (data: TranslationBase, key: string): void => {
-    // If the data is a function or not a object (eg. a string or array),
-    // it's the final value for the key being built and there is no need
-    // for more recursion
+    // If the data is a function or not an object (string, array), just set the value directly.
     if (
       typeof data === 'function' ||
       Array.isArray(data) ||
@@ -26,15 +23,12 @@ export function flattenObject(obj: TranslationBase): TranslationFlatObject {
       result[key] = data;
     } else {
       let isEmpty = true;
-
-      // Recursive call to the keys and connect to the respective data
       Object.keys(data).forEach(k => {
         isEmpty = false;
         recursive(data[k] as TranslationBase, key ? `${key}.${k}` : k);
       });
 
-      // Check for when the object is empty but a key exists, so that
-      // it defaults to an empty object
+      // If the object is empty but a key exists, default to an empty string
       if (isEmpty && key) {
         result[key] = '';
       }
@@ -46,6 +40,6 @@ export function flattenObject(obj: TranslationBase): TranslationFlatObject {
 }
 
 export default {
-  en: flattenObject(en),
-  cs_cz: flattenObject(cs_cz),
+  en: flattenObject(nonFlattenedTranslations.en),
+  cs_cz: flattenObject(nonFlattenedTranslations.cs_cz),
 };

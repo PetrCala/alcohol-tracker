@@ -20,6 +20,16 @@ import type {Direction} from './CalendarArrow';
 import type SessionsCalendarProps from './types';
 import type {DayComponentProps} from './types';
 import CalendarArrow from './CalendarArrow';
+import setCalendarLocale from './setCalendarLocale';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+
+Onyx.connect({
+  key: ONYXKEYS.NVP_PREFERRED_LOCALE,
+  callback: value => {
+    setCalendarLocale(value ?? CONST.LOCALES.DEFAULT);
+  },
+});
 
 function SessionsCalendar({
   userID,
