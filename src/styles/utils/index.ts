@@ -19,6 +19,7 @@ import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
 import type {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
+import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import {defaultStyles} from '..';
 import type {ThemeStyles} from '..';
 import containerComposeStyles from './containerComposeStyles';
@@ -1338,6 +1339,22 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     };
   },
 
+  getSessionsCalendarDayMarkingContainerStyle: (
+    marking: MarkingProps | undefined,
+    isDisabled: boolean,
+  ): ViewStyle => {
+    const baseStyles = {
+      ...styles.alignSelfCenter,
+      ...styles.justifyContentCenter,
+      ...styles.componentSizeNormalSmall,
+    };
+    return {
+      ...baseStyles,
+      ...(isDisabled ? styles.noBorder : styles.border),
+      ...(!isDisabled && {backgroundColor: marking?.color ?? 'green'}),
+    };
+  },
+
   /**
    * Generate a style for the background color of the button, based on its current state.
    *
@@ -1375,13 +1392,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     alignItems: 'center',
     // eslint-disable-next-line object-shorthand
     borderRadius: borderRadius,
-  }),
-
-  /**
-   * Select the correct color for text.
-   */
-  getColoredBackgroundStyle: (isColored: boolean): StyleProp<TextStyle> => ({
-    backgroundColor: isColored ? theme.mentionBG : undefined,
   }),
 
   /**

@@ -1,7 +1,7 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import type {DateData} from 'react-native-calendars';
-import {hasDecimalPoint} from '@libs/DataHandling';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import {hasDecimalPoint} from '@libs/DataHandling';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import {endOfDay} from 'date-fns';
 import type {
@@ -32,35 +32,6 @@ function DayComponent({
   const StyleUtils = useStyleUtils();
   const isDisabled = state === 'disabled';
   const isToday = state === 'today';
-
-  if (!date) {
-    return null;
-  }
-
-  const getMarkingContainerStyle = (date: DateData, marking?: MarkingProps) => {
-    const baseStyle = localStyles.daySessionsMarkingContainer;
-    const validColors: CalendarColors[] = [
-      'black',
-      'yellow',
-      'red',
-      'orange',
-      'green',
-    ];
-
-    if (state === 'disabled') {
-      return {...baseStyle, borderWidth: 0};
-    }
-
-    if (endOfDay(date.timestamp).getTime() <= date.timestamp) {
-      return {...baseStyle, borderWidth: 0};
-    }
-
-    const color = validColors.includes(marking?.color as CalendarColors)
-      ? marking?.color
-      : 'green'; // Default to 'green' if color is not in validColors
-
-    return {...baseStyle, backgroundColor: color};
-  };
 
   const getMarkingTextStyle = (marking?: MarkingProps) => {
     let baseStyle = localStyles.daySessionMarkingText;
@@ -100,8 +71,11 @@ function DayComponent({
         )}>
         {date?.day}
       </Text>
-      {/* // TODO rewrite this using global styles */}
-      <View style={getMarkingContainerStyle(date, marking)}>
+      <View
+        style={StyleUtils.getSessionsCalendarDayMarkingContainerStyle(
+          marking,
+          isDisabled,
+        )}>
         <Text style={getMarkingTextStyle(marking)}>
           {isDisabled ? '' : units}
         </Text>
@@ -118,17 +92,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%', // Give explicit width and height
     height: 50,
-  },
-  daySessionsMarkingContainer: {
-    marginTop: 0,
-    marginBottom: 5,
-    height: 35,
-    width: 35,
-    borderWidth: 1,
-    borderColor: '#D3D3D3',
-    borderRadius: 5,
-    alignSelf: 'center',
-    justifyContent: 'center',
   },
   daySessionMarkingText: {
     fontSize: 18,

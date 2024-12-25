@@ -810,6 +810,21 @@ const styles = (theme: ThemeColors) =>
       color: theme.textReversed,
     },
 
+    componentSizeSmall: {
+      width: variables.componentSizeSmall,
+      height: variables.componentSizeSmall,
+    },
+
+    componentSizeNormalSmall: {
+      width: variables.componentSizeNormalSmall,
+      height: variables.componentSizeNormalSmall,
+    },
+
+    componentSizeNormal: {
+      width: variables.componentSizeNormal,
+      height: variables.componentSizeNormal,
+    },
+
     contextMenuItemPopoverMaxWidth: {
       maxWidth: 375,
     },

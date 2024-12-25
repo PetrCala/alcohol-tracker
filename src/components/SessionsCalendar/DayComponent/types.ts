@@ -4,7 +4,7 @@ import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
 
 type DayComponentProps = {
-  date?: DateData;
+  date: DateData;
   state?: DayState;
   units?: number;
   marking?: MarkingProps;

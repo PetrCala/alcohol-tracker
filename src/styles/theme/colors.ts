@@ -22,7 +22,8 @@ const colors: Record<string, Color> = {
   transparent: 'transparent',
 
   // Dark Mode Theme Colors
-  productDark100: '#1B1B06',
+  productDark100: '#010409', // GH black
+  // productDark100: '#1B1B06',
   productDark200: '#1F2407',
   productDark300: '#1A2E0A',
   productDark400: '#353D1A',

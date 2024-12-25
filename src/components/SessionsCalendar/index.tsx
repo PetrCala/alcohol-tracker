@@ -88,9 +88,6 @@ function SessionsCalendar({
     <Calendar
       current={visibleDate.dateString}
       dayComponent={({date, state, marking, theme}: DayComponentProps) => {
-        if (!date) {
-          return;
-        }
         return (
           <DayComponent
             date={date}
