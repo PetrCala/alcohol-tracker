@@ -99,7 +99,6 @@ function SeeBugsScreen() {
     );
     return `${localizedTime} - ${nicknames[userId]}`;
   };
-  console.log(bugList);
 
   return (
     <ScreenWrapper testID={SeeBugsScreen.displayName}>
