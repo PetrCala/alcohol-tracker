@@ -14,12 +14,15 @@ function isRecent(timestamp: number): boolean {
  * Converts a number into a verbose string representation of its age.
  * @param number - The number to convert.
  * @param addAgo - Optional. Specifies whether to add "ago" at the end of the string. Default is true.
+ * @param useAbbreviation - Optional. Specifies whether to use abbreviated time units. Default is false.
+ * @param addSpace - Optional. Specifies whether to add a space between the number and the time unit. Default is true.
  * @returns The verbose string representation of the number's age.
  */
 function numberToVerboseString(
   duration: number,
   addAgo = true,
   useAbbreviation = false,
+  addSpace = false,
 ): string {
   // Format the number into human-readable form based on its age
   let count: number;
@@ -59,9 +62,10 @@ function numberToVerboseString(
     : fullNamePath;
 
   const unitsString = Localize.translateLocal(unitTranslationKey);
+  const spaceString = addSpace ? ' ' : '';
   const agoString = addAgo ? ` ${Localize.translateLocal('common.ago')}` : '';
 
-  return `${count} ${unitsString}${agoString}`;
+  return `${count}${spaceString}${unitsString}${agoString}`;
 }
 
 function getTimestampAge(
