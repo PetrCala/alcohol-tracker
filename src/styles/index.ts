@@ -738,6 +738,10 @@ const styles = (theme: ThemeColors) =>
       overflow: 'hidden',
     },
 
+    cardBG: {
+      backgroundColor: theme.border,
+    },
+
     cardSectionContainer: {
       backgroundColor: theme.cardBG,
       borderRadius: variables.componentBorderRadiusCard,
@@ -1069,6 +1073,12 @@ const styles = (theme: ThemeColors) =>
       alignItems: 'center',
       backgroundColor: theme.appBG,
       overflow: 'hidden',
+    },
+
+    grayHeader: {
+      backgroundColor: theme.border,
+      ...sizing.mnw100,
+      ...spacing.p3,
     },
 
     headerBar: {

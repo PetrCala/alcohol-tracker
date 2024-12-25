@@ -41,6 +41,7 @@ import RenderHTML from './RenderHTML';
 import SelectCircle from './SelectCircle';
 import SubscriptAvatar from './SubscriptAvatar';
 import Text from './Text';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type IconProps = {
   /** Flag to choose between avatar image or an icon */
@@ -342,7 +343,7 @@ function MenuItem(
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const combinedStyle = [style, styles.popoverMenuItem];
-  const {isSmallScreenWidth} = useWindowDimensions();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
   const {isExecuting, singleExecution, waitForNavigate} =
     useContext(MenuItemGroupContext) ?? {};
 
@@ -483,7 +484,7 @@ function MenuItem(
             }
             onPressIn={() =>
               shouldBlockSelection &&
-              isSmallScreenWidth &&
+              shouldUseNarrowLayout &&
               DeviceCapabilities.canUseTouchScreen() &&
               ControlSelection.block()
             }

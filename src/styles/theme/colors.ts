@@ -22,27 +22,27 @@ const colors: Record<string, Color> = {
   transparent: 'transparent',
 
   // Dark Mode Theme Colors
-  productDark100: '#010409', // GH black
-  // productDark100: '#1B1B06',
-  productDark200: '#1F2407',
-  productDark300: '#1A2E0A',
-  productDark400: '#353D1A',
-  productDark500: '#4A4F22',
-  productDark600: '#56602A',
-  productDark700: '#9C9C8B',
-  productDark800: '#BBBBAF',
-  productDark900: '#ECECE7',
+  // productDark100: '#010409', // black
+  productDark100: '#0D1117', // appBG
+  productDark200: '#151B23', // card
+  productDark300: '#212830', // search
+  productDark400: '#3D444D', // border
+  productDark500: '#1E2329', // button hovered
+  productDark600: '#23282D', // button pressed
+  productDark700: '#9198A1', // icon
+  productDark800: '#E1E7ED', // text supporting
+  productDark900: '#F0F6FC', // text
 
   // Light Mode Theme Colors
-  productLight100: '#FCFBF9',
-  productLight200: '#F8F4F0',
-  productLight300: '#F2EDE7',
-  productLight400: '#E6E1DA',
-  productLight500: '#D8D1C7',
-  productLight600: '#C7BFB3',
-  productLight700: '#A9A9A3',
-  productLight800: '#84847E',
-  productLight900: '#2C2E22',
+  productLight100: '#FFFFFF', // appBG
+  productLight200: '#F6F8FA', // card
+  productLight300: '#F6F8FA', // search // TODO
+  productLight400: '#D0D9E0', // border
+  productLight500: '#F2F3F4', // button hovered
+  productLight600: '#EDEEEF', // button pressed
+  productLight700: '#59636E', // icon
+  productLight800: '#2F3339', // text supporting
+  productLight900: '#1F2329', // text
 
   // Brand Colors from Figma
   blue100: '#B0D9FF',

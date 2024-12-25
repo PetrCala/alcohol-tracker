@@ -15,7 +15,7 @@ const lightTheme = {
   borderFocus: colors.yellowHover,
   icon: colors.productLight700,
   iconDark: colors.productLight900,
-  iconMenu: colors.red, // yellowStrong
+  iconMenu: colors.yellowStrong,
   iconHovered: colors.productLight900,
   iconMenuHovered: colors.yellow,
   iconSuccessFill: colors.yellowStrong,
@@ -81,7 +81,7 @@ const lightTheme = {
   skeletonLHNIn: colors.productLight400,
   skeletonLHNOut: colors.productLight600,
   QRLogo: colors.yellow,
-  appLogo: colors.productLight100,
+  appLogo: colors.productLight900,
   white: colors.white,
   transparentWhite: `${colors.white}51`,
   searchBarBG: colors.productLight300,

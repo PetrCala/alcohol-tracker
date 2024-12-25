@@ -18,7 +18,6 @@ const ScreenHeight = Dimensions.get('window').height;
 
 const EnlargableImage: React.FC<EnlargableImageProps> = props => {
   const styles = useThemeStyles();
-  const theme = useTheme();
   const {imageSource, imageStyle, imageLayout, onImageLayout} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
