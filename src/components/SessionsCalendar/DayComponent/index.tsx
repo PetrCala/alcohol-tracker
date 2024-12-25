@@ -36,7 +36,7 @@ function DayComponent({
         )}>
         <Text
           style={StyleUtils.getSessionsCalendarDayMarkingTextStyle(marking)}>
-          {isDisabled ? '' : units}
+          {!isDisabled ? units : ''}
         </Text>
       </View>
     </TouchableOpacity>
