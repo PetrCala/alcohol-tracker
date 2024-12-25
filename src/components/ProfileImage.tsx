@@ -11,6 +11,7 @@ import ERRORS from '@src/ERRORS';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import EnlargableImage from './Buttons/EnlargableImage';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
+import useTheme from '@hooks/useTheme';
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
@@ -25,6 +26,7 @@ type ProfileImageProps = {
 
 function ProfileImage(props: ProfileImageProps) {
   const {storage, userID, downloadPath, style} = props;
+  const theme = useTheme();
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userID);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
   const initialDownloadPath = useRef(downloadPath);
@@ -36,6 +38,10 @@ function ProfileImage(props: ProfileImageProps) {
     imageUrl && imageUrl !== CONST.NO_IMAGE
       ? {uri: imageUrl}
       : KirokuIcons.UserIcon;
+  const iconTint =
+    imageSource && typeof imageSource === 'object' && 'uri' in imageSource
+      ? undefined // The source is an URI link
+      : theme.icon; // No source given, use default
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
@@ -99,7 +105,9 @@ function ProfileImage(props: ProfileImageProps) {
     return <FlexibleLoadingIndicator style={[style, {flex: 0}]} />;
   }
   if (!props.enlargable) {
-    return <Image source={imageSource} style={style} />;
+    return (
+      <Image source={imageSource} style={[style, {tintColor: iconTint}]} />
+    );
   }
   if (!props.layout || !props.onLayout) {
     return;
@@ -108,7 +116,7 @@ function ProfileImage(props: ProfileImageProps) {
   return (
     <EnlargableImage
       imageSource={imageSource}
-      imageStyle={style}
+      imageStyle={[style, {tintColor: iconTint}]}
       imageLayout={props.layout}
       onImageLayout={props.onLayout}
     />
