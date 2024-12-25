@@ -1,17 +1,18 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import type {DayComponentProps} from '@components/SessionsCalendar/types';
+import {TouchableOpacity, View} from 'react-native';
 import Text from '@components/Text';
 import useStyleUtils from '@hooks/useStyleUtils';
+import useThemeStyles from '@hooks/useThemeStyles';
+import type {DayComponentProps} from '@components/SessionsCalendar/types';
 
-// Custom Day Component
 function DayComponent({
   date,
   state,
   units,
   marking,
-  theme,
+  theme, // eslint-disable-line @typescript-eslint/no-unused-vars
   onPress,
 }: DayComponentProps) {
+  const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const isDisabled = state === 'disabled';
   const isToday = state === 'today';
@@ -19,9 +20,12 @@ function DayComponent({
   return (
     <TouchableOpacity
       accessibilityRole="button"
-      style={localStyles.dayContainer}
-      onPress={() => onPress && date && onPress(date)} // Guard against undefined onPress
-    >
+      style={[
+        styles.alignItemsCenter,
+        styles.justifyContentCenter,
+        // styles.mnw100, // Uncomment to offset the text labels to the left
+      ]}
+      onPress={() => onPress && date && onPress(date)}>
       <Text
         style={StyleUtils.getSessionsCalendarDayLabelStyle(
           isDisabled,
@@ -42,20 +46,5 @@ function DayComponent({
     </TouchableOpacity>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  // Day component styles
-  dayContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%', // Give explicit width and height
-    height: 50,
-  },
-  daySessionMarkingText: {
-    fontSize: 18,
-    alignSelf: 'center',
-  },
-});
 
 export default DayComponent;
