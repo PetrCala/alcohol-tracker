@@ -81,7 +81,7 @@ const lightTheme = {
   skeletonLHNIn: colors.productLight400,
   skeletonLHNOut: colors.productLight600,
   QRLogo: colors.yellow,
-  appLogo: colors.productLight100,
+  appLogo: colors.productLight900,
   white: colors.white,
   transparentWhite: `${colors.white}51`,
   searchBarBG: colors.productLight300,
