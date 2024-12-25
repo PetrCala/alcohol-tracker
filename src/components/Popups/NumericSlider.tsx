@@ -58,9 +58,9 @@ function NumericSlider({
             minimumValue={0}
             maximumValue={maxValue}
             step={step}
-            minimumTrackTintColor={theme.textDark}
-            maximumTrackTintColor={theme.textDark}
-            thumbTintColor={theme.textDark}
+            minimumTrackTintColor={theme.text}
+            maximumTrackTintColor={theme.text}
+            thumbTintColor={theme.text}
             onValueChange={handleSliderChange}
             tapToSeek
           />
