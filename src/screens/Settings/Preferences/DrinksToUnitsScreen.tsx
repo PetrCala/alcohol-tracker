@@ -136,7 +136,7 @@ function DrinksToUnitsScreen() {
         shouldGreyOutWhenDisabled={false}
         shouldUseRowFlexDirection
         shouldShowRightIcon={false}
-        shouldShowRightComponent={true}
+        shouldShowRightComponent
         rightComponent={
           <Button
             text={detail.currentValue.toString()}

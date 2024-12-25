@@ -17,7 +17,7 @@ import useTheme from '@hooks/useTheme';
 import {listenForDataChanges} from '@database/baseFunctions';
 import DBPATHS from '@src/DBPATHS';
 import {fetchNicknameByUID} from '@libs/actions/User';
-import {Timestamp} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp} from '@src/types/onyx/OnyxCommon';
 import CONST from '@src/CONST';
 
 function SeeBugsScreen() {
@@ -104,12 +104,12 @@ function SeeBugsScreen() {
   return (
     <ScreenWrapper testID={SeeBugsScreen.displayName}>
       <HeaderWithBackButton
-        title={translate('adminScreen.seeBugReports')}
+        title={translate('adminScreen.bugReports')}
         onBackButtonPress={() => Navigation.goBack()}
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
         <Section
-          title={''}
+          title=""
           containerStyles={styles.ph0}
           childrenStyles={styles.pt3}>
           {Object.entries(bugList).map(([id, bug]) => (

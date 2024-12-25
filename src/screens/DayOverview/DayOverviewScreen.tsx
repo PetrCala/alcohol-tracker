@@ -134,7 +134,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
             )}
             style={[
               styles.buttonMedium,
-              !!editMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
+              editMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
             ]}
           />
         }

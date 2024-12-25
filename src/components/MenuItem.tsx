@@ -25,6 +25,7 @@ import * as Session from '@userActions/Session';
 import CONST from '@src/CONST';
 import type {Icon as IconType} from '@src/types/onyx/OnyxCommon';
 import type IconAsset from '@src/types/utils/IconAsset';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import Avatar from './Avatar';
 import Badge from './Badge';
@@ -41,7 +42,6 @@ import RenderHTML from './RenderHTML';
 import SelectCircle from './SelectCircle';
 import SubscriptAvatar from './SubscriptAvatar';
 import Text from './Text';
-import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type IconProps = {
   /** Flag to choose between avatar image or an icon */

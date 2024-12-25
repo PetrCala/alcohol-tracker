@@ -19,7 +19,7 @@ import MenuItem from '@components/MenuItem';
 import * as Preferences from '@userActions/Preferences';
 import type {NumericSliderProps} from '@components/Popups/NumericSlider';
 import NumericSlider from '@components/Popups/NumericSlider';
-import {CalendarColors} from '@components/SessionsCalendar/types';
+import type {CalendarColors} from '@components/SessionsCalendar/types';
 
 type MenuItem = {
   title?: string;
@@ -111,7 +111,7 @@ function UnitsToColorsScreen() {
         shouldGreyOutWhenDisabled={false}
         shouldUseRowFlexDirection
         shouldShowRightIcon={false}
-        shouldShowRightComponent={true}
+        shouldShowRightComponent
         rightComponent={
           <Button
             text={detail.currentValue.toString()}

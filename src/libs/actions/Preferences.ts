@@ -6,7 +6,7 @@ import * as Localize from '@libs/Localize';
 import Navigation from '@libs/Navigation/Navigation';
 import type {Preferences, Theme} from '@src/types/onyx';
 import DBPATHS from '@src/DBPATHS';
-import {User} from '@firebase/auth';
+import type {User} from '@firebase/auth';
 
 /** Save preferences data into the database.
  *

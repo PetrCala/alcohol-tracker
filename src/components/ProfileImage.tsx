@@ -8,10 +8,10 @@ import CONST from '@src/CONST';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import ERRORS from '@src/ERRORS';
+import useTheme from '@hooks/useTheme';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import EnlargableImage from './Buttons/EnlargableImage';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
-import useTheme from '@hooks/useTheme';
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
