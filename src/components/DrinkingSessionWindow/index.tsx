@@ -242,17 +242,19 @@ function DrinkingSessionWindow({
         customRightButton={
           sessionIsLive && (
             <Button
+              success
               onPress={() => setMonkeMode(!monkeMode)}
               text={translate(
                 monkeMode
                   ? 'liveSessionScreen.exitMonkeMode'
                   : 'liveSessionScreen.enterMonkeMode',
               )}
-              style={[
-                styles.buttonMedium,
-                monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
-              ]}
-              textStyles={styles.buttonLargeText}
+              style={
+                (styles.buttonMedium,
+                !!monkeMode
+                  ? styles.buttonSuccessPressed
+                  : styles.buttonSuccess)
+              }
             />
           )
         }
@@ -334,16 +336,14 @@ function DrinkingSessionWindow({
           text={translate('liveSessionScreen.discardSession', {
             discardWord: deleteSessionWording,
           })}
-          textStyles={styles.buttonText}
-          innerStyles={styles.bottomTabButton}
+          style={styles.buttonLarge}
           onPress={handleDiscardSession}
         />
         <Button
           success
           large
           text={translate('liveSessionScreen.saveSession')}
-          textStyles={styles.buttonText}
-          innerStyles={styles.bottomTabButton}
+          style={styles.buttonLargeSuccess}
           onPress={() => saveSession(db, user)}
         />
       </View>

@@ -45,7 +45,9 @@ export default {
     previous: 'Předchozí',
     goBack: 'Jít zpět',
     logIn: 'Přihlásit se',
+    logInHere: 'Přihlaste se zde,',
     signUp: 'Zaregistrovat se',
+    signUpHere: 'Zaregistrujte se zde,',
     create: 'Vytvořit',
     add: 'Přidat',
     resend: 'Odeslat znovu',
@@ -694,7 +696,7 @@ export default {
   },
   reportBugScreen: {
     title: 'Nahlásit chybu',
-    prompt: 'Co se stalo? Prosím popište chybu podrobně.',
+    prompt: 'Co se stalo? Prosím podrobně popište vzniklou chybu níže.',
     describeBug: 'Popište chybu zde',
     submit: 'Odeslat hlášení',
     sent: 'Hlášení chyby bylo odesláno!',
@@ -931,7 +933,7 @@ export default {
   },
   signUpScreen: {
     signingIn: 'Přihlašuji...',
-    chooseAnotherMethod: 'Zvolit jiný způsob přihlášení',
+    chooseAnotherMethod: 'Zvolte jiný způsob přihlášení',
     error: {
       generic: 'Při vytváření účtu došlo k chybě. Zkuste to prosím znovu.',
     },

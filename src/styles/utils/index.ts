@@ -19,6 +19,8 @@ import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
 import type {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
+import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import type {LightCalendarColors} from '@components/SessionsCalendar/DayComponent/types';
 import {defaultStyles} from '..';
 import type {ThemeStyles} from '..';
 import containerComposeStyles from './containerComposeStyles';
@@ -1295,12 +1297,20 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {};
   },
 
-  getSessionsCalendarHeaderStyle: (): CalendarHeaderProps => {
+  /**
+   * Returns the style for the sessions calendar main component
+   */
+  getSessionsCalendarStyle: (): CalendarHeaderProps => {
     return {
+      backgroundColor: theme.componentBG,
+      calendarBackground: theme.componentBG,
       textDayHeaderFontWeight: 'bold',
+      textSectionTitleColor: theme.textSupporting,
+
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'stylesheet.calendar.header': {
         header: {
+          backgroundColor: theme.componentBG,
           height: variables.calendarHeaderHeight,
           marginLeft: -5,
           flexDirection: 'row',
@@ -1316,6 +1326,60 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
         },
       },
     } as CalendarHeaderProps;
+  },
+
+  /**
+   * Returns the style for the sessions calendar month day label, e.g. 1, 2, 3, etc.
+   */
+  getSessionsCalendarDayLabelStyle: (
+    isDisabled: boolean,
+    isToday: boolean,
+  ): TextStyle => {
+    return {
+      ...styles.textMicro,
+      ...styles.alignSelfStart,
+      color: isDisabled
+        ? theme.textMutedReversed
+        : isToday
+          ? theme.link
+          : theme.textSupporting,
+    };
+  },
+
+  /**
+   * Returns the style for the sessions calendar day marking container
+   */
+  getSessionsCalendarDayMarkingContainerStyle: (
+    marking: MarkingProps | undefined,
+    isDisabled: boolean,
+  ): ViewStyle => {
+    const baseStyles = {
+      ...styles.alignSelfCenter,
+      ...styles.justifyContentCenter,
+      ...styles.componentSizeNormalSmall,
+    };
+    return {
+      ...baseStyles,
+      ...(isDisabled ? styles.noBorder : styles.border),
+      ...(!isDisabled && {backgroundColor: marking?.color ?? 'green'}),
+    };
+  },
+
+  /** Returns styles for the session calendar day marking (units) */
+  getSessionsCalendarDayMarkingTextStyle: (
+    marking: MarkingProps | undefined,
+  ): TextStyle => {
+    const isLightColor =
+      marking?.color &&
+      Object.values(CONST.CALENDAR_COLORS.LIGHT).includes(
+        marking.color as LightCalendarColors,
+      );
+    const textColor = isLightColor ? theme.textDark : theme.textLight;
+    return {
+      ...styles.textNormal,
+      ...styles.textAlignCenter,
+      color: textColor,
+    };
   },
 
   /**
@@ -1355,13 +1419,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     alignItems: 'center',
     // eslint-disable-next-line object-shorthand
     borderRadius: borderRadius,
-  }),
-
-  /**
-   * Select the correct color for text.
-   */
-  getColoredBackgroundStyle: (isColored: boolean): StyleProp<TextStyle> => ({
-    backgroundColor: isColored ? theme.mentionBG : undefined,
   }),
 
   /**
@@ -1408,44 +1465,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
       ? {...styles.offlineFeedback.text, color: styles.formError.color}
       : {...styles.offlineFeedback.text},
 
-  getEmojiReactionBubbleStyle: (
-    isHovered: boolean,
-    hasUserReacted: boolean,
-    isContextMenu = false,
-  ): ViewStyle => {
-    let backgroundColor = theme.border;
-
-    if (isHovered) {
-      backgroundColor = theme.buttonHoveredBG;
-    }
-
-    if (hasUserReacted) {
-      backgroundColor = theme.reactionActiveBackground;
-    }
-
-    if (isContextMenu) {
-      return {
-        paddingVertical: 3,
-        paddingHorizontal: 12,
-        backgroundColor,
-      };
-    }
-
-    return {
-      paddingVertical: 2,
-      paddingHorizontal: 8,
-      backgroundColor,
-    };
-  },
-
-  getEmojiReactionCounterTextStyle: (hasUserReacted: boolean): TextStyle => {
-    if (hasUserReacted) {
-      return {color: theme.reactionActiveText};
-    }
-
-    return {color: theme.text};
-  },
-
   getErrorScreenContainerStyle: (safeAreaPaddingBottom = 0): ViewStyle => ({
     backgroundColor: theme.componentBG,
     paddingBottom: 40 + safeAreaPaddingBottom,
@@ -1481,24 +1500,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
         return theme.icon;
     }
   },
-
-  /**
-   * Returns style object for the user mention component based on whether the mention is ours or not.
-   */
-  getMentionStyle: (isOurMention: boolean): TextStyle => {
-    const backgroundColor = isOurMention ? theme.ourMentionBG : theme.mentionBG;
-    return {
-      backgroundColor,
-      borderRadius: variables.componentBorderRadiusSmall,
-      paddingHorizontal: 2,
-    };
-  },
-
-  /**
-   * Returns text color for the user mention text based on whether the mention is ours or not.
-   */
-  getMentionTextColor: (isOurMention: boolean): string =>
-    isOurMention ? theme.ourMentionText : theme.mentionText,
 
   /**
    * Determines the theme color for a modal based on the app's background color,

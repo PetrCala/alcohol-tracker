@@ -404,7 +404,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     bgDark: {
-      backgroundColor: theme.inverse,
+      backgroundColor: theme.darkBG,
     },
 
     border: {
@@ -795,6 +795,7 @@ const styles = (theme: ThemeColors) =>
       right: 10,
       padding: 10,
       zIndex: 10,
+      backgroundColor: theme.transparent,
     },
 
     colorMutedReversed: {
@@ -807,6 +808,21 @@ const styles = (theme: ThemeColors) =>
 
     colorReversed: {
       color: theme.textReversed,
+    },
+
+    componentSizeSmall: {
+      width: variables.componentSizeSmall,
+      height: variables.componentSizeSmall,
+    },
+
+    componentSizeNormalSmall: {
+      width: variables.componentSizeNormalSmall,
+      height: variables.componentSizeNormalSmall,
+    },
+
+    componentSizeNormal: {
+      width: variables.componentSizeNormal,
+      height: variables.componentSizeNormal,
     },
 
     contextMenuItemPopoverMaxWidth: {
@@ -1103,6 +1119,10 @@ const styles = (theme: ThemeColors) =>
       borderRadius: variables.componentBorderRadiusRounded,
       height: '100%',
       backgroundColor: theme.success,
+    },
+
+    imageCropBG: {
+      backgroundColor: theme.imageCropBackgroundColor,
     },
 
     invisiblePopover: {
@@ -1489,6 +1509,7 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
       borderTopWidth: 1,
       borderBottomWidth: 1,
+      backgroundColor: theme.componentBG,
     },
 
     sessionColorMarker: (sessionColor: CalendarColors) =>
@@ -1669,7 +1690,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     signUpScreen: {
-      backgroundColor: theme.highlightBG,
+      backgroundColor: theme.appBG,
       minHeight: '100%',
       flex: 1,
     },
@@ -2392,6 +2413,10 @@ const styles = (theme: ThemeColors) =>
 
     textWhite: {
       color: theme.textLight,
+    },
+
+    textBlack: {
+      color: theme.textDark,
     },
 
     textBlue: {

@@ -88,9 +88,6 @@ function SessionsCalendar({
     <Calendar
       current={visibleDate.dateString}
       dayComponent={({date, state, marking, theme}: DayComponentProps) => {
-        if (!date) {
-          return;
-        }
         return (
           <DayComponent
             date={date}
@@ -118,7 +115,7 @@ function SessionsCalendar({
       disableAllTouchEventsForDisabledDays
       renderArrow={(direction: Direction) => CalendarArrow(direction)}
       style={styles.sessionsCalendarContainer}
-      theme={StyleUtils.getSessionsCalendarHeaderStyle()}
+      theme={StyleUtils.getSessionsCalendarStyle()}
     />
   );
 }

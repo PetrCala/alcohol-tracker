@@ -125,6 +125,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         onBackButtonPress={Navigation.goBack}
         customRightButton={
           <Button
+            success
             onPress={() => setEditMode(!editMode)}
             text={translate(
               !editMode
@@ -133,9 +134,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
             )}
             style={[
               styles.buttonMedium,
-              !editMode ? styles.buttonSuccess : styles.buttonSuccessPressed,
+              !!editMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
             ]}
-            textStyles={styles.buttonLargeText}
           />
         }
       />
