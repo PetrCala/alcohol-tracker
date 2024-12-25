@@ -497,6 +497,8 @@ export default {
     generalSection: 'General',
     seeFeedback: 'See feedback',
     seeBugReports: 'See bug reports',
+    feedback: 'Feedback',
+    bugReports: 'Bug reports',
   },
   sessionSummaryScreen: {
     title: 'Session Summary',

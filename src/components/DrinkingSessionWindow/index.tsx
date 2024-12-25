@@ -251,9 +251,7 @@ function DrinkingSessionWindow({
               )}
               style={
                 (styles.buttonMedium,
-                !!monkeMode
-                  ? styles.buttonSuccessPressed
-                  : styles.buttonSuccess)
+                monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess)
               }
             />
           )

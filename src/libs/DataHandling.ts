@@ -18,9 +18,9 @@ import type {
 import CONST from '@src/CONST';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import _ from 'lodash';
+import type {TranslationPaths} from '@src/languages/types';
 import * as DSUtils from './DrinkingSessionUtils';
 import {getRandomInt} from './Choice';
-import {TranslationPaths} from '@src/languages/types';
 
 function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(

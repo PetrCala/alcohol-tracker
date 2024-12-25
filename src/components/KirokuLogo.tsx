@@ -11,9 +11,9 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
+import useTheme from '@hooks/useTheme';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import ImageSVG from './ImageSVG';
-import useTheme from '@hooks/useTheme';
 
 type KirokuLogoProps = {
   /** Additional styles to add to the component */

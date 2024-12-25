@@ -17,7 +17,7 @@ import useTheme from '@hooks/useTheme';
 import {listenForDataChanges} from '@database/baseFunctions';
 import DBPATHS from '@src/DBPATHS';
 import {fetchNicknameByUID} from '@libs/actions/User';
-import {Timestamp} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp} from '@src/types/onyx/OnyxCommon';
 import CONST from '@src/CONST';
 
 function SeeFeedbackScreen() {
@@ -103,12 +103,12 @@ function SeeFeedbackScreen() {
   return (
     <ScreenWrapper testID={SeeFeedbackScreen.displayName}>
       <HeaderWithBackButton
-        title={translate('adminScreen.seeFeedback')}
+        title={translate('adminScreen.feedback')}
         onBackButtonPress={() => Navigation.goBack()}
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
         <Section
-          title={''}
+          title=""
           containerStyles={styles.ph0}
           childrenStyles={styles.pt3}>
           {Object.entries(feedbackList).map(([id, feedback]) => (

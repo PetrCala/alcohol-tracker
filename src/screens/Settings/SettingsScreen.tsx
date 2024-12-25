@@ -179,7 +179,7 @@ function SettingsScreen() {
           icon: KirokuIcons.Delete,
           routeName: ROUTES.SETTINGS_DELETE,
         },
-        ...(!!userIsAdmin
+        ...(userIsAdmin
           ? [
               {
                 translationKey: 'settingsScreen.adminTools',

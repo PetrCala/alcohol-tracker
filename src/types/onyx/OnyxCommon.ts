@@ -1,7 +1,7 @@
 import type {ValueOf} from 'type-fest';
 import type {AvatarSource} from '@libs/UserUtils';
 import type CONST from '@src/CONST';
-import DeepValueOf from '../utils/DeepValueOf';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 
 /** A pending action */
 type PendingAction = ValueOf<typeof CONST.RED_BRICK_ROAD_PENDING_ACTION> | null;
