@@ -142,6 +142,17 @@ function SessionsCalendar({
   }
 
   return <Calendar {...calendarProps} />;
+  // {TODO implement this}
+  //   {
+  //     /* <Calendar
+  //         initialDate=""
+  //         context={{ date : '' }} // Disable marking of today
+  //         markingType="custom"
+  //         markedDates={reservedDates}
+  //         renderHeader={date => <Text>{moment(new Date(date)).format('YYYY MMMM')}</Text>}
+  //         enableSwipeMonths
+  // /> */
+  //   }
 }
 
 SessionsCalendar.displayName = 'SessionsCalendar';
