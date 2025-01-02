@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import type {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
+import _ from 'lodash';
 import {getPreviousMonth, getNextMonth} from '@libs/DataHandling';
 import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
@@ -12,7 +13,6 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import type {DateString} from '@src/types/time';
 import useStyleUtils from '@hooks/useStyleUtils';
-import _ from 'lodash';
 import useLazyMarkedDates from '@hooks/useLazyMarkedDates';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import DayComponent from './DayComponent';
@@ -21,15 +21,8 @@ import type SessionsCalendarProps from './types';
 import type {DayComponentProps} from './types';
 import CalendarArrow from './CalendarArrow';
 import setCalendarLocale from './setCalendarLocale';
-import Onyx from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-
-Onyx.connect({
-  key: ONYXKEYS.NVP_PREFERRED_LOCALE,
-  callback: value => {
-    setCalendarLocale(value ?? CONST.LOCALES.DEFAULT);
-  },
-});
 
 function SessionsCalendar({
   userID,
@@ -41,9 +34,11 @@ function SessionsCalendar({
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const user = auth?.currentUser;
+  const [preferredLocale] = useOnyx(ONYXKEYS.NVP_PREFERRED_LOCALE);
   const {markedDates, unitsMap, loadedFrom, loadMoreMonths, isLoading} =
     useLazyMarkedDates(userID, drinkingSessionData || {}, preferences);
   const [minDate, setMinDate] = useState<string>(CONST.DATE.MIN_DATE);
+  const [locale, setLocale] = useState<string>(CONST.LOCALES.DEFAULT);
 
   const calculateMinDate = (
     data: DrinkingSessionList | null | undefined,
@@ -86,49 +81,68 @@ function SessionsCalendar({
     // TODO display other user's sessions too in a clever manner
   };
 
+  const dayComponent = useCallback(
+    ({date, state, marking, theme}: DayComponentProps) => (
+      <DayComponent
+        date={date}
+        state={state}
+        units={unitsMap.get(date.dateString)}
+        marking={marking}
+        theme={theme}
+        onPress={onDayPress}
+      />
+    ),
+    [unitsMap, onDayPress],
+  );
+
+  const calendarProps = useMemo(
+    () => ({
+      current: visibleDate.dateString,
+      dayComponent: dayComponent,
+      minDate,
+      maxDate: format(new Date(), CONST.DATE.CALENDAR_FORMAT),
+      monthFormat: CONST.DATE.MONTH_YEAR_ABBR_FORMAT, // e.g. "Mar 2024"
+      onPressArrowLeft: handleLeftArrowPress,
+      onPressArrowRight: handleRightArrowPress,
+      markedDates,
+      markingType: 'period',
+      firstDay: CONST.WEEK_STARTS_ON, // e.g. Monday = 1
+      enableSwipeMonths: false,
+      disableAllTouchEventsForDisabledDays: true,
+      renderArrow: (direction: Direction) => CalendarArrow(direction),
+      style: styles.sessionsCalendarContainer,
+      theme: StyleUtils.getSessionsCalendarStyle(),
+      locale: locale,
+    }),
+    [
+      visibleDate.dateString,
+      dayComponent,
+      minDate,
+      handleLeftArrowPress,
+      handleRightArrowPress,
+      markedDates,
+      styles.sessionsCalendarContainer,
+      StyleUtils,
+      locale,
+    ],
+  );
+
   useEffect(() => {
     setMinDate(calculateMinDate(drinkingSessionData));
   }, [drinkingSessionData]);
+
+  useEffect(() => {
+    const newLocale = preferredLocale ?? CONST.LOCALES.DEFAULT;
+    setCalendarLocale(newLocale);
+    setLocale(newLocale);
+  }, [preferredLocale]);
 
   if (isLoading) {
     return <FlexibleLoadingIndicator />;
   }
 
-  return (
-    <Calendar
-      current={visibleDate.dateString}
-      dayComponent={({date, state, marking, theme}: DayComponentProps) => {
-        return (
-          <DayComponent
-            date={date}
-            state={state}
-            units={unitsMap.get(date.dateString)}
-            marking={marking}
-            theme={theme}
-            onPress={onDayPress}
-          />
-        );
-      }}
-      minDate={minDate}
-      maxDate={format(new Date(), CONST.DATE.CALENDAR_FORMAT)} // today
-      monthFormat={CONST.DATE.MONTH_YEAR_ABBR_FORMAT}
-      onPressArrowLeft={(subtractMonth: () => void) =>
-        handleLeftArrowPress(subtractMonth)
-      }
-      onPressArrowRight={(addMonth: () => void) =>
-        handleRightArrowPress(addMonth)
-      }
-      markedDates={markedDates}
-      markingType="period"
-      firstDay={CONST.WEEK_STARTS_ON}
-      enableSwipeMonths={false}
-      disableAllTouchEventsForDisabledDays
-      renderArrow={(direction: Direction) => CalendarArrow(direction)}
-      style={styles.sessionsCalendarContainer}
-      theme={StyleUtils.getSessionsCalendarStyle()}
-    />
-  );
+  return <Calendar {...calendarProps} />;
 }
 
 SessionsCalendar.displayName = 'SessionsCalendar';
-export default SessionsCalendar;
+export default memo(SessionsCalendar);
