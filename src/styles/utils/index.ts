@@ -1361,7 +1361,9 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {
       ...baseStyles,
       ...(isDisabled ? styles.noBorder : styles.border),
-      ...(!isDisabled && {backgroundColor: marking?.color ?? 'green'}),
+      ...(!isDisabled && {
+        backgroundColor: marking?.color ?? CONST.CALENDAR_COLORS.DARK.GREEN,
+      }),
     };
   },
 

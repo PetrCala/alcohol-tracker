@@ -241,12 +241,14 @@ function sessionsToDayMarking(
 
   const hasBlackout = sessions.some(obj => obj.blackout === true);
   const color: CalendarColors = hasBlackout
-    ? 'black'
+    ? CONST.CALENDAR_COLORS.DARK.BLACK
     : convertUnitsToColors(totalUnits, preferences.units_to_colors);
 
   // Determine text color based on background color
-  const shouldUseContrast = color in ['red', 'green', 'black'];
-  const textColor = shouldUseContrast ? 'white' : 'black';
+  const shouldUseContrast = color in Object.values(CONST.CALENDAR_COLORS.DARK);
+  const textColor = shouldUseContrast
+    ? CONST.CALENDAR_COLORS.TEXT.WHITE
+    : CONST.CALENDAR_COLORS.TEXT.BLACK;
 
   const markingObject: SessionsCalendarDayMarking = {
     units: totalUnits,
@@ -481,17 +483,17 @@ function convertUnitsToColors(
   unitsToColors: UnitsToColors | undefined,
 ): CalendarColors {
   if (!unitsToColors) {
-    return 'green';
+    return CONST.CALENDAR_COLORS.DARK.GREEN;
   }
   let sessionColor: CalendarColors;
   if (units === 0) {
-    sessionColor = 'green';
+    sessionColor = CONST.CALENDAR_COLORS.DARK.GREEN;
   } else if (units <= unitsToColors.yellow) {
-    sessionColor = 'yellow';
+    sessionColor = CONST.CALENDAR_COLORS.LIGHT.YELLOW;
   } else if (units <= unitsToColors.orange) {
-    sessionColor = 'orange';
+    sessionColor = CONST.CALENDAR_COLORS.LIGHT.ORANGE;
   } else {
-    sessionColor = 'red';
+    sessionColor = CONST.CALENDAR_COLORS.DARK.RED;
   }
   return sessionColor;
 }

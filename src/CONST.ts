@@ -156,6 +156,10 @@ const CONST = {
       BLACK: 'black',
       GREEN: 'green',
     },
+    TEXT: {
+      WHITE: 'white',
+      BLACK: 'black',
+    },
   },
 
   CALENDAR_PICKER: {
