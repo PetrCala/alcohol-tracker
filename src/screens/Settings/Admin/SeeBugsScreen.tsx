@@ -117,6 +117,7 @@ function SeeBugsScreen() {
               key={`${id}`}
               title={getVerboseBugsHeading(bug.user_id, bug.submit_time)}
               description={bug.text}
+              numberOfLinesDescription={20}
               style={styles.borderTopRounded}
               rightComponent={removeBugButton(id)}
               shouldShowRightComponent
