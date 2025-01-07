@@ -14,7 +14,7 @@ import type {ValueOf} from 'type-fest';
 import type ImageSVGProps from '@components/ImageSVG/types';
 // eslint-disable-next-line no-restricted-imports
 import {defaultTheme} from '@styles/theme';
-import type {ThemeColors} from '@styles/theme/types';
+import type {Color, ThemeColors} from '@styles/theme/types';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
@@ -1335,12 +1335,21 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     isDisabled: boolean,
     isToday: boolean,
   ): TextStyle => {
+    let textColor: Color;
+    switch (true) {
+      case isDisabled:
+        textColor = theme.textMutedReversed;
+        break;
+      case isToday:
+        textColor = theme.link;
+        break;
+      default:
+        textColor = theme.textSupporting;
+    }
     return {
       ...styles.textMicro,
       ...styles.alignSelfStart,
-      color: (isDisabled ? theme.textMutedReversed : isToday)
-        ? theme.link
-        : theme.textSupporting,
+      color: textColor,
     };
   },
 
