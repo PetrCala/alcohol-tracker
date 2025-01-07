@@ -56,7 +56,7 @@ function SeeBugsScreen() {
 
       try {
         const userIds = Object.values(bugList).map(bug => bug.user_id);
-        newNicknames = (await fetchUserNicknames(db, userIds)) ?? [];
+        newNicknames = (await fetchUserNicknames(db, userIds)) ?? {};
       } catch (error) {
         console.error('Error fetching user nicknames:', error);
       }

@@ -58,7 +58,7 @@ function SeeFeedbackScreen() {
         const userIds = Object.values(feedbackList).map(
           feedback => feedback.user_id,
         );
-        newNicknames = (await fetchUserNicknames(db, userIds)) ?? [];
+        newNicknames = (await fetchUserNicknames(db, userIds)) ?? {};
       } catch (error) {
         console.error('Error fetching user nicknames:', error);
       }
