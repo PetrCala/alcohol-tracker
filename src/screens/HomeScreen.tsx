@@ -115,6 +115,12 @@ function HomeScreen({route}: HomeScreenProps) {
     setShouldNavigateToTzFix(shouldNavigate);
   }, [drinkingSessionData, userData?.timezone]);
 
+  useEffect(() => {
+    // Update the ongoing session local data
+    const ongoingSessionId = DSUtils.getOngoingSessionId(drinkingSessionData);
+    DS.syncLocalLiveSessionData(ongoingSessionId, drinkingSessionData);
+  }, [drinkingSessionData]);
+
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus

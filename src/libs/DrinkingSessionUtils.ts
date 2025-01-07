@@ -147,6 +147,23 @@ function isDrinkTypeKey(key: string): key is keyof Drinks {
   return _.includes(Object.values(CONST.DRINKS.KEYS), key);
 }
 
+/** From a list of drinking sessions, returns an ID of an ongoing session. If there is none, returns null. */
+function getOngoingSessionId(
+  drinkingSessions: DrinkingSessionList | null | undefined,
+): DrinkingSessionId | null {
+  if (isEmptyObject(drinkingSessions)) {
+    return null;
+  }
+
+  const ongoingSessions = Object.entries(drinkingSessions).find(
+    ([_, value]) => value?.ongoing === true,
+  );
+
+  // if (ongoingSessions.length > 1) {...} // Possibly handle this
+
+  return ongoingSessions ? ongoingSessions[0] : null;
+}
+
 /**
  * Calculates the total units of a Drinks object based on a DrinksToUnits mapping.
  *
@@ -856,6 +873,7 @@ export {
   getDrinkingSessionOnyxKey,
   getEmptySession,
   getIconForSession,
+  getOngoingSessionId,
   getSessionAddDrinksOptions,
   getSessionRemoveDrinksOptions,
   getSessionTypeDescription,

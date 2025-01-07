@@ -67,11 +67,9 @@ function StartSessionButtonAndPopover(
   const {auth, db} = useFirebase();
   const {translate} = useLocalize();
   const user = auth.currentUser;
-  const [isVisible, setIsVisible] = useState(false);
   const {userData, userStatusData} = useDatabaseData();
   const [ongoingSessionData] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const [startSession] = useOnyx(ONYXKEYS.START_SESSION_GLOBAL_CREATE);
-  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [isCreateMenuActive, setIsCreateMenuActive] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
   const {windowHeight} = useWindowDimensions();
@@ -321,21 +319,6 @@ function StartSessionButtonAndPopover(
     userStatusData,
     startSession?.sessionType,
   ]);
-
-  useEffect(() => {
-    if (userStatusData) {
-      Onyx.set(
-        ONYXKEYS.ONGOING_SESSION_DATA,
-        userStatusData?.latest_session?.ongoing
-          ? userStatusData?.latest_session
-          : null,
-      );
-    }
-  }, [userStatusData]);
-
-  useEffect(() => {
-    setIsVisible(!loadingText && !ongoingSessionData?.ongoing);
-  }, [ongoingSessionData?.ongoing, loadingText]);
 
   return (
     <View style={[styles.flexShrink1, styles.ph2]}>
