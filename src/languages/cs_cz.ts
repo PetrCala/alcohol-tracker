@@ -306,8 +306,8 @@ export default {
     smallBeer: 'Malé pivo',
     beer: 'Pivo',
     wine: 'Víno',
-    weakShot: 'Slabý panák',
-    strongShot: 'Silný panák',
+    weakShot: 'Malý panák',
+    strongShot: 'Velký panák',
     cocktail: 'Koktejl',
     other: 'Ostatní',
   },
@@ -486,7 +486,7 @@ export default {
     drinksAndUnitsSection: {
       title: 'Drinky a jednotky',
       description:
-        'Nastavte, kolik jednotek každý drink představuje a kdy se mění barva relace',
+        'Nastavte přepočet drinků na jednotky a kdy se mění barva relace',
       drinksToUnits: 'Drinky na jednotky',
       unitsToColors: 'Jednotky na barvy',
     },
@@ -500,11 +500,11 @@ export default {
   unitsToColorsScreen: {
     title: 'Jednotky na barvy',
     description:
-      'Nastavte hraniční body, při kterých se mění barvy relace; každý je maximální hodnota, do které zůstane relace v dané barvě',
+      'Nastavte hraniční body, při kterých se mění barvy relace; tyto body představují maximální hodnotu, do které zůstane relace v dané barvě',
   },
   drinksToUnitsScreen: {
     title: 'Drinky na jednotky',
-    description: 'Zvolte, kolik jednotek představuje každý drink',
+    description: 'Zvolte, kolika jednotkám je roven každý z drinků',
   },
   languageScreen: {
     language: 'Jazyk',
