@@ -1,5 +1,5 @@
 import type {Database} from 'firebase/database';
-import {update, ref, get, set} from 'firebase/database';
+import {update, ref, get} from 'firebase/database';
 import type {
   AppSettings,
   DrinkingSessionList,
@@ -8,7 +8,6 @@ import type {
   Profile,
   ReasonForLeaving,
   ReasonForLeavingId,
-  Theme,
   UserData,
   UserStatus,
 } from '@src/types/onyx';

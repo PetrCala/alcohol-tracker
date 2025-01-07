@@ -2,7 +2,7 @@ import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import type {TimeUnit} from '@src/types/onyx/OnyxCommon';
 import * as Localize from './Localize';
-import {getPlural, shouldUsePlural} from './StringUtilsKiroku';
+import {shouldUsePlural} from './StringUtilsKiroku';
 
 function isRecent(timestamp: number): boolean {
   const now = Date.now();

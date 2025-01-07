@@ -48,6 +48,7 @@ const useProfileList = (userArray: UserArray) => {
     } finally {
       setLoadingDisplayData(false);
     }
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, [userArray, db]); // including the profileList causes an infinite loop
 
   useEffect(() => {

@@ -21,7 +21,7 @@ import type {NumericSliderProps} from '@components/Popups/NumericSlider';
 import NumericSlider from '@components/Popups/NumericSlider';
 import CONST from '@src/CONST';
 
-type MenuItem = {
+type MenuItemProps = {
   title?: string;
   key: string;
   currentValue: number;
@@ -87,7 +87,7 @@ function DrinksToUnitsScreen() {
   };
 
   const drinksToUnitsMenuItems = useMemo(() => {
-    const drinksHelperData: MenuItem[] = [
+    const drinksHelperData: MenuItemProps[] = [
       {
         title: translate('drinks.smallBeer'),
         key: CONST.DRINKS.KEYS.SMALL_BEER,
@@ -149,7 +149,10 @@ function DrinksToUnitsScreen() {
                 value: detail.currentValue ?? 0,
                 key: detail.key ?? '',
                 onSave: (value: number) => {
-                  setCurrentValues(prev => ({...prev, [detail.key]: value}));
+                  setCurrentValues(prevVal => ({
+                    ...prevVal,
+                    [detail.key]: value,
+                  }));
                 },
               }));
             }}
@@ -165,7 +168,6 @@ function DrinksToUnitsScreen() {
     currentValues.strong_shot,
     currentValues.weak_shot,
     currentValues.wine,
-    sliderConfig,
     styles.plainSectionTitle,
     styles.sectionMenuItemTopDescription,
     styles.settingValueButton,

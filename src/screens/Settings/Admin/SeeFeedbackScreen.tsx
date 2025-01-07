@@ -61,7 +61,7 @@ function SeeFeedbackScreen() {
           if (data) {
             newNicknames[userId] = data; // Set if not null
           }
-        } catch (error: any) {
+        } catch (error) {
           console.error('Error fetching nickname:', error);
         }
       }
@@ -69,7 +69,7 @@ function SeeFeedbackScreen() {
     };
 
     fetchNicknames();
-  }, [feedbackList, db]);
+  }, [feedbackList, db, nicknames]);
 
   const deleteFeedback = (feedbackKey: string) => {
     (async () => {
