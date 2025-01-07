@@ -4,6 +4,8 @@ import type {
   AppSettings,
   DrinkingSessionList,
   FriendRequestList,
+  Nickname,
+  NicknameToId,
   Preferences,
   Profile,
   ReasonForLeaving,
@@ -43,6 +45,7 @@ import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import Log from '@libs/Log';
 import ERRORS from '@src/ERRORS';
 import * as Session from './Session';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -402,26 +405,39 @@ async function changeUserName(
 }
 
 /**
- * Fetch the Firebase nickname of a user given their UID.
+ * Fetches the Firebase nickname of an array of users. Returns these nicknames as a mapping object in the form of {[userId]: userNickname}.
+ *
  * @param db The Realtime Database instance.
  * @param uid The user's UID.
  * @returns{Promise<string|null>} The nickname or null if not found.
  *
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
  */
-async function fetchNicknameByUID(
+async function fetchUserNicknames(
   db: Database,
-  uid: string,
-): Promise<string | null> {
-  const userRef = DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid);
+  userIds: Array<UserID>,
+): Promise<NicknameToId> {
+  if (isEmptyObject(userIds)) {
+    return {};
+  }
+  const urls = userIds.map(userId =>
+    DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId),
+  );
 
-  const userSnapshot = await readDataOnce<Profile>(db, userRef);
+  const fetchPromises = urls.map(url =>
+    readDataOnce<Profile>(db, url).then(response => response),
+  );
 
-  if (!userSnapshot) {
-    return null;
+  const results = await Promise.all(fetchPromises);
+
+  if (!results) {
+    return {};
   }
 
-  return userSnapshot.display_name;
+  return userIds.reduce((acc, key, index) => {
+    acc[key] = results[index]?.display_name ?? '';
+    return acc;
+  }, {} as NicknameToId);
 }
 
 /** Fetch the timestamp of when a user last agreed to terms and conditions */
@@ -638,7 +654,7 @@ export {
   changeUserName,
   deleteUserData,
   fetchLastAgreedToTermsAt,
-  fetchNicknameByUID,
+  fetchUserNicknames,
   getDefaultPreferences,
   getDefaultUserData,
   getDefaultUserStatus,

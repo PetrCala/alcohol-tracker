@@ -16,7 +16,7 @@ import Button from '@components/Button';
 import useTheme from '@hooks/useTheme';
 import {listenForDataChanges} from '@database/baseFunctions';
 import DBPATHS from '@src/DBPATHS';
-import {fetchNicknameByUID} from '@libs/actions/User';
+import {fetchUserNicknames} from '@libs/actions/User';
 import type {Timestamp} from '@src/types/onyx/OnyxCommon';
 import CONST from '@src/CONST';
 
@@ -52,19 +52,17 @@ function SeeFeedbackScreen() {
         return;
       }
 
-      const newNicknames = {...nicknames};
+      let newNicknames: NicknameToId = {};
 
-      for (const feedback of Object.values(feedbackList)) {
-        try {
-          const userId = feedback.user_id;
-          const data = await fetchNicknameByUID(db, userId);
-          if (data) {
-            newNicknames[userId] = data; // Set if not null
-          }
-        } catch (error) {
-          console.error('Error fetching nickname:', error);
-        }
+      try {
+        const userIds = Object.values(feedbackList).map(
+          feedback => feedback.user_id,
+        );
+        newNicknames = (await fetchUserNicknames(db, userIds)) ?? [];
+      } catch (error) {
+        console.error('Error fetching user nicknames:', error);
       }
+
       setNicknames(newNicknames);
     };
 
