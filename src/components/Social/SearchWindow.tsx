@@ -1,13 +1,13 @@
-import {Keyboard, StyleSheet, TextInput, View} from 'react-native';
+import {Keyboard, StyleSheet, View} from 'react-native';
 import {useState, forwardRef, useEffect, useRef} from 'react';
 import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {SearchWindowRef} from '@src/types/various/Search';
-import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
+import TextInput from '@components/TextInput';
 import useStyleUtils from '@hooks/useStyleUtils';
 import {PressableWithFeedback} from '@components/Pressable';
 import useLocalize from '@hooks/useLocalize';
@@ -27,7 +27,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
-    const textInputRef = useRef<TextInput>(null); // Input field ref for focus handling
+    // const textInputRef = useRef<TextInput>(null); // Input field ref for focus handling
 
     const handleDoSearch = (searchText: string, database?: Database): void => {
       onSearch(searchText, database);
@@ -57,20 +57,21 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
 
     return (
       <View style={styles.searchWindowContainer}>
-        <View
-          style={[
-            localStyles.textContainer,
-            searchOnTextChange && localStyles.responsiveTextContainer,
-            styles.searchWindowTextContainer,
-          ]}>
-          <KeyboardFocusHandler>
-            <Icon
-              src={KirokuIcons.Search}
-              medium
-              fill={StyleUtils.getIconFillColor()}
-              additionalStyles={[styles.alignSelfCenter, styles.mh3]}
-            />
-            <TextInput
+        <View style={styles.searchWindowTextContainer}>
+          <Icon
+            src={KirokuIcons.Search}
+            medium
+            fill={StyleUtils.getIconFillColor()}
+            additionalStyles={[styles.alignSelfCenter, styles.mh3]}
+          />
+          <TextInput
+            autoGrow
+            placeholder={windowText}
+            value={searchText}
+            onChangeText={text => setSearchText(text)}
+            shouldShowClearButton={!!searchText}
+          />
+          {/* <TextInput
               accessibilityLabel={translate('textInput.accessibilityLabel')}
               placeholder={windowText}
               placeholderTextColor="#a8a8a8"
@@ -80,8 +81,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               keyboardType="default"
               textContentType="nickname"
               ref={textInputRef}
-            />
-          </KeyboardFocusHandler>
+            /> */}
           {searchText !== '' ||
             (searchCount > 0 && (
               <PressableWithFeedback
@@ -96,7 +96,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               </PressableWithFeedback>
             ))}
         </View>
-        {searchOnTextChange ? null : (
+        {!searchOnTextChange && (
           <View
             style={[
               styles.justifyContentCenter,
@@ -117,15 +117,6 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  textContainer: {
-    justifyContent: 'flex-start',
-    alignContent: 'center',
-    alignSelf: 'center',
-    flexDirection: 'row',
-  },
-  responsiveTextContainer: {
-    width: '100%',
-  },
   searchTextResetContainer: {
     width: '10%',
     height: '100%',
