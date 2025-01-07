@@ -15,14 +15,14 @@ import type {DateString} from '@src/types/time';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useLazyMarkedDates from '@hooks/useLazyMarkedDates';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 import DayComponent from './DayComponent';
 import type {Direction} from './CalendarArrow';
 import type SessionsCalendarProps from './types';
 import type {DayComponentProps} from './types';
 import CalendarArrow from './CalendarArrow';
 import setCalendarLocale from './setCalendarLocale';
-import {useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 function SessionsCalendar({
   userID,
@@ -98,7 +98,7 @@ function SessionsCalendar({
   const calendarProps = useMemo(
     () => ({
       current: visibleDate.dateString,
-      dayComponent: dayComponent,
+      dayComponent,
       minDate,
       maxDate: format(new Date(), CONST.DATE.CALENDAR_FORMAT),
       monthFormat: CONST.DATE.MONTH_YEAR_ABBR_FORMAT, // e.g. "Mar 2024"
@@ -112,7 +112,7 @@ function SessionsCalendar({
       renderArrow: (direction: Direction) => CalendarArrow(direction),
       style: styles.sessionsCalendarContainer,
       theme: StyleUtils.getSessionsCalendarStyle(),
-      locale: locale,
+      locale,
     }),
     [
       visibleDate.dateString,
