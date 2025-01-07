@@ -120,6 +120,7 @@ function SeeFeedbackScreen() {
                 feedback.submit_time,
               )}
               description={feedback.text}
+              numberOfLinesDescription={20}
               style={styles.borderTopRounded}
               rightComponent={removeFeedbackButton(id)}
               shouldShowRightComponent
