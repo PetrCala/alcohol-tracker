@@ -6,7 +6,7 @@ import Section from '@components/Section';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import type {BugList, Nickname, NicknameToId} from '@src/types/onyx';
+import type {BugList, NicknameToId} from '@src/types/onyx';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {removeBug} from '@database/feedback';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
