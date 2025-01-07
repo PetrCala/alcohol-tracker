@@ -1561,9 +1561,11 @@ const styles = (theme: ThemeColors) =>
     searchWindowTextContainer: {
       backgroundColor: theme.searchBarBG,
       flexGrow: 1,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
       height: '100%',
       borderRadius: 10,
-      ...sizing.mw100,
     },
 
     searchWindowText: {
