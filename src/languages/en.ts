@@ -823,8 +823,6 @@ export default {
     synchronizing: 'Synchronizing data...',
     loading: 'Loading your session...',
     drinksConsumed: 'Drinks consumed',
-    enterMonkeMode: 'Monke Mode',
-    exitMonkeMode: 'Exit Monke Mode',
     sessionFrom: 'Session from',
     sessionOn: 'Session on',
     blackout: 'Blackout',

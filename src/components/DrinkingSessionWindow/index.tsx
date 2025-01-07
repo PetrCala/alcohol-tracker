@@ -55,7 +55,6 @@ function DrinkingSessionWindow({
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [sessionColor, setSessionColor] = useState<string>('green');
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
-  const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const waitForNavigate = useWaitForNavigation();
   // const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const [discardModalVisible, setDiscardModalVisible] =
@@ -69,48 +68,6 @@ function DrinkingSessionWindow({
 
   const hasSessionChanged = () => {
     return !isEqual(sessionRef.current, session);
-  };
-
-  const handleMonkePlus = () => {
-    DS.updateDrinks(
-      sessionId,
-      CONST.DRINKS.KEYS.OTHER,
-      1,
-      CONST.DRINKS.ACTIONS.ADD,
-      preferences?.drinks_to_units,
-    );
-  };
-
-  const handleMonkeMinus = () => {
-    if (!session) {
-      return;
-    }
-    const otherUnitsLeft = sumDrinksOfSingleType(
-      session.drinks,
-      CONST.DRINKS.KEYS.OTHER,
-    );
-    let keyToRemove: DrinkKey | null = null;
-    if (otherUnitsLeft > 0) {
-      // Try to remove a drink from 'others' first
-      keyToRemove = CONST.DRINKS.KEYS.OTHER;
-    } else if (sumAllDrinks(session.drinks) > 0) {
-      // In case there are no other drinks, remove one at random
-      const drinkKeysLeft = getUniqueDrinkTypesInSession(session);
-      if (!drinkKeysLeft) {
-        return;
-      }
-      keyToRemove =
-        drinkKeysLeft[Math.floor(Math.random() * drinkKeysLeft.length)];
-    }
-    if (keyToRemove) {
-      DS.updateDrinks(
-        sessionId,
-        keyToRemove,
-        1,
-        CONST.DRINKS.ACTIONS.REMOVE,
-        preferences?.drinks_to_units,
-      );
-    }
   };
 
   async function saveSession(db: any, user: User | null) {
@@ -237,26 +194,7 @@ function DrinkingSessionWindow({
 
   return (
     <>
-      <HeaderWithBackButton
-        onBackButtonPress={handleBackPress}
-        customRightButton={
-          sessionIsLive && (
-            <Button
-              success
-              onPress={() => setMonkeMode(!monkeMode)}
-              text={translate(
-                monkeMode
-                  ? 'liveSessionScreen.exitMonkeMode'
-                  : 'liveSessionScreen.enterMonkeMode',
-              )}
-              style={
-                (styles.buttonMedium,
-                monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess)
-              }
-            />
-          )
-        }
-      />
+      <HeaderWithBackButton onBackButtonPress={handleBackPress} />
       <ScrollView contentContainerStyle={[styles.w100]}>
         <View style={styles.pt2}>
           <View style={styles.alignItemsCenter}>
@@ -281,51 +219,19 @@ function DrinkingSessionWindow({
             {totalUnits}
           </Text>
         </View>
-        {monkeMode ? (
-          <View style={localStyles.modifyUnitsContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={[localStyles.modifyUnitsButton, {backgroundColor: 'red'}]}
-              onPress={() => handleMonkeMinus()}>
-              <Icon
-                src={KirokuIcons.Minus}
-                height={60}
-                width={40}
-                fill={theme.textLight}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={[
-                localStyles.modifyUnitsButton,
-                {backgroundColor: 'green'},
-              ]}
-              onPress={() => handleMonkePlus()}>
-              <Icon
-                src={KirokuIcons.Plus}
-                height={40}
-                width={40}
-                fill={theme.textLight}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <>
-            <DrinkTypesView session={session} />
-            <SessionDetailsWindow
-              sessionId={sessionId}
-              session={session}
-              onBlackoutChange={(value: boolean) =>
-                DS.updateBlackout(session, value)
-              }
-              shouldAllowDateChange={type !== CONST.SESSION.TYPES.LIVE}
-              shouldAllowTimezoneChange={
-                !session?.ongoing
-                // session.type !== CONST.SESSION.TYPES.LIVE // Enable this down the line
-              }
-            />
-          </>
-        )}
+        <DrinkTypesView session={session} />
+        <SessionDetailsWindow
+          sessionId={sessionId}
+          session={session}
+          onBlackoutChange={(value: boolean) =>
+            DS.updateBlackout(session, value)
+          }
+          shouldAllowDateChange={type !== CONST.SESSION.TYPES.LIVE}
+          shouldAllowTimezoneChange={
+            !session?.ongoing
+            // session.type !== CONST.SESSION.TYPES.LIVE // Enable this down the line
+          }
+        />
         <FillerView />
       </ScrollView>
       <View style={[styles.bottomTabBarContainer, styles.gap4]}>
@@ -383,25 +289,5 @@ function DrinkingSessionWindow({
     </>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  modifyUnitsContainer: {
-    height: 400,
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    flexDirection: 'row',
-    padding: 10,
-  },
-  modifyUnitsButton: {
-    width: 100,
-    height: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 50,
-  },
-});
 
 export default DrinkingSessionWindow;
