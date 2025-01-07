@@ -6,7 +6,7 @@ import Section from '@components/Section';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import type {BugList, NicknameToId} from '@src/types/onyx';
+import type {BugList, Nickname, NicknameToId} from '@src/types/onyx';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {removeBug} from '@database/feedback';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -16,7 +16,7 @@ import Button from '@components/Button';
 import useTheme from '@hooks/useTheme';
 import {listenForDataChanges} from '@database/baseFunctions';
 import DBPATHS from '@src/DBPATHS';
-import {fetchNicknameByUID} from '@libs/actions/User';
+import {fetchUserNicknames} from '@libs/actions/User';
 import type {Timestamp} from '@src/types/onyx/OnyxCommon';
 import CONST from '@src/CONST';
 
@@ -52,19 +52,15 @@ function SeeBugsScreen() {
         return;
       }
 
-      const newNicknames = {...nicknames};
+      let newNicknames: NicknameToId = {};
 
-      for (const bug of Object.values(bugList)) {
-        try {
-          const userId = bug.user_id;
-          const data = await fetchNicknameByUID(db, userId);
-          if (data) {
-            newNicknames[userId] = data; // Set if not null
-          }
-        } catch (error) {
-          console.error('Error fetching nickname:', error);
-        }
+      try {
+        const userIds = Object.values(bugList).map(bug => bug.user_id);
+        newNicknames = (await fetchUserNicknames(db, userIds)) ?? [];
+      } catch (error) {
+        console.error('Error fetching user nicknames:', error);
       }
+
       setNicknames(newNicknames);
     };
 
