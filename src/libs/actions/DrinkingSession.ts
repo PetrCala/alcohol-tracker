@@ -8,8 +8,9 @@ import type {
   DrinksToUnits,
   UserStatus,
 } from '@src/types/onyx';
-import * as Localize from '@src/libs/Localize';
-import * as DSUtils from '@src/libs/DrinkingSessionUtils';
+import * as Localize from '@libs/Localize';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {User} from 'firebase/auth';
 import CONST from '@src/CONST';
@@ -26,6 +27,7 @@ import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {ValueOf} from 'type-fest';
 import _ from 'lodash';
 import DBPATHS from '@src/DBPATHS';
+import {Alert} from 'react-native';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
@@ -113,8 +115,8 @@ async function updateDrinkingSessionData(
  * @param drinkingSessionData  The drinking session data.
  */
 async function syncLocalLiveSessionData(
-  ongoingSessionId: DrinkingSessionId | undefined,
-  drinkingSessionData: DrinkingSessionList | undefined,
+  ongoingSessionId: DrinkingSessionId | undefined | null,
+  drinkingSessionData: DrinkingSessionList | undefined | null,
 ) {
   if (ongoingSessionId && drinkingSessionData) {
     const newData = drinkingSessionData[ongoingSessionId];
@@ -431,7 +433,8 @@ async function setIsCreatingNewSession(val: boolean): Promise<void> {
  */
 function navigateToOngoingSessionScreen(): void {
   if (!ongoingSessionData?.id) {
-    throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
+    Alert.alert(Localize.translateLocal('drinkingSession.error.missingId'));
+    return;
   }
   Navigation.navigate(
     ROUTES.DRINKING_SESSION_LIVE.getRoute(ongoingSessionData.id),
