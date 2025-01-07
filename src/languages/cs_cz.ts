@@ -823,8 +823,6 @@ export default {
     synchronizing: 'Synchronizuji data...',
     loading: 'Načítám vaši relaci...',
     drinksConsumed: 'Zkonzumované drinky',
-    enterMonkeMode: 'Monke mód',
-    exitMonkeMode: 'Ukončit Monke mód',
     sessionFrom: 'Relace od',
     sessionOn: 'Relace dne',
     blackout: 'Výpadek paměti',
