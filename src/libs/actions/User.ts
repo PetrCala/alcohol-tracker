@@ -44,8 +44,8 @@ import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import Log from '@libs/Log';
 import ERRORS from '@src/ERRORS';
-import * as Session from './Session';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import * as Session from './Session';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -415,7 +415,7 @@ async function changeUserName(
  */
 async function fetchUserNicknames(
   db: Database,
-  userIds: Array<UserID>,
+  userIds: UserID[],
 ): Promise<NicknameToId> {
   if (isEmptyObject(userIds)) {
     return {};
