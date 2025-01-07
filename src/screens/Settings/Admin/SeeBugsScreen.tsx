@@ -61,7 +61,7 @@ function SeeBugsScreen() {
           if (data) {
             newNicknames[userId] = data; // Set if not null
           }
-        } catch (error: any) {
+        } catch (error) {
           console.error('Error fetching nickname:', error);
         }
       }
@@ -69,7 +69,7 @@ function SeeBugsScreen() {
     };
 
     fetchNicknames();
-  }, [bugList, db]);
+  }, [bugList, db, nicknames]);
 
   const deleteBug = (bugKey: string) => {
     (async () => {
