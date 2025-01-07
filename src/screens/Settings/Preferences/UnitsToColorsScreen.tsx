@@ -21,7 +21,7 @@ import type {NumericSliderProps} from '@components/Popups/NumericSlider';
 import NumericSlider from '@components/Popups/NumericSlider';
 import type {CalendarColors} from '@components/SessionsCalendar/types';
 
-type MenuItem = {
+type MenuItemProps = {
   title?: string;
   key: CalendarColors;
   currentValue: number;
@@ -87,7 +87,7 @@ function UnitsToColorsScreen() {
   };
 
   const unitsToColorsMenuItems = useMemo(() => {
-    const unitsHelperData: MenuItem[] = [
+    const unitsHelperData: MenuItemProps[] = [
       {
         title: translate('units.yellow'),
         key: 'yellow',
@@ -124,7 +124,10 @@ function UnitsToColorsScreen() {
                 value: detail.currentValue ?? 0,
                 key: detail.key ?? '',
                 onSave: (value: number) => {
-                  setCurrentValues(prev => ({...prev, [detail.key]: value}));
+                  setCurrentValues(prevVal => ({
+                    ...prevVal,
+                    [detail.key]: value,
+                  }));
                 },
               }));
             }}
@@ -135,7 +138,6 @@ function UnitsToColorsScreen() {
   }, [
     currentValues.orange,
     currentValues.yellow,
-    sliderConfig,
     styles.plainSectionTitle,
     styles.sectionMenuItemTopDescription,
     styles.settingValueButton,

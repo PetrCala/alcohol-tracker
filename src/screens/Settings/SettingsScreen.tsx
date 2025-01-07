@@ -2,7 +2,6 @@ import {useRoute} from '@react-navigation/native';
 import React, {
   useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,

@@ -1338,11 +1338,9 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {
       ...styles.textMicro,
       ...styles.alignSelfStart,
-      color: isDisabled
-        ? theme.textMutedReversed
-        : isToday
-          ? theme.link
-          : theme.textSupporting,
+      color: (isDisabled ? theme.textMutedReversed : isToday)
+        ? theme.link
+        : theme.textSupporting,
     };
   },
 
