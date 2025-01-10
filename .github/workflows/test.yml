@@ -1,16 +1,16 @@
 name: Jest Unit Tests
 
 on:
+  workflow_call:
   pull_request:
-    branches: [non-existing-branch] # Do not run for now
-    # branches-ignore: [master, staging, dev]
-  # Do not run for now
-  # workflow_call:
-  # pull_request:
-  #   types: [opened, synchronize]
-  #   branches-ignore: [staging, production]
-  #   paths:
-  #     ['**.js', '**.ts', '**.tsx', '**.sh', 'package.json', 'package-lock.json']
+    types: [opened, synchronize]
+    branches-ignore: [staging, production]
+    paths:
+      ['**.js', '**.ts', '**.tsx', '**.sh', 'package.json', 'package-lock.json']
+
+concurrency:
+  group: ${{ github.ref == 'refs/heads/master' && format('{0}-{1}', github.ref, github.sha) || github.ref }}-jest
+  cancel-in-progress: true
 
 jobs:
   jest:
@@ -43,19 +43,3 @@ jobs:
 
       - name: Jest tests
         run: npx jest --silent --shard=${{ fromJSON(matrix.chunk) }}/${{ strategy.job-total }} --max-workers ${{ steps.cpu-cores.outputs.count }}
-
-  shellTests:
-    if: ${{ github.actor != 'KirokuAdmin' && github.actor != 'imgbot[bot]' || github.event_name == 'workflow_call' }}
-    runs-on: ubuntu-latest
-    name: Shell tests
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: ./.github/actions/composite/setupNode
-
-      - name: Test CI git logic
-        run: __tests__/unit/CIGitLogicTest.sh
-
-      # storybook tests

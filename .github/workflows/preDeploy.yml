@@ -7,34 +7,36 @@ on:
     paths-ignore: [docs/**, contributingGuides/**, jest/**, tests/**]
 
 jobs:
-  # typecheck:
-  #   uses: ./.github/workflows/typecheck.yml
+  typecheck:
+    uses: ./.github/workflows/typecheck.yml
 
-  # lint:
-  #   uses: ./.github/workflows/lint.yml
+  lint:
+    uses: ./.github/workflows/lint.yml
 
-  # test:
-  #   uses: ./.github/workflows/test.yml
+  test:
+    uses: ./.github/workflows/test.yml
 
   confirmPassingBuild:
     runs-on: ubuntu-latest
-    # needs: [typecheck, lint, test]
+    needs: [typecheck, lint, test]
     if: ${{ always() }}
 
     steps:
       - uses: actions/checkout@v4
 
-      # - name: Announce failed workflow in Discord
-      #   if: ${{ needs.typecheck.result == 'failure' || needs.lint.result == 'failure' || needs.test.result == 'failure' }}
-      #   uses: ./.github/actions/composite/announceFailedWorkflowInDiscord
-      #   with:
-      #     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-      # - name: Exit failed workflow
-      #   if: ${{ needs.typecheck.result == 'failure' || needs.lint.result == 'failure' || needs.test.result == 'failure' }}
-      #   run: |
-      #     echo "Checks failed, exiting ~ typecheck: ${{ needs.typecheck.result }}, lint: ${{ needs.lint.result }}, test: ${{ needs.test.result }}"
-      #     exit 1
+      - name: Announce failed workflow in Discord
+        if: ${{ needs.typecheck.result == 'failure' || needs.lint.result == 'failure' || needs.test.result == 'failure' }}
+        uses: ./.github/actions/composite/announceFailedWorkflowInDiscord
+        with:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+
+      - name: Exit failed workflow
+        if: ${{ needs.typecheck.result == 'failure' || needs.lint.result == 'failure' || needs.test.result == 'failure' }}
+        run: |
+          echo "Checks failed, exiting ~ typecheck: ${{ needs.typecheck.result }}, lint: ${{ needs.lint.result }}, test: ${{ needs.test.result }}"
+          exit 1
 
   chooseDeployActions:
     runs-on: ubuntu-latest
