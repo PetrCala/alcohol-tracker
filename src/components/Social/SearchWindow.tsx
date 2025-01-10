@@ -1,5 +1,5 @@
 import {Keyboard, View} from 'react-native';
-import {useState, forwardRef, useEffect, useRef} from 'react';
+import {useState, forwardRef, useEffect} from 'react';
 import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {SearchWindowRef} from '@src/types/various/Search';
@@ -7,7 +7,6 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import TextInput from '@components/TextInput';
-import useStyleUtils from '@hooks/useStyleUtils';
 import useLocalize from '@hooks/useLocalize';
 
 type SearchWindowProps = {
@@ -22,9 +21,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     const styles = useThemeStyles();
     const {db} = useFirebase();
     const {translate} = useLocalize();
-    const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
-    const textInputRef = useRef(null); // Input field ref for focus handling
 
     const handleDoSearch = (searchText: string, database?: Database): void => {
       onSearch(searchText, database);
@@ -64,7 +61,6 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             hideFocusedState
             textInputContainerStyles={styles.noBorder}
             onClear={handleResetSearch}
-            ref={textInputRef}
           />
         </View>
         {!searchOnTextChange && (
