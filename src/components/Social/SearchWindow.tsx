@@ -7,6 +7,7 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
+import variables from '@src/styles/variables';
 import TextInput from '@components/TextInput';
 import useStyleUtils from '@hooks/useStyleUtils';
 import {PressableWithFeedback} from '@components/Pressable';
@@ -65,11 +66,12 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             additionalStyles={[styles.alignSelfCenter, styles.mh3]}
           />
           <TextInput
-            autoGrow
+            // autoGrow
             placeholder={windowText}
             value={searchText}
             onChangeText={text => setSearchText(text)}
             shouldShowClearButton={!!searchText}
+            autoGrow
           />
           {/* <TextInput
               accessibilityLabel={translate('textInput.accessibilityLabel')}
