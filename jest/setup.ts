@@ -2,9 +2,11 @@ import '@shopify/flash-list/jestSetup';
 import 'react-native-gesture-handler/jestSetup';
 import mockStorage from 'react-native-onyx/dist/storage/__mocks__';
 import 'setimmediate';
+import mockConsole from './mockConsole';
 import setupMockImages from './setupMockImages';
 import type Animated from 'react-native-reanimated';
 
+mockConsole();
 setupMockImages();
 
 jest.mock('firebase/app', () => ({
