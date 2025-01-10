@@ -1076,7 +1076,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     grayHeader: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.cardBG,
       ...sizing.mnw100,
       ...spacing.p3,
     },
