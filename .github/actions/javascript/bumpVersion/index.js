@@ -1,15 +1,6 @@
 /**
  * NOTE: This is a compiled file. DO NOT directly edit this file.
  */
-/**
- * NOTE: This is a compiled file. DO NOT directly edit this file.
- */
-/**
- * NOTE: This is a compiled file. DO NOT directly edit this file.
- */
-/**
- * NOTE: This is a compiled file. DO NOT directly edit this file.
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -25788,14 +25779,16 @@ exports.generateAndroidVersionCode = generateAndroidVersionCode;
  * Update the Android app versionName and versionCode.
  */
 function updateAndroidVersion(versionName, versionCode) {
-    console.log('Updating android:', `versionName: ${versionName}`, `versionCode: ${versionCode}`);
+    // console.log('Updating android:', `versionName: ${versionName}`, `versionCode: ${versionCode}`);
     return fs_1.promises
         .readFile(BUILD_GRADLE_PATH, { encoding: 'utf8' })
-        .then((content) => {
-        let updatedContent = content.toString().replace(/versionName "([0-9.-]*)"/, `versionName "${versionName}"`);
+        .then(content => {
+        let updatedContent = content
+            .toString()
+            .replace(/versionName "([0-9.-]*)"/, `versionName "${versionName}"`);
         return (updatedContent = updatedContent.replace(/versionCode ([0-9]*)/, `versionCode ${versionCode}`));
     })
-        .then((updatedContent) => fs_1.promises.writeFile(BUILD_GRADLE_PATH, updatedContent, { encoding: 'utf8' }));
+        .then(updatedContent => fs_1.promises.writeFile(BUILD_GRADLE_PATH, updatedContent, { encoding: 'utf8' }));
 }
 exports.updateAndroidVersion = updateAndroidVersion;
 /**
@@ -25804,8 +25797,10 @@ exports.updateAndroidVersion = updateAndroidVersion;
  */
 function updateiOSVersion(version) {
     const shortVersion = version.split('-')[0];
-    const cfVersion = version.includes('-') ? version.replace('-', '.') : `${version}.0`;
-    console.log('Updating iOS', `CFBundleShortVersionString: ${shortVersion}`, `CFBundleVersion: ${cfVersion}`);
+    const cfVersion = version.includes('-')
+        ? version.replace('-', '.')
+        : `${version}.0`;
+    // console.log('Updating iOS', `CFBundleShortVersionString: ${shortVersion}`, `CFBundleVersion: ${cfVersion}`);
     // Update Plists
     (0, child_process_1.execSync)(`/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${shortVersion}" ${PLIST_PATH}`);
     (0, child_process_1.execSync)(`/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${shortVersion}" ${PLIST_PATH_TEST}`);
