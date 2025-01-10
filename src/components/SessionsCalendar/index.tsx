@@ -24,6 +24,7 @@ import type SessionsCalendarProps from './types';
 import type {DayComponentProps} from './types';
 import CalendarArrow from './CalendarArrow';
 import setCalendarLocale from './setCalendarLocale';
+import useTheme from '@hooks/useTheme';
 
 function SessionsCalendar({
   userID,
@@ -34,6 +35,7 @@ function SessionsCalendar({
 }: SessionsCalendarProps) {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
+  const theme = useTheme();
   const user = auth?.currentUser;
   const [preferredLocale] = useOnyx(ONYXKEYS.NVP_PREFERRED_LOCALE);
   const {markedDates, unitsMap, loadedFrom, loadMoreMonths, isLoading} =
@@ -123,7 +125,7 @@ function SessionsCalendar({
       handleRightArrowPress,
       markedDates,
       styles.sessionsCalendarContainer,
-      StyleUtils,
+      StyleUtils.getSessionsCalendarStyle,
       locale,
     ],
   );
