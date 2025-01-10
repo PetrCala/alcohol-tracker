@@ -53,6 +53,7 @@
     "app.json",
     "package.json", // Application version import
     "firebase.json",
-    "react-native.config.js"
+    "react-native.config.js",
+    "local/tests/integration"
   ]
 }
