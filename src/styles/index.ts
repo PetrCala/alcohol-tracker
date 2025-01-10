@@ -1519,7 +1519,6 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
       borderTopWidth: 1,
       borderBottomWidth: 1,
-      backgroundColor: theme.componentBG,
     },
 
     sessionColorMarker: (sessionColor: CalendarColors) =>
