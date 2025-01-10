@@ -14,6 +14,7 @@ import type {MenuItemProps} from './MenuItem';
 import MenuItem from './MenuItem';
 import PopoverWithMeasuredContent from './PopoverWithMeasuredContent';
 import Text from './Text';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type PopoverMenuItem = MenuItemProps & {
   /** Text label */
@@ -93,7 +94,7 @@ function PopoverMenu({
   shouldSetModalVisibility = true,
 }: PopoverMenuProps) {
   const styles = useThemeStyles();
-  const {isSmallScreenWidth} = useWindowDimensions();
+  const {isSmallScreenWidth} = useResponsiveLayout();
   const selectedItemIndex = useRef<number | null>(null);
 
   const [currentMenuItems, setCurrentMenuItems] = useState(menuItems);
