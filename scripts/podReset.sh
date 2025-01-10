@@ -49,7 +49,7 @@ pod setup
 
 pod install
 
-cd $PROJECT_ROOT
+cd -
 
 git add ios/Podfile.lock
 git add ios/kiroku.xcodeproj/project.pbxproj
