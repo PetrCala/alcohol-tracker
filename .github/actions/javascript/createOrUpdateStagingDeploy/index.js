@@ -1,15 +1,6 @@
 /**
  * NOTE: This is a compiled file. DO NOT directly edit this file.
  */
-/**
- * NOTE: This is a compiled file. DO NOT directly edit this file.
- */
-/**
- * NOTE: This is a compiled file. DO NOT directly edit this file.
- */
-/**
- * NOTE: This is a compiled file. DO NOT directly edit this file.
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -37109,7 +37100,7 @@ class GithubUtils {
                     GithubUtils.getIssueOrPullRequestNumberFromURL(b));
                 // Tag version and comparison URL
                 // eslint-disable-next-line max-len
-                let issueBody = `**Release Version:** \`${tag}\`\r\n**Compare Changes:** https://github.com/Expensify/App/compare/production...staging\r\n`;
+                let issueBody = `**Release Version:** \`${tag}\`\r\n**Compare Changes:** https://github.com/PetrCala/Kiroku/compare/production...staging\r\n`;
                 // PR list
                 if (sortedPRList.length > 0) {
                     issueBody +=
@@ -37148,12 +37139,10 @@ class GithubUtils {
                 }
                 issueBody += '**Deployer verifications:**';
                 // eslint-disable-next-line max-len
-                issueBody += `\r\n- [${isTimingDashboardChecked ? 'x' : ' '}] I checked the [App Timing Dashboard](https://graphs.expensify.com/grafana/d/yj2EobAGz/app-timing?orgId=1) and verified this release does not cause a noticeable performance regression.`;
-                // eslint-disable-next-line max-len
-                issueBody += `\r\n- [${isFirebaseChecked ? 'x' : ' '}] I checked [Firebase Crashlytics](https://console.firebase.google.com/u/0/project/expensify-chat/crashlytics/app/android:com.expensify.chat/issues?state=open&time=last-seven-days&tag=all) and verified that this release does not introduce any new crashes. More detailed instructions on this verification can be found [here](https://stackoverflowteams.com/c/expensify/questions/15095/15096).`;
+                issueBody += `\r\n- [${isFirebaseChecked ? 'x' : ' '}] I checked [Firebase Crashlytics](https://console.firebase.google.com/u/0/project/alcohol-tracker-db/crashlytics/app/android:com.alcohol_tracker/issues?state=open&time=last-seven-days&tag=all) and verified that this release does not introduce any new crashes.`;
                 // eslint-disable-next-line max-len
                 issueBody += `\r\n- [${isGHStatusChecked ? 'x' : ' '}] I checked [GitHub Status](https://www.githubstatus.com/) and verified there is no reported incident with Actions.`;
-                issueBody += '\r\n\r\ncc @Expensify/applauseleads\r\n';
+                // issueBody += '\r\n\r\ncc @Expensify/applauseleads\r\n';
                 const issueAssignees = [...new Set(Object.values(internalQAPRMap))];
                 const issue = { issueBody, issueAssignees };
                 return issue;
