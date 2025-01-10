@@ -1555,11 +1555,11 @@ const styles = (theme: ThemeColors) =>
       height: variables.searchWindowHeight,
       ...spacing.ph2,
       ...spacing.pb2,
+      ...sizing.mw100,
     },
 
     searchWindowTextContainer: {
       backgroundColor: theme.searchBarBG,
-      flexGrow: 1,
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
