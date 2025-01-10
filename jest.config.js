@@ -22,7 +22,7 @@ module.exports = {
     enableGlobally: true,
     doNotFake: ['nextTick'],
   },
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   setupFiles: [
     '<rootDir>/jest/setup.ts',
     // './node_modules/@react-native-google-signin/google-signin/jest/build/setup.js',
