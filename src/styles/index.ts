@@ -1553,24 +1553,19 @@ const styles = (theme: ThemeColors) =>
     searchWindowContainer: {
       flexDirection: 'row',
       height: variables.searchWindowHeight,
+      ...spacing.gap2,
       ...spacing.ph2,
       ...spacing.pb2,
-      ...sizing.mw100,
     },
 
     searchWindowTextContainer: {
       backgroundColor: theme.searchBarBG,
       flexDirection: 'row',
+      flexGrow: 1,
       justifyContent: 'flex-start',
       alignItems: 'center',
-      height: '100%',
-      borderRadius: 10,
-    },
-
-    searchWindowText: {
-      flexGrow: 1,
-      color: theme.text,
-      alignItems: 'center',
+      borderRadius: variables.borderRadiusSmall,
+      ...spacing.ph2,
     },
 
     searchTableHeaderActive: {
