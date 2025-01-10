@@ -1,5 +1,5 @@
 import Onyx from 'react-native-onyx';
-import type {DeferredUpdatesDictionary} from '@userActions/OnyxUpdateManager/types';
+import type {DeferredUpdatesDictionary} from '@libs/actions/OnyxUpdateManager/types';
 import * as SequentialQueue from '@libs/Network/SequentialQueue';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {OnyxUpdatesFromServer, Response} from '@src/types/onyx';
