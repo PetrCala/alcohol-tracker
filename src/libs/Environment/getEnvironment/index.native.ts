@@ -40,7 +40,7 @@ function getEnvironment(): Promise<Environment> {
     }
 
     // If we haven't set the environment yet and we aren't on dev/adhoc, check to see if this is a beta build
-    betaChecker.isBetaBuild().then(isBeta => {
+    betaChecker.isBetaBuild().then((isBeta: boolean) => {
       environment = isBeta ? CONST.ENVIRONMENT.STAGING : CONST.ENVIRONMENT.PROD;
       resolve(environment);
     });
