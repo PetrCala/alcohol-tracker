@@ -18,6 +18,7 @@ import type {Color, ThemeColors} from '@styles/theme/types';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
+import type {Theme as RNCalendarsTheme} from 'react-native-calendars/src/types';
 import type {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import type {LightCalendarColors} from '@components/SessionsCalendar/DayComponent/types';
@@ -1297,36 +1298,61 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {};
   },
 
-  /**
-   * Returns the style for the sessions calendar main component
-   */
-  getSessionsCalendarStyle: (): CalendarHeaderProps => {
+  getSessionsCalendarStyle(): RNCalendarsTheme {
     return {
       backgroundColor: theme.componentBG,
       calendarBackground: theme.componentBG,
       textDayHeaderFontWeight: 'bold',
       textSectionTitleColor: theme.textSupporting,
-
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      'stylesheet.calendar.header': {
-        header: {
-          backgroundColor: theme.componentBG,
-          height: variables.calendarHeaderHeight,
-          marginLeft: -5,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        },
-        monthText: {
-          color: theme.text,
-          fontSize: variables.fontSizeLarge,
-          ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-          flexShrink: 1,
-          textAlign: 'center',
-        },
-      },
-    } as CalendarHeaderProps;
+      // Customize month text
+      monthTextColor: theme.text,
+      textMonthFontSize: variables.fontSizeLarge,
+      textMonthFontFamily: 'EXP_NEUE_BOLD', // Replace with your actual font family
+      // Customize arrow colors
+      arrowColor: theme.text, // Or any color you prefer
+      // Customize day text
+      dayTextColor: theme.text,
+      // todayTextColor: theme.todayTextColor,
+      // selectedDayBackgroundColor: theme.selectedDayBackground,
+      // selectedDayTextColor: theme.selectedDayTextColor,
+      // Customize day header text
+      textDayHeaderFontSize: 14,
+      // textDayHeaderFontWeight: '600',
+      textDayHeaderFontFamily: 'Helvetica', // Replace with your actual font family
+      // Add other theme properties as needed
+    };
   },
+
+  // /**
+  //  * Returns the style for the sessions calendar main component
+  //  */
+  // getSessionsCalendarStyle: (): RNCalendarsTheme => {
+  //   return {
+  //     backgroundColor: theme.componentBG,
+  //     calendarBackground: theme.componentBG,
+  //     textDayHeaderFontWeight: 'bold',
+  //     textSectionTitleColor: theme.textSupporting,
+
+  //     // eslint-disable-next-line @typescript-eslint/naming-convention
+  //     'stylesheet.calendar.header': {
+  //       header: {
+  //         backgroundColor: theme.componentBG,
+  //         height: variables.calendarHeaderHeight,
+  //         marginLeft: -5,
+  //         flexDirection: 'row',
+  //         alignItems: 'center',
+  //         justifyContent: 'space-between',
+  //       },
+  //       monthText: {
+  //         color: theme.text,
+  //         fontSize: variables.fontSizeLarge,
+  //         ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+  //         flexShrink: 1,
+  //         textAlign: 'center',
+  //       },
+  //     },
+  //   };
+  // },
 
   /**
    * Returns the style for the sessions calendar month day label, e.g. 1, 2, 3, etc.
