@@ -4,7 +4,7 @@ import * as App from '@userActions/App';
 import type {
   DeferredUpdatesDictionary,
   DetectGapAndSplitResult,
-} from '@userActions/OnyxUpdateManager/types';
+} from '@libs/actions/OnyxUpdateManager/types';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {applyUpdates} from './applyUpdates';
 // eslint-disable-next-line import/no-cycle

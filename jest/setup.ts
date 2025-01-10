@@ -3,6 +3,7 @@ import 'react-native-gesture-handler/jestSetup';
 import mockStorage from 'react-native-onyx/dist/storage/__mocks__';
 import 'setimmediate';
 import setupMockImages from './setupMockImages';
+import type Animated from 'react-native-reanimated';
 
 setupMockImages();
 
@@ -50,4 +51,15 @@ jest.mock('react-native-sound', () => {
 
 jest.mock('react-native-share', () => ({
   default: jest.fn(),
+}));
+
+jest.mock('react-native-reanimated', () => ({
+  ...jest.requireActual<typeof Animated>('react-native-reanimated/mock'),
+  createAnimatedPropAdapter: jest.fn,
+  useReducedMotion: jest.fn,
+}));
+
+jest.mock('@src/libs/actions/Timing', () => ({
+  start: jest.fn(),
+  end: jest.fn(),
 }));
