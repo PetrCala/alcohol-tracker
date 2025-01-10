@@ -648,6 +648,17 @@ function getDisplayNameForParticipant(
 }
 
 /**
+ * Returns the the display names of the given user accountIDs
+ */
+function getUserDetailTooltipText(
+  accountID: UserID,
+  fallbackUserDisplayName = '',
+): string {
+  const displayNameForParticipant = getDisplayNameForParticipant(accountID);
+  return displayNameForParticipant || fallbackUserDisplayName;
+}
+
+/**
  * Determine whether the given session is on a different day when converted to the given timezone.
  *
  * @param session The session to check
@@ -690,17 +701,6 @@ function getUserTrackingStartDate(
   }
 
   return new Date(earliestTimestamp);
-}
-
-/**
- * Returns the the display names of the given user userIDs
- */
-function getUserDetailTooltipText(
-  userID: UserID,
-  fallbackUserDisplayName = '',
-): string {
-  const displayNameForParticipant = getDisplayNameForParticipant(userID);
-  return displayNameForParticipant || fallbackUserDisplayName;
 }
 
 /**
