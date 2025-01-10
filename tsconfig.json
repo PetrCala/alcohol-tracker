@@ -53,9 +53,6 @@
     "app.json",
     "package.json", // Application version import
     "firebase.json",
-    "**/alcohol-tracker*.json",
-    "react-native.config.js",
-    "local/toImplement/Form",
-    "../Kiroku-dev/admin"
+    "react-native.config.js"
   ]
 }
