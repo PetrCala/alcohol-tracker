@@ -8,9 +8,6 @@ type DrinksTimestamp = Timestamp;
 /** A drink identifier key */
 type DrinkKey = DeepValueOf<typeof CONST.DRINKS.KEYS>;
 
-/** A drink verbose name */
-type DrinkName = DeepValueOf<typeof CONST.DRINKS.NAMES>;
-
 /** A collection of drink records, usually stored under a single timestamp */
 type Drinks = Partial<Record<DrinkKey, number>>;
 
@@ -18,4 +15,4 @@ type Drinks = Partial<Record<DrinkKey, number>>;
 type DrinksList = Record<DrinksTimestamp, Drinks>;
 
 export default Drinks;
-export type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp};
+export type {DrinkKey, DrinksList, DrinksTimestamp};
