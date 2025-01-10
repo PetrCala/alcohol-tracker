@@ -7,6 +7,18 @@ import type Animated from 'react-native-reanimated';
 
 setupMockImages();
 
+jest.mock('firebase/app', () => ({
+  initializeApp: jest.fn(),
+  getApp: jest.fn(),
+  getApps: jest.fn().mockImplementation(() => []),
+}));
+
+jest.mock('firebase/auth', () => ({
+  getAuth: jest.fn(),
+  getReactNativePersistence: jest.fn(),
+  initializeAuth: jest.fn(),
+}));
+
 // This mock is required as per setup instructions for react-navigation testing
 // https://reactnavigation.org/docs/testing/#mocking-native-modules
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
