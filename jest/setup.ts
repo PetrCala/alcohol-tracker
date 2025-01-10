@@ -9,6 +9,10 @@ import type Animated from 'react-native-reanimated';
 mockConsole();
 setupMockImages();
 
+// Fix missing encoders in the node environment
+global.TextEncoder = require('util').TextEncoder;
+global.TextDecoder = require('util').TextDecoder;
+
 jest.mock('firebase/app', () => ({
   initializeApp: jest.fn(),
   getApp: jest.fn(),
