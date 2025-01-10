@@ -1,4 +1,5 @@
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+import type {MarkingTypes} from 'react-native-calendars/src/types';
 import type {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
 import _ from 'lodash';
@@ -105,7 +106,7 @@ function SessionsCalendar({
       onPressArrowLeft: handleLeftArrowPress,
       onPressArrowRight: handleRightArrowPress,
       markedDates,
-      markingType: 'period',
+      markingType: 'period' as MarkingTypes,
       firstDay: CONST.WEEK_STARTS_ON, // e.g. Monday = 1
       enableSwipeMonths: false,
       disableAllTouchEventsForDisabledDays: true,
