@@ -1,7 +1,7 @@
 import type {
   DeferredUpdatesDictionary,
   DetectGapAndSplitResult,
-} from '@userActions/OnyxUpdateManager/types';
+} from '@libs/actions/OnyxUpdateManager/types';
 import createProxyForObject from '@src/utils/createProxyForObject';
 import type * as OnyxUpdateManagerUtilsImport from '..';
 import {applyUpdates} from './applyUpdates';

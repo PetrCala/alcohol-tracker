@@ -1,7 +1,12 @@
 // Issue - https://github.com/Expensify/App/issues/26719
 import type {AppStateStatus} from 'react-native';
 import {AppState} from 'react-native';
-import type {OnyxEntry, OnyxMergeInput, OnyxUpdate} from 'react-native-onyx';
+import type {
+  OnyxEntry,
+  OnyxKey,
+  OnyxMergeInput,
+  OnyxUpdate,
+} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import * as API from '@libs/API';
@@ -60,6 +65,19 @@ Onyx.connect({
   key: ONYXKEYS.NVP_PREFERRED_LOCALE,
   callback: val => (preferredLocale = val),
 });
+
+const KEYS_TO_PRESERVE: OnyxKey[] = [
+  // ONYXKEYS.ACCOUNT,
+  ONYXKEYS.IS_LOADING_APP,
+  ONYXKEYS.IS_SIDEBAR_LOADED,
+  ONYXKEYS.MODAL,
+  ONYXKEYS.NETWORK,
+  ONYXKEYS.SESSION,
+  ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT,
+  ONYXKEYS.PREFERRED_THEME,
+  ONYXKEYS.NVP_PREFERRED_LOCALE,
+  ONYXKEYS.CREDENTIALS,
+];
 
 let resolveIsReadyPromise: () => void;
 const isReadyToOpenApp = new Promise<void>(resolve => {
@@ -589,4 +607,5 @@ export {
   updateLastVisitedPath,
   updateLastRoute,
   waitForSignOnTransitionToFinish,
+  KEYS_TO_PRESERVE,
 };
