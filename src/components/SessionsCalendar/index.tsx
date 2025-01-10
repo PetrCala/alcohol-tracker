@@ -86,7 +86,7 @@ function SessionsCalendar({
       <DayComponent
         date={date}
         state={state}
-        units={unitsMap.get(date.dateString)}
+        units={date ? unitsMap.get(date.dateString) : 0}
         marking={marking}
         theme={theme}
         onPress={onDayPress}

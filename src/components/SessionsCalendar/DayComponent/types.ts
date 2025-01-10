@@ -14,7 +14,7 @@ type CalendarColors = LightCalendarColors | DarkCalendarColors;
 
 /** Props for a react native calendar day component */
 type DayComponentProps = {
-  date: DateData;
+  date?: DateData;
   state?: DayState;
   units?: number;
   marking?: MarkingProps;
