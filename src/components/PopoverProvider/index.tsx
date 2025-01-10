@@ -7,7 +7,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import type {View} from 'react-native';
+// eslint-disable-next-line no-restricted-imports
+import type {Text, View} from 'react-native';
 import type {
   AnchorRef,
   PopoverContextProps,
@@ -16,18 +17,19 @@ import type {
 
 const PopoverContext = createContext<PopoverContextValue>({
   onOpen: () => {},
-  popover: {},
+  popover: null,
+  popoverAnchor: null,
   close: () => {},
   isOpen: false,
 });
 
 function elementContains(
-  ref: RefObject<View | HTMLElement> | undefined,
+  ref: RefObject<View | HTMLElement | Text> | undefined,
   target: EventTarget | null,
 ) {
   if (
     ref?.current &&
-    'contains' in ref?.current &&
+    'contains' in ref.current &&
     ref?.current?.contains(target as Node)
   ) {
     return true;
@@ -38,19 +40,23 @@ function elementContains(
 function PopoverContextProvider(props: PopoverContextProps) {
   const [isOpen, setIsOpen] = useState(false);
   const activePopoverRef = useRef<AnchorRef | null>(null);
+  const [activePopoverAnchor, setActivePopoverAnchor] =
+    useState<AnchorRef['anchorRef']['current']>(null);
 
   const closePopover = useCallback(
-    (anchorRef?: RefObject<View | HTMLElement>) => {
+    (anchorRef?: RefObject<View | HTMLElement | Text>): boolean => {
       if (
         !activePopoverRef.current ||
         (anchorRef && anchorRef !== activePopoverRef.current.anchorRef)
       ) {
-        return;
+        return false;
       }
 
       activePopoverRef.current.close();
       activePopoverRef.current = null;
       setIsOpen(false);
+      setActivePopoverAnchor(null);
+      return true;
     },
     [],
   );
@@ -90,11 +96,13 @@ function PopoverContextProvider(props: PopoverContextProps) {
       if (e.key !== 'Escape') {
         return;
       }
-      closePopover();
+      if (closePopover()) {
+        e.stopImmediatePropagation();
+      }
     };
-    document.addEventListener('keydown', listener, true);
+    document.addEventListener('keyup', listener, true);
     return () => {
-      document.removeEventListener('keydown', listener, true);
+      document.removeEventListener('keyup', listener, true);
     };
   }, [closePopover]);
 
@@ -134,6 +142,7 @@ function PopoverContextProvider(props: PopoverContextProps) {
         closePopover(activePopoverRef.current.anchorRef);
       }
       activePopoverRef.current = popoverParams;
+      setActivePopoverAnchor(popoverParams.anchorRef.current);
       setIsOpen(true);
     },
     [closePopover],
@@ -143,10 +152,12 @@ function PopoverContextProvider(props: PopoverContextProps) {
     () => ({
       onOpen,
       close: closePopover,
+      // eslint-disable-next-line react-compiler/react-compiler
       popover: activePopoverRef.current,
+      popoverAnchor: activePopoverAnchor,
       isOpen,
     }),
-    [onOpen, closePopover, isOpen],
+    [onOpen, closePopover, isOpen, activePopoverAnchor],
   );
 
   return (
