@@ -91,7 +91,7 @@ bun.lockb
 *.jsbundle
 
 # Ruby / CocoaPods
-/ios/Pods/
+**/Pods/
 /vendor/bundle/
 
 # GitHub GPG Keys
