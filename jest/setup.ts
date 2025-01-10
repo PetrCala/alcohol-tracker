@@ -21,6 +21,8 @@ jest.mock('firebase/auth', () => ({
   initializeAuth: jest.fn(),
 }));
 
+jest.mock('@react-native-async-storage/async-storage', () => ({}));
+
 // This mock is required as per setup instructions for react-navigation testing
 // https://reactnavigation.org/docs/testing/#mocking-native-modules
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
