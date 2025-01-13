@@ -6,7 +6,7 @@ import type {FetchDataKey} from './types';
  * for a specific user.
  */
 function fetchDataKeyToDbPath(key: FetchDataKey, userID?: UserID) {
-  const id = userID || '-1';
+  const id = userID ?? '-1';
 
   let path;
   switch (key) {
@@ -28,6 +28,8 @@ function fetchDataKeyToDbPath(key: FetchDataKey, userID?: UserID) {
     case 'userData':
       path = DBPATHS.USERS_USER_ID.getRoute(id);
       break;
+    default:
+      break;
   }
   if (path) {
     return path;
@@ -35,4 +37,7 @@ function fetchDataKeyToDbPath(key: FetchDataKey, userID?: UserID) {
   return null;
 }
 
-export {fetchDataKeyToDbPath};
+export {
+  // eslint-disable-next-line import/prefer-default-export
+  fetchDataKeyToDbPath,
+};

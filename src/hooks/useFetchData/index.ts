@@ -5,6 +5,9 @@ import type RefetchDatabaseData from '@src/types/utils/RefetchDatabaseData';
 import type {FetchData, FetchDataKey, FetchDataKeys} from './types';
 import {fetchDataKeyToDbPath} from './utils';
 
+// This module will be deleted in the future, so we don't care about types for now
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 // Define a type for the hook's return value
 type UseFetchDataReturn = {
   data: FetchData;
@@ -31,6 +34,7 @@ const useFetchData = (
 ): UseFetchDataReturn => {
   const {db} = useFirebase();
   const [refetchIndex, setRefetchIndex] = useState(0); // Used to trigger refetch
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<{[key in FetchDataKey]?: any}>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [resolveRefetch, setResolveRefetch] = useState<() => void>(
@@ -68,19 +72,17 @@ const useFetchData = (
       });
 
       const results = await Promise.all(promises);
-      const newData = results.reduce(
-        (acc, currentData) => ({
-          ...acc,
-          ...currentData,
-        }),
-        {},
-      );
+      const newData = results.reduce((acc, currentData) => {
+        Object.assign(acc, currentData);
+        return acc;
+      }, {});
+
       setData(prevData => {
         // Merge newData with prevData, ensuring only specified keys are updated
         const updatedData = {...prevData};
 
         for (const key of keysToFetch) {
-          if (newData.hasOwnProperty(key)) {
+          if (Object.prototype.hasOwnProperty.call(newData, key)) {
             updatedData[key] = newData[key];
           }
           // If newData does not have the key, prevData[key] remains unchanged
@@ -94,7 +96,7 @@ const useFetchData = (
     };
 
     fetchData();
-  }, [userID, refetchIndex]); // No dataTypes, as that would duplicate the refetch
+  }, [db, userID, refetchIndex, keysToFetch, resolveRefetch]); // No dataTypes, as that would duplicate the refetch
 
   return {
     data: {
