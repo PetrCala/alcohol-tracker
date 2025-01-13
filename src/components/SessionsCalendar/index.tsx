@@ -1,4 +1,5 @@
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+import {useOnyx} from 'react-native-onyx';
 import type {MarkingTypes} from 'react-native-calendars/src/types';
 import type {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
@@ -12,19 +13,18 @@ import {differenceInMonths, format} from 'date-fns';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import type {DateString} from '@src/types/time';
+import type {DateString} from '@src/types/onyx/OnyxCommon';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useLazyMarkedDates from '@hooks/useLazyMarkedDates';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import useTheme from '@hooks/useTheme';
 import DayComponent from './DayComponent';
 import type {Direction} from './CalendarArrow';
 import type SessionsCalendarProps from './types';
 import type {DayComponentProps} from './types';
 import CalendarArrow from './CalendarArrow';
 import setCalendarLocale from './setCalendarLocale';
-import useTheme from '@hooks/useTheme';
 
 function SessionsCalendar({
   userID,

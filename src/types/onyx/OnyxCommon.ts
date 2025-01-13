@@ -76,6 +76,9 @@ type UserArray = UserID[];
 /** A way of measuring consumed alcohol */
 type MeasureType = 'drinks' | 'units';
 
+/** A base date string */
+type DateString = typeof CONST.DATE.FNS_FORMAT_STRING;
+
 /** A semantic versioning string */
 type Semver = string;
 
@@ -87,6 +90,7 @@ type TimeUnit = DeepValueOf<typeof CONST.TIME_UNITS>;
 
 export type {
   AvatarType,
+  DateString,
   ErrorFields,
   Errors,
   Icon,
