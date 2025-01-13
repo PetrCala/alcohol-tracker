@@ -1,17 +1,11 @@
 import React, {useState, useEffect, useMemo, useRef} from 'react';
-import {BackHandler, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {BackHandler, View} from 'react-native';
+import type {Database} from 'firebase/database';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import {
-  getUniqueDrinkTypesInSession,
-  sumAllDrinks,
-  sumDrinksOfSingleType,
-  convertUnitsToColors,
-} from '@libs/DataHandling';
 import Text from '@components/Text';
-import useWaitForNavigation from '@hooks/useWaitForNavigation';
-import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
+import type {DrinkingSession} from '@src/types/onyx';
 import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsWindow from '@components/SessionDetailsWindow';
 import FillerView from '@components/FillerView';
@@ -19,16 +13,14 @@ import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
-import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as App from '@userActions/App';
+import {convertUnitsToColors} from '@libs/DataHandling';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
-import Icon from '@components/Icon';
 import DateUtils from '@libs/DateUtils';
 import {isEqual} from 'lodash';
 import type {CalendarColors} from '@components/SessionsCalendar/types';
@@ -46,7 +38,6 @@ function DrinkingSessionWindow({
 }: DrinkingSessionWindowProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const theme = useTheme();
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {preferences} = useDatabaseData();
@@ -54,8 +45,6 @@ function DrinkingSessionWindow({
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [sessionColor, setSessionColor] = useState<string>('green');
-  const [sessionFinished, setSessionFinished] = useState<boolean>(false);
-  const waitForNavigate = useWaitForNavigation();
   // const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
@@ -70,80 +59,87 @@ function DrinkingSessionWindow({
     return !isEqual(sessionRef.current, session);
   };
 
-  async function saveSession(db: any, user: User | null) {
-    if (!session || !user) {
-      return;
-    }
-    if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      Log.warn('DrinkingSessionWindow - saveSession - Max units exceeded');
-      return null;
-    }
-    if (totalUnits <= 0) {
-      // TODO inform the user why the they can not save their session - 0 units
-      return;
-    }
+  const saveSession = (database: Database, usr: User | null) => {
+    (async () => {
+      if (!session || !usr) {
+        return;
+      }
+      if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
+        Log.warn('DrinkingSessionWindow - saveSession - Max units exceeded');
+        return null;
+      }
+      if (totalUnits <= 0) {
+        // TODO inform the user why the they can not save their session - 0 units
+        return;
+      }
 
-    await App.setLoadingText(translate('liveSessionScreen.saving'));
-    setSessionFinished(true); // No more db syncs
-    const newSessionData: DrinkingSession = {
-      ...session,
-      end_time: session?.ongoing ? Date.now() : session.end_time,
-    };
-    delete newSessionData.ongoing;
-    delete newSessionData.id;
+      await App.setLoadingText(translate('liveSessionScreen.saving'));
+      const newSessionData: DrinkingSession = {
+        ...session,
+        end_time: session?.ongoing ? Date.now() : session.end_time,
+      };
+      delete newSessionData.ongoing;
+      delete newSessionData.id;
 
-    try {
-      await DS.saveDrinkingSessionData(
-        db,
-        user.uid,
-        newSessionData,
-        sessionId,
-        onyxKey,
-        !!sessionIsLive, // Update status if the session is live
-      );
-      // Reroute to session summary, do not allow user to return
-      onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.SAVE);
-    } catch (error) {
-      ErrorUtils.raiseAppError(ERRORS.SESSION.SAVE_FAILED, error);
-      setSessionFinished(false);
-    } finally {
-      await App.setLoadingText(null);
-    }
-  }
+      try {
+        await DS.saveDrinkingSessionData(
+          database,
+          usr.uid,
+          newSessionData,
+          sessionId,
+          onyxKey,
+          !!sessionIsLive, // Update status if the session is live
+        );
+        // Reroute to session summary, do not allow user to return
+        onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+      } catch (error) {
+        ErrorUtils.raiseAppError(ERRORS.SESSION.SAVE_FAILED, error);
+      } finally {
+        await App.setLoadingText(null);
+      }
+    })();
+  };
 
-  const handleDiscardSession = async () => {
+  const handleDiscardSession = () => {
     setDiscardModalVisible(true);
   };
 
-  const handleConfirmDiscard = async () => {
-    if (!user) {
-      return;
-    }
-    try {
-      setDiscardModalVisible(false);
-      await App.setLoadingText(
-        translate('liveSessionScreen.discardingSession', {
-          discardWord: sessionIsLive ? 'Discarding' : 'Deleting',
-        }),
-      );
-      await DS.removeDrinkingSessionData(
-        db,
-        user.uid,
-        sessionId,
-        onyxKey,
-        !!sessionIsLive,
-      );
-      onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
-    } catch (error) {
-      ErrorUtils.raiseAppError(ERRORS.SESSION.DISCARD_FAILED, error);
-    } finally {
-      await App.setLoadingText(null);
-    }
+  const handleConfirmDiscard = () => {
+    (async () => {
+      if (!user) {
+        return;
+      }
+      try {
+        setDiscardModalVisible(false);
+        await App.setLoadingText(
+          translate('liveSessionScreen.discardingSession', {
+            discardWord: sessionIsLive ? 'Discarding' : 'Deleting',
+          }),
+        );
+        await DS.removeDrinkingSessionData(
+          db,
+          user.uid,
+          sessionId,
+          onyxKey,
+          !!sessionIsLive,
+        );
+        onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
+      } catch (error) {
+        ErrorUtils.raiseAppError(ERRORS.SESSION.DISCARD_FAILED, error);
+      } finally {
+        await App.setLoadingText(null);
+      }
+    })();
+  };
+
+  const confirmGoBack = () => {
+    setShouldShowLeaveConfirmation(false);
+    onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.BACK);
   };
 
   /** If an update is pending, update immediately before navigating away
    */
-  const handleBackPress = async () => {
+  const handleBackPress = () => {
     if (!sessionIsLive && hasSessionChanged()) {
       setShouldShowLeaveConfirmation(true); // Unsaved changes
       return;
@@ -151,28 +147,23 @@ function DrinkingSessionWindow({
     confirmGoBack();
   };
 
-  const confirmGoBack = async () => {
-    setShouldShowLeaveConfirmation(false);
-    onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.BACK);
-  };
-
   // Update the hooks whenever drinks change
   useMemo(() => {
     if (!preferences) {
       return;
     }
-    const totalUnits = DSUtils.calculateTotalUnits(
+    const newTotalUnits = DSUtils.calculateTotalUnits(
       session?.drinks,
       preferences.drinks_to_units,
       true,
     );
-    const sessionColor = convertUnitsToColors(
+    const newSessionColor = convertUnitsToColors(
       totalUnits,
       preferences.units_to_colors,
     );
-    setTotalUnits(totalUnits);
-    setSessionColor(sessionColor);
-  }, [session?.drinks]);
+    setTotalUnits(newTotalUnits);
+    setSessionColor(newSessionColor);
+  }, [session?.drinks, preferences, totalUnits]);
 
   // Make the system back press toggle the go back handler
   useEffect(() => {
