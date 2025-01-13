@@ -15,7 +15,7 @@ const friendRequestRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
  * @param userB - User ID of the friend being checked.
  * @returns Returns true if userB is a friend of userA, otherwise false.
  */
-export async function isFriend(
+async function isFriend(
   db: Database,
   userA: string,
   userB: string,
@@ -38,7 +38,7 @@ export async function isFriend(
  * @throws Alert: In case the database fails to
  *  save the data.
  */
-export async function sendFriendRequest(
+async function sendFriendRequest(
   db: Database,
   userFrom: string,
   userTo: string,
@@ -61,7 +61,7 @@ export async function sendFriendRequest(
  * @throws In case the database fails to
  *  save the data.
  */
-export async function deleteFriendRequest(
+async function deleteFriendRequest(
   db: Database,
   userFrom: string,
   userTo: string,
@@ -82,7 +82,7 @@ export async function deleteFriendRequest(
  * @throws In case the database fails to
  *  save the data.
  */
-export async function acceptFriendRequest(
+async function acceptFriendRequest(
   db: Database,
   userFrom: string,
   userTo: string,
@@ -104,7 +104,7 @@ export async function acceptFriendRequest(
  * @returns
  * @throws In case the database fails to save the data.
  */
-export async function unfriend(
+async function unfriend(
   db: Database,
   userFrom: string,
   userTo: string,
@@ -114,3 +114,11 @@ export async function unfriend(
   updates[friendRef.getRoute(userTo, userFrom)] = null;
   await update(ref(db), updates);
 }
+
+export {
+  acceptFriendRequest,
+  deleteFriendRequest,
+  isFriend,
+  sendFriendRequest,
+  unfriend,
+};
