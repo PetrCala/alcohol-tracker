@@ -1,10 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import type {
-  ImageSourcePropType,
-  StyleProp,
-  ViewProps,
-  ViewStyle,
-} from 'react-native';
+import type {ImageSourcePropType, StyleProp, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
@@ -26,12 +21,12 @@ type UploadImageComponentProps = {
   containerStyles?: StyleProp<ViewStyle>;
 };
 
-const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
+function UploadImageComponent({
   pathToUpload,
   src,
   isProfilePicture = false,
   containerStyles,
-}) => {
+}: UploadImageComponentProps) {
   const {auth, db, storage} = useFirebase();
   const styles = useThemeStyles();
   const user = auth.currentUser;
@@ -45,7 +40,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [success, setSuccess] = useState('');
 
-  const chooseImage = async () => {
+  const chooseImage = () => {
     ImagePicker.openPicker({
       width: 300,
       height: 400,
@@ -57,7 +52,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       writeTempFile: true,
       mediaType: 'photo',
     })
-      .then((image: any) => {
+      .then(image => {
         const source = {uri: image.path};
         if (!source) {
           ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH_FAILED);
@@ -75,28 +70,30 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       });
   };
 
-  const handleChooseImagePress = async () => {
-    try {
-      // Check for permissions
-      const permissionAllowed = await checkPermission('read_photos');
-      if (!permissionAllowed) {
-        const permissionGranted = await requestPermission('read_photos');
-        if (!permissionGranted) {
-          return; // Permission denied - info message automatically handled by requestPermission
-        }
-      }
-      await chooseImage(); // Call automatically
-      resetIndicators(); // Clean the indicators for upload
-    } catch (error) {
-      ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE_FAILED, error);
-    }
-  };
-
   const resetIndicators = () => {
     setUploadOngoing(false);
     setUploadProgress(null);
     setWarning('');
     setSuccess('');
+  };
+
+  const handleChooseImagePress = () => {
+    (async () => {
+      try {
+        // Check for permissions
+        const permissionAllowed = await checkPermission('read_photos');
+        if (!permissionAllowed) {
+          const permissionGranted = await requestPermission('read_photos');
+          if (!permissionGranted) {
+            return; // Permission denied - info message automatically handled by requestPermission
+          }
+        }
+        chooseImage(); // Call automatically
+        resetIndicators(); // Clean the indicators for upload
+      } catch (error) {
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE_FAILED, error);
+      }
+    })();
   };
 
   useEffect(() => {
@@ -135,7 +132,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     };
 
     handleUpload(imageSource);
-  }, [imageSource]);
+  }, [auth, db, isProfilePicture, storage, user, pathToUpload, imageSource]);
 
   return (
     <View
@@ -163,6 +160,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       <SuccessMessage successText={success} dispatch={dispatch} /> */}
     </View>
   );
-};
+}
 
 export default UploadImageComponent;
