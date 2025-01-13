@@ -95,8 +95,7 @@ export default function withKeyboardState<
     );
   }
   WithKeyboardState.displayName = `withKeyboardState(${getComponentDisplayName(WrappedComponent)})`;
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  return forwardRef(WithKeyboardState) as any;
+  return forwardRef(WithKeyboardState);
 }
 
 export {

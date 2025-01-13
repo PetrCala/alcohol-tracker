@@ -44,7 +44,10 @@ function EnvironmentProvider({
   const [environment, setEnvironment] = useState<EnvironmentValue>(
     CONST.ENVIRONMENT.PROD,
   );
-  const [environmentURL, setEnvironmentURL] = useState(CONST.KIROKU_URL);
+  const [
+    environmentURL,
+    // setEnvironmentURL
+  ] = useState(CONST.KIROKU_URL);
 
   useEffect(() => {
     Environment.getEnvironment().then(setEnvironment);
