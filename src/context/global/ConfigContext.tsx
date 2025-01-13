@@ -9,11 +9,9 @@ type ConfigContextType = {
   config?: Config;
 };
 
-export const ConfigContext = createContext<ConfigContextType | undefined>(
-  undefined,
-);
+const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
-export const useConfig = (): ConfigContextType => {
+const useConfig = (): ConfigContextType => {
   const context = useContext(ConfigContext);
   if (!context) {
     throw new Error('useConfig must be used within a ConfigProvider');
@@ -25,7 +23,7 @@ type ConfigProviderProps = {
   children: ReactNode;
 };
 
-export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
+function ConfigProvider({children}: ConfigProviderProps) {
   const dataTypes: FetchDataKeys = ['config'];
 
   const {data} = useListenToData(dataTypes);
@@ -39,4 +37,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   return (
     <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
   );
-};
+}
+
+export {ConfigContext, useConfig, ConfigProvider};
+export type {ConfigContextType};
