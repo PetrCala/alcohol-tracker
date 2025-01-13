@@ -32,4 +32,7 @@ async function checkAccountCreationLimit(db: Database): Promise<boolean> {
   return true;
 }
 
-export {checkAccountCreationLimit};
+export {
+  // eslint-disable-next-line import/prefer-default-export
+  checkAccountCreationLimit,
+};

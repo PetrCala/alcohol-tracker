@@ -8,6 +8,9 @@ import type {
 import type {UserID} from './types/onyx/OnyxCommon';
 import type {NicknameKey} from './types/onyx/NicknameToId';
 
+// The database uses 'snake_case' for keys
+/* eslint-disable @typescript-eslint/naming-convention */
+
 const DBPATHS = {
   ROOT: '',
 
@@ -211,8 +214,8 @@ const DBPATHS = {
 
 export default DBPATHS;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ExtractPathName<TRoute> = TRoute extends {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getRoute: (...args: any[]) => infer TRouteName;
 }
   ? TRouteName
