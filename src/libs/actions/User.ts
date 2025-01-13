@@ -4,7 +4,6 @@ import type {
   AppSettings,
   DrinkingSessionList,
   FriendRequestList,
-  Nickname,
   NicknameToId,
   Preferences,
   Profile,

@@ -156,7 +156,8 @@ function getOngoingSessionId(
   }
 
   const ongoingSessions = Object.entries(drinkingSessions).find(
-    ([_, value]) => value?.ongoing === true,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ([_item, value]) => value?.ongoing === true,
   );
 
   // if (ongoingSessions.length > 1) {...} // Possibly handle this
