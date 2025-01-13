@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react';
-import {createContext, useContext} from 'react';
+import {createContext, useContext, useMemo} from 'react';
 import type {Auth} from 'firebase/auth';
 import {connectAuthEmulator} from 'firebase/auth';
 import type {Database} from 'firebase/database';
@@ -27,7 +27,7 @@ const FirebaseContext = createContext<FirebaseContextProps | null>(null);
  *
  * @example { db, storage } = useFirebase();
  */
-export const useFirebase = (): FirebaseContextProps => {
+const useFirebase = (): FirebaseContextProps => {
   const context = useContext(FirebaseContext);
   if (!context) {
     throw new Error(
@@ -43,53 +43,57 @@ type FirebaseProviderProps = {
 
 /** Provide a firebase context to the application
  */
-export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
-  children,
-}) => {
-  // Initialize Auth with React Native persistence
-  const db = getDatabase(FirebaseApp);
-  const storage = getStorage(FirebaseApp);
+function FirebaseProvider({children}: FirebaseProviderProps) {
+  const value = useMemo(() => {
+    // Initialize Auth with React Native persistence
+    const db = getDatabase(FirebaseApp);
+    const storage = getStorage(FirebaseApp);
 
-  // Check if emulators should be used
-  if (CONFIG.IS_USING_EMULATORS) {
-    console.debug('The app is running in testing mode.');
+    // Check if emulators should be used
+    if (CONFIG.IS_USING_EMULATORS) {
+      console.debug('The app is running in testing mode.');
 
-    console.debug('Connecting to Firebase Emulators...');
+      console.debug('Connecting to Firebase Emulators...');
 
-    if (!FirebaseConfig.authDomain) {
-      throw new Error('Auth URL not defined in FirebaseConfig');
-    }
-    if (!FirebaseConfig.databaseURL) {
-      throw new Error('Database URL not defined in FirebaseConfig');
-    }
-    if (!FirebaseConfig.storageBucket) {
-      throw new Error('Storage bucket not defined in FirebaseConfig');
-    }
+      if (!FirebaseConfig.authDomain) {
+        throw new Error('Auth URL not defined in FirebaseConfig');
+      }
+      if (!FirebaseConfig.databaseURL) {
+        throw new Error('Database URL not defined in FirebaseConfig');
+      }
+      if (!FirebaseConfig.storageBucket) {
+        throw new Error('Storage bucket not defined in FirebaseConfig');
+      }
 
-    if (!isConnectedToAuthEmulator(auth)) {
-      connectAuthEmulator(auth, CONFIG.EMULATORS.AUTH_URL);
-    }
+      if (!isConnectedToAuthEmulator(auth)) {
+        connectAuthEmulator(auth, CONFIG.EMULATORS.AUTH_URL);
+      }
 
-    // Safety check to connect to emulators only if they are not already running
-    if (!isConnectedToDatabaseEmulator(db)) {
-      connectDatabaseEmulator(
-        db,
-        CONFIG.EMULATORS.HOST,
-        CONFIG.EMULATORS.DATABASE_PORT,
-      );
-    }
+      // Safety check to connect to emulators only if they are not already running
+      if (!isConnectedToDatabaseEmulator(db)) {
+        connectDatabaseEmulator(
+          db,
+          CONFIG.EMULATORS.HOST,
+          CONFIG.EMULATORS.DATABASE_PORT,
+        );
+      }
 
-    if (!isConnectedToStorageEmulator(storage)) {
-      connectStorageEmulator(
-        storage,
-        CONFIG.EMULATORS.HOST,
-        CONFIG.EMULATORS.STORAGE_BUCKET_PORT,
-      );
+      if (!isConnectedToStorageEmulator(storage)) {
+        connectStorageEmulator(
+          storage,
+          CONFIG.EMULATORS.HOST,
+          CONFIG.EMULATORS.STORAGE_BUCKET_PORT,
+        );
+      }
     }
-  }
+    return {auth, db, storage};
+  }, []);
+
   return (
-    <FirebaseContext.Provider value={{auth, db, storage}}>
+    <FirebaseContext.Provider value={value}>
       {children}
     </FirebaseContext.Provider>
   );
-};
+}
+
+export {useFirebase, FirebaseProvider};
