@@ -1,5 +1,5 @@
-import type {CommitType} from '../../.github/libs/GitUtils';
-import GitUtils from '../../.github/libs/GitUtils';
+import type {CommitType} from '@github/libs/GitUtils';
+import GitUtils from '@github/libs/GitUtils';
 
 type ExampleDataType = {
   input: CommitType[];

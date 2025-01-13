@@ -7,9 +7,11 @@ import type {TranslationPaths} from '@src/languages/types';
 const setCalendarLocale = (locale: Locale) => {
   const translationsLocale = translations.default[locale];
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   LocaleConfig.locales[locale] =
     translationsLocale.calendar as TranslationPaths;
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   LocaleConfig.defaultLocale = locale;
 };
 

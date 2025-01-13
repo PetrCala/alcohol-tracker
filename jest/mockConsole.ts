@@ -18,7 +18,7 @@ const mockConsoleMethod = (method: 'log' | 'warn' | 'error') => {
  * @param methods Optional array of console methods to mock.
  */
 const mockConsole = (
-  methods: ('log' | 'warn' | 'error')[] = ['log', 'warn', 'error'],
+  methods: Array<'log' | 'warn' | 'error'> = ['log', 'warn', 'error'],
 ) => {
   methods.forEach(mockConsoleMethod);
 };

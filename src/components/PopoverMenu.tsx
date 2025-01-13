@@ -9,12 +9,12 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 import CONST from '@src/CONST';
 import type {AnchorPosition} from '@src/styles';
 import type AnchorAlignment from '@src/types/utils/AnchorAlignment';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import type {MenuItemProps} from './MenuItem';
 import MenuItem from './MenuItem';
 import PopoverWithMeasuredContent from './PopoverWithMeasuredContent';
 import Text from './Text';
-import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type PopoverMenuItem = MenuItemProps & {
   /** Text label */
