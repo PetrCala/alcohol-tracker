@@ -51,11 +51,9 @@ Onyx.registerLogger(({level, message}) => {
   }
 });
 
-type KirokuProps = {};
-
 const SplashScreenHiddenContext = React.createContext({});
 
-function Kiroku({}: KirokuProps) {
+function Kiroku() {
   const {db, auth} = useFirebase();
   const {isOnline} = useUserConnection();
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
@@ -64,7 +62,6 @@ function Kiroku({}: KirokuProps) {
   const {splashScreenState, setSplashScreenState} = useContext(
     SplashScreenStateContext,
   );
-  const [hasAttemptedToAutoLogin, setAttemptedToAutoLogin] = useState(false);
   const [lastVisitedPath] = useOnyx(ONYXKEYS.LAST_VISITED_PATH);
   const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
@@ -101,22 +98,23 @@ function Kiroku({}: KirokuProps) {
   }, [auth]);
 
   useMemo(() => {
-    if (config) {
-      const underMaintenance: boolean = checkIfUnderMaintenance(
-        config?.maintenance,
-      );
-      const versionValidationResult = validateAppVersion(config.app_settings);
-      const newUpdateAvailable = !!versionValidationResult?.updateAvailable;
-      const newUpdateRequired = !versionValidationResult.success;
-      const newShouldShowUpdateModal =
-        !shouldShowVerifyEmailModal &&
-        UserUtils.shouldShowUpdateModal(newUpdateAvailable, newUpdateRequired);
-
-      setIsUnderMaintenance(underMaintenance);
-      setUpdateAvailable(newUpdateAvailable);
-      setUpdateRequired(newUpdateRequired);
-      setShouldShowUpdateModal(newShouldShowUpdateModal);
+    if (!config) {
+      return;
     }
+    const underMaintenance: boolean = checkIfUnderMaintenance(
+      config?.maintenance,
+    );
+    const versionValidationResult = validateAppVersion(config.app_settings);
+    const newUpdateAvailable = !!versionValidationResult?.updateAvailable;
+    const newUpdateRequired = !versionValidationResult.success;
+    const newShouldShowUpdateModal =
+      !shouldShowVerifyEmailModal &&
+      UserUtils.shouldShowUpdateModal(newUpdateAvailable, newUpdateRequired);
+
+    setIsUnderMaintenance(underMaintenance);
+    setUpdateAvailable(newUpdateAvailable);
+    setUpdateRequired(newUpdateRequired);
+    setShouldShowUpdateModal(newShouldShowUpdateModal);
   }, [config, shouldShowVerifyEmailModal]);
 
   const shouldInit = isNavigationReady && hasCheckedAutoLogin;
@@ -219,7 +217,7 @@ function Kiroku({}: KirokuProps) {
       }
       appStateChangeListener.current.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't want this effect to run again
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, []);
 
   useLayoutEffect(() => {
@@ -243,19 +241,18 @@ function Kiroku({}: KirokuProps) {
     // This should later be refactored to use onyx/API
     const checkShouldShowAgreeToTermsModal = async () => {
       try {
-        if (!auth.currentUser || !db || !config) {
+        if (!auth.currentUser || !db || !config?.terms_last_updated) {
           return;
         }
         const lastAgreedAt = await User.fetchLastAgreedToTermsAt(
           db,
           auth.currentUser.uid,
         );
-        const shouldShowAgreeToTermsModal =
-          UserUtils.shouldShowAgreeToTermsModal(
-            lastAgreedAt,
-            config?.terms_last_updated,
-          );
-        setShouldShowAgreeToTermsModal(shouldShowAgreeToTermsModal);
+        const shouldShowModal = UserUtils.shouldShowAgreeToTermsModal(
+          lastAgreedAt,
+          config?.terms_last_updated,
+        );
+        setShouldShowAgreeToTermsModal(shouldShowModal);
       } catch (error) {
         ErrorUtils.raiseAlert(ERRORS.DATABASE.DATA_FETCH_FAILED, error);
       }
