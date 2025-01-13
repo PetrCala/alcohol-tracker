@@ -10,7 +10,6 @@ import type {
 } from '@src/types/onyx';
 import * as Localize from '@libs/Localize';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import * as ErrorUtils from '@libs/ErrorUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {User} from 'firebase/auth';
 import CONST from '@src/CONST';
