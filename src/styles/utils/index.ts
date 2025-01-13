@@ -19,7 +19,6 @@ import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
 import type {Theme as RNCalendarsTheme} from 'react-native-calendars/src/types';
-import type {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import type {LightCalendarColors} from '@components/SessionsCalendar/DayComponent/types';
 import {defaultStyles} from '..';

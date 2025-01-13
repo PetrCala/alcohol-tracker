@@ -64,7 +64,7 @@ function Avatar({
   fallbackIcon = KirokuIcons.UserIcon,
   fallbackIconTestID = '',
   type = CONST.ICON_TYPE_AVATAR,
-  name = '',
+  name = '', // eslint-disable-line @typescript-eslint/no-unused-vars
   userID,
 }: AvatarProps) {
   const theme = useTheme();
