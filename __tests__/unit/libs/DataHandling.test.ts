@@ -21,20 +21,12 @@ import {
   timestampToDate,
   convertUnitsToColors,
 } from '@libs/DataHandling';
-import {
-  createMockPreferences,
-  createMockSession,
-  createMockDrinksList,
-} from '@src/database/MockDatabase';
+import {createMockSession} from '@src/database/MockDatabase';
 import type {
   DrinkingSession,
-  DrinkingSessionArray,
-  DrinkingSessionList,
   DrinksList,
-  Preferences,
   Drinks,
   UnitsToColors,
-  DrinksToUnits,
 } from '@src/types/onyx';
 import CONST from '@src/CONST';
 
@@ -71,7 +63,7 @@ describe('timestampToDate function', () => {
 });
 
 describe('dateToDateData function', () => {
-  function checkDateDataProperties(date: Date, dateData: any) {
+  function checkDateDataProperties(date: Date, dateData: DateData) {
     const formattedDate = formatDate(date);
     expect(dateData.dateString).toEqual(formattedDate);
     expect(dateData.day).toEqual(date.getDate());
@@ -366,11 +358,13 @@ describe('sumDrinksOfSingleType function', () => {
 
   beforeEach(() => {
     drinksData = {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       1632423423: {
         beer: 2,
         cocktail: 1,
         other: 3,
       },
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       1632434223: {
         other: 3,
       },
@@ -696,8 +690,10 @@ describe('getRandomDrinksList', () => {
 
   it('should return an object with all values between 0 and maxDrinkValue (exclusive)', () => {
     for (const drink in randomDrinks) {
-      expect(randomDrinks[drink as keyof Drinks]).toBeGreaterThanOrEqual(0);
-      expect(randomDrinks[drink as keyof Drinks]).toBeLessThanOrEqual(30);
+      if (Object.hasOwn(randomDrinks, drink)) {
+        expect(randomDrinks[drink as keyof Drinks]).toBeGreaterThanOrEqual(0);
+        expect(randomDrinks[drink as keyof Drinks]).toBeLessThanOrEqual(30);
+      }
     }
   });
 
