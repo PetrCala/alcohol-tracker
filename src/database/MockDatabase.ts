@@ -30,7 +30,7 @@ import {
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import CONST from '@src/CONST';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import {addDays, startOfDay, subDays} from 'date-fns';
+import {addDays, subDays} from 'date-fns';
 import DateUtils from '@libs/DateUtils';
 
 function getMockSessionIDs(): string[] {
@@ -129,15 +129,15 @@ function createMockFeedback(): Feedback {
 }
 
 function createMockUserStatus(
-  latest_session_id?: string,
-  latest_session?: DrinkingSession,
+  latestSessionId?: string,
+  latestSession?: DrinkingSession,
 ): UserStatus {
   const mockUserStatus: UserStatus = {
     last_online: Date.now(),
   };
-  if (latest_session_id && latest_session) {
-    mockUserStatus.latest_session_id = latest_session_id;
-    mockUserStatus.latest_session = latest_session;
+  if (latestSessionId && latestSession) {
+    mockUserStatus.latest_session_id = latestSessionId;
+    mockUserStatus.latest_session = latestSession;
   }
   return mockUserStatus;
 }
@@ -183,9 +183,7 @@ function createMockSession(
   drinks?: DrinksList,
   ongoing?: boolean,
 ): DrinkingSession {
-  if (!drinks) {
-    drinks = getZeroDrinksList();
-  }
+  const sessionDrinks: DrinksList = drinks ?? getZeroDrinksList();
   let sessionDate = new Date(baseDate);
 
   if (shouldOffetDays) {
@@ -202,7 +200,7 @@ function createMockSession(
     end_time: sessionDate.getTime() + 2 * 60 * 60 * 1000, // +2 hours
     blackout: false,
     note: '',
-    drinks,
+    drinks: sessionDrinks,
     type: getRandomChoice(Object.values(CONST.SESSION.TYPES)),
     timezone: DateUtils.getCurrentTimezone().selected,
   };
@@ -276,12 +274,11 @@ function createMockFriendRequests(userID: string): FriendRequestList {
   );
   const mockUserIDs = getMockUserIDs();
   for (const mockId of mockUserIDs) {
-    if (mockId === userID) {
-      continue; // Skip self
+    if (mockId !== userID) {
+      const randomIndex = Math.floor(Math.random() * statuses.length);
+      const mockStatus = statuses[randomIndex];
+      mockRequestData[mockId] = mockStatus;
     }
-    const randomIndex = Math.floor(Math.random() * statuses.length);
-    const mockStatus = statuses[randomIndex];
-    mockRequestData[mockId] = mockStatus;
   }
   return mockRequestData;
 }
@@ -324,7 +321,7 @@ function createMockDatabase(noFriends = false): DatabaseProps {
   const mockUserIDs = getMockUserIDs();
   const mockSessionIDs = getMockSessionIDs();
 
-  mockUserIDs.forEach((userID, index) => {
+  mockUserIDs.forEach(userID => {
     // Feedback
     db.feedback[userID] = createMockFeedback();
 
@@ -369,13 +366,10 @@ function createMockDatabase(noFriends = false): DatabaseProps {
  *
  * @returns The path of the exported JSON file.
  */
-function exportMockDatabase(verbose = false): string {
+function exportMockDatabase(): string {
   const mockDatabase = createMockDatabase();
   const filePath = './mockDatabase.json';
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
-  if (verbose) {
-    console.log(`Mock database exported to: ${filePath}`);
-  }
   return filePath;
 }
 
