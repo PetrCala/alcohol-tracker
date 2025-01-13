@@ -177,7 +177,8 @@ function DrinkingSessionWindow({
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
-  }, [session]);
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
+  }, []);
 
   useFocusEffect(() => {
     App.setLoadingText(null);
