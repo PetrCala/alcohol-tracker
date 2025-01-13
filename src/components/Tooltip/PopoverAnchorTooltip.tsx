@@ -13,8 +13,8 @@ function PopoverAnchorTooltip({
   const tooltipRef = useRef<BoundsObserver>(null);
 
   const isPopoverRelatedToTooltipOpen = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/dot-notation, react-compiler/react-compiler
     const tooltipNode =
+      // eslint-disable-next-line @typescript-eslint/dot-notation, react-compiler/react-compiler
       (tooltipRef.current?.['_childNode'] as Node | undefined) ?? null;
 
     if (
