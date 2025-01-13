@@ -1,7 +1,8 @@
 import useThemeStyles from '@hooks/useThemeStyles';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import CONST from '@src/CONST';
 import useLocalize from '@hooks/useLocalize';
+import Text from '@components/Text';
 import SafeAreaConsumer from './SafeAreaConsumer';
 import Modal from './Modal';
 
