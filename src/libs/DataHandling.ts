@@ -1,5 +1,5 @@
 import type {DateData} from 'react-native-calendars';
-import type {DateString} from '@src/types/time';
+import type {DateString} from '@src/types/onyx/OnyxCommon';
 import type {
   CalendarColors,
   SessionsCalendarDayMarking,

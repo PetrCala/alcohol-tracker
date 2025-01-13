@@ -1,6 +1,5 @@
 import type {DrinkingSessionId} from './types/onyx';
-import type {UserID} from './types/onyx/OnyxCommon';
-import type {DateString} from './types/time';
+import type {UserID, DateString} from './types/onyx/OnyxCommon';
 
 /**
  * Builds a URL with an encoded URI component for the `backTo` param which can be added to the end of URLs

@@ -22,10 +22,8 @@ import type {MarkedDates} from 'react-native-calendars/src/types';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {useFirebase} from '@context/global/FirebaseContext';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
+import type {UserID, DateString} from '@src/types/onyx/OnyxCommon';
 import {useIsFocused} from '@react-navigation/native';
-
-type DateString = string;
 
 /**
  * Custom hook to manage and memoize drinking session data with lazy loading
