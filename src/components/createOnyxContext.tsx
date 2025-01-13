@@ -29,10 +29,10 @@ type WithOnyxKeyProps<
   TTransformedValue,
 > = {
   propName?: TOnyxKey | TNewOnyxKey;
-  // It's not possible to infer the type of props of the wrapped component, so we have to use `any` here
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transformValue?: (
     value: OnyxValue<TOnyxKey>,
+    // It's not possible to infer the type of props of the wrapped component, so we have to use `any` here
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     props: any,
   ) => TTransformedValue;
 };
