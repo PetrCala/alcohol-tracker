@@ -154,8 +154,8 @@ const ROUTES = {
 export {getUrlWithBackToParam, PUBLIC_SCREENS_ROUTES};
 export default ROUTES;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ExtractRouteName<TRoute> = TRoute extends {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getRoute: (...args: any[]) => infer TRouteName;
 }
   ? TRouteName
