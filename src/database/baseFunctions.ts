@@ -5,6 +5,7 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {Diff, DiffArray} from 'deep-diff';
 import {diff} from 'deep-diff';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FirebaseUpdates<T = any> = Record<string, T>;
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
@@ -104,9 +105,13 @@ async function fetchDisplayDataForUsers(
 ): Promise<ProfileList | UserStatusList> {
   const newDisplayData: ProfileList = {};
   if (db && userIDs) {
-    const data: any[] = await fetchDataForUsers(db, userIDs, refTemplate);
+    const data = await fetchDataForUsers(db, userIDs, refTemplate);
     userIDs.forEach((id, index) => {
-      newDisplayData[id] = data[index];
+      const profile = data[index];
+      if (!profile) {
+        throw new Error(`Failed to fetch data for a user: ${id}`);
+      }
+      newDisplayData[id] = profile;
     });
   }
   return newDisplayData;
@@ -124,7 +129,7 @@ function differencesToUpdates<T>(differences: Array<Diff<T, T>>): Partial<T> {
   const updates: Partial<T> = {};
 
   differences.forEach(difference => {
-    const path = difference.path || [];
+    const path = difference.path ?? [];
 
     if (path.length === 0) {
       return;
