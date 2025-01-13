@@ -19,8 +19,9 @@ import {
 import {sessionsToDayMarking} from '@libs/DataHandling';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import type {MarkedDates} from 'react-native-calendars/src/types';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import * as Calendar from '@userActions/Calendar';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {UserID, DateString} from '@src/types/onyx/OnyxCommon';
 import {useIsFocused} from '@react-navigation/native';
@@ -96,17 +97,22 @@ function useLazyMarkedDates(
         session.start_time,
         session.timezone ?? defaultTimezone,
       );
-      const dayKey = format(sessionDate, CONST.DATE.FNS_FORMAT_STRING);
+      const dayKey = format(
+        sessionDate,
+        CONST.DATE.FNS_FORMAT_STRING,
+      ) as DateString;
 
       if (!index.has(dayKey)) {
         index.set(dayKey, []);
       }
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       index.get(dayKey)!.push(session);
     });
 
     const datesToLoad = eachDayOfInterval({start, end});
-    const dayStrings = datesToLoad.map(date =>
-      format(date, CONST.DATE.FNS_FORMAT_STRING),
+    const dayStrings = datesToLoad.map(
+      date => format(date, CONST.DATE.FNS_FORMAT_STRING) as DateString,
     );
 
     // Mark the dates and units for each day - do not use the in-built forEach method, as it introduces an erro into the assignment
@@ -156,16 +162,17 @@ function useLazyMarkedDates(
 
   useEffect(() => {
     // For the current user, save the number of months loaded when focus is lost
-    if (!isFocused) {
-      if (user?.uid === userID) {
-        const newMonthsLoaded = differenceInMonths(
-          new Date(),
-          loadedFrom.current ?? new Date(),
-        );
-        Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
-      }
+    if (isFocused) {
+      return;
     }
-  }, [isFocused]);
+    if (user?.uid === userID) {
+      const newMonthsLoaded = differenceInMonths(
+        new Date(),
+        loadedFrom.current ?? new Date(),
+      );
+      Calendar.setSessionsCalendarMonthsLoaded(newMonthsLoaded);
+    }
+  }, [isFocused, user?.uid, userID]);
 
   useEffect(() => {
     // Calculate only upon refocus
@@ -185,7 +192,10 @@ function useLazyMarkedDates(
 
     loadMoreMonths(newMonthsToLoad, true);
     setIsLoading(false);
-  }, [sessions, preferences, userID, isFocused]);
+
+    // TODOcheck the validity of loadMoreMonths and monthsLoaded for re-renders
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
+  }, [sessions, preferences, userID, user?.uid, isFocused, monthsLoaded]);
 
   return {
     markedDates,
