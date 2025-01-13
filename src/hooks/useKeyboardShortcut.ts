@@ -29,7 +29,7 @@ type KeyboardShortcutConfig = {
 export default function useKeyboardShortcut(
   shortcut: Shortcut,
   callback: (e?: GestureResponderEvent | KeyboardEvent) => void,
-  config: KeyboardShortcutConfig | Record<string, never> = {},
+  config: KeyboardShortcutConfig = {},
 ) {
   const {
     captureOnInputs = true,
@@ -67,7 +67,7 @@ export default function useKeyboardShortcut(
     return () => {
       unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    /* eslint-disable react-compiler/react-compiler, react-hooks/exhaustive-deps */
   }, [
     isActive,
     callback,
