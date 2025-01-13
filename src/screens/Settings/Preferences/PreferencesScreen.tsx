@@ -76,7 +76,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
         },
       ],
     };
-  }, [translate, preferences?.theme]);
+  }, [translate, preferences?.theme, preferredLocale]); // Check whether preferred locale does not cause infinite re-render
 
   const drinksAndUnitsMenuItemsData: Menu = useMemo(() => {
     return {
