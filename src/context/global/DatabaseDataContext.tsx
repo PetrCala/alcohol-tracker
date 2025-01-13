@@ -20,11 +20,11 @@ type DatabaseDataContextType = {
   userData?: UserData;
 };
 
-export const DatabaseDataContext = createContext<
-  DatabaseDataContextType | undefined
->(undefined);
+const DatabaseDataContext = createContext<DatabaseDataContextType | undefined>(
+  undefined,
+);
 
-export const useDatabaseData = (): DatabaseDataContextType => {
+const useDatabaseData = (): DatabaseDataContextType => {
   const context = useContext(DatabaseDataContext);
   if (!context) {
     throw new Error(
@@ -38,9 +38,7 @@ type DatabaseDataProviderProps = {
   children: ReactNode;
 };
 
-export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
-  children,
-}) => {
+function DatabaseDataProvider({children}: DatabaseDataProviderProps) {
   const {auth} = useFirebase();
   const user = auth.currentUser;
   const userID = user ? user.uid : '';
@@ -82,4 +80,6 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       {children}
     </DatabaseDataContext.Provider>
   );
-};
+}
+
+export {DatabaseDataContext, useDatabaseData, DatabaseDataProvider};
