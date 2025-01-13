@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react';
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
 import {useFirebase} from './FirebaseContext';
@@ -8,7 +8,7 @@ type UserConnectionContextProps = {
   isOnline: boolean | undefined;
 };
 
-export const UserConnectionContext = createContext<
+const UserConnectionContext = createContext<
   UserConnectionContextProps | undefined
 >(undefined);
 
@@ -16,7 +16,7 @@ export const UserConnectionContext = createContext<
  *
  * @example { isOnline } = useUserConnection(); // Returns a boolean
  */
-export const useUserConnection = (): UserConnectionContextProps => {
+const useUserConnection = (): UserConnectionContextProps => {
   const context = useContext(UserConnectionContext);
   if (!context) {
     throw new Error(
@@ -35,9 +35,7 @@ type UserConnectionProviderProps = {
  * Using a user connection listener, monitor the user connection status
  * and provide this information through a context provider.
  */
-export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({
-  children,
-}) => {
+function UserConnectionProvider({children}: UserConnectionProviderProps) {
   const {db} = useFirebase();
   const [isOnline, setIsOnline] = useState<boolean | undefined>(true);
 
@@ -51,22 +49,25 @@ export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({
     NetInfo.fetch().then(state => {
       const isUsingEmulators = isConnectedToDatabaseEmulator(db);
       const isConnected = state.isConnected as boolean | undefined;
-      setIsOnline(isConnected || isUsingEmulators);
+      setIsOnline(isConnected ?? isUsingEmulators);
     });
 
     // Unsubscribe to clean up the subscription
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [db]);
 
-  const value = {
-    isOnline,
-  };
+  const value = useMemo(() => {
+    return {isOnline};
+  }, [isOnline]);
 
   return (
     <UserConnectionContext.Provider value={value}>
       {children}
     </UserConnectionContext.Provider>
   );
-};
+}
+
+export {UserConnectionContext, useUserConnection, UserConnectionProvider};
+export type {UserConnectionContextProps};
