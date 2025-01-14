@@ -546,6 +546,11 @@ async function saveSelectedTimezone(
   });
 }
 
+/** Set the information about when the verify email modal was last dismissed */
+async function setVerifyEmailDismissed(timestamp: Timestamp): Promise<void> {
+  await Onyx.set(ONYXKEYS.VERIFY_EMAIL_DISMISSED, timestamp);
+}
+
 /** Attempt to log in to the Firebase authentication service with a user's credentials
  *
  * @param auth The Firebase authentication object
@@ -662,6 +667,7 @@ export {
   saveSelectedTimezone,
   sendUpdateEmailLink,
   sendVerifyEmailLink,
+  setVerifyEmailDismissed,
   synchronizeUserStatus,
   updateAgreedToTermsAt,
   updateAutomaticTimezone,

@@ -1,7 +1,6 @@
 import useThemeStyles from '@hooks/useThemeStyles';
 import React from 'react';
 import type {StyleProp, ViewStyle, TextStyle} from 'react-native';
-import {Image} from 'react-native';
 import useNativeDriver from '@libs/useNativeDriver';
 import * as Animatable from 'react-native-animatable';
 import variables from '@src/styles/variables';
@@ -10,6 +9,8 @@ import useTheme from '@hooks/useTheme';
 import useLocalize from '@hooks/useLocalize';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import Icon from './Icon';
+
+/* eslint-disable @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing */
 
 type SuccessAnimationProps = {
   /** The icon asset to display */
@@ -22,7 +23,7 @@ type SuccessAnimationProps = {
   visible: boolean;
 
   /** Callback to fire when the animation ends */
-  onAnimationEnd?: () => void;
+  onAnimationEnd?: () => Promise<void>;
 
   /** Optional styles to be assigned to the container */
   style?: StyleProp<ViewStyle>;
