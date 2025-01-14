@@ -64,15 +64,15 @@ describe('Test the validateSemver function', () => {
   });
 
   it('throws an error for non-strings', () => {
-    // @ts-expect-error
+    // @ts-expect-error An invalid semver is passed
     expect(() => validateSemver(1)).toThrow('Invalid SemVer version.');
-    // @ts-expect-error
+    // @ts-expect-error An invalid semver is passed
     expect(() => validateSemver(undefined)).toThrow('Invalid SemVer version.');
-    // @ts-expect-error
+    // @ts-expect-error An invalid semver is passed
     expect(() => validateSemver(null)).toThrow('Invalid SemVer version.');
-    // @ts-expect-error
+    // @ts-expect-error An invalid semver is passed
     expect(() => validateSemver([1, 2, 3])).toThrow('Invalid SemVer version.');
-    // @ts-expect-error
+    // @ts-expect-error An invalid semver is passed
     expect(() => validateSemver({a: 1})).toThrow('Invalid SemVer version.');
   });
 
