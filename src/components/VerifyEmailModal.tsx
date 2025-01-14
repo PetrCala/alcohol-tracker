@@ -5,8 +5,6 @@ import {View} from 'react-native';
 import useLocalize from '@hooks/useLocalize';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import Onyx from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 import useTheme from '@hooks/useTheme';
 import {sleep} from '@libs/TimeUtils';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -65,12 +63,14 @@ function VerifyEmailModal() {
   };
 
   const onDismissVerifyEmail = () => {
-    Onyx.set(ONYXKEYS.VERIFY_EMAIL_DISMISSED, new Date().getTime())
+    const dismissTime = new Date().getTime();
+    User.setVerifyEmailDismissed(dismissTime)
       .then(() => {
         setIsVisible(false);
       })
       .catch(error => {
-        setErrorText(error.message);
+        const errorMessage = error instanceof Error ? error.message : '';
+        setErrorText(errorMessage);
       });
   };
 
@@ -83,10 +83,12 @@ function VerifyEmailModal() {
   // Redirect to home screen if user is verified
   useEffect(() => {
     const checkStatus = async () => {
-      if (user) {
-        await user.reload();
-        setEmailVerified(user.emailVerified);
+      if (!user) {
+        return;
       }
+
+      await user.reload();
+      setEmailVerified(user.emailVerified);
     };
     checkStatus();
   }, [user, auth]);
@@ -141,8 +143,8 @@ function VerifyEmailModal() {
                     <DotIndicatorMessage
                       style={[styles.mv2]}
                       type="success"
-                      // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
                       messages={{
+                        // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
                         0: translate('verifyEmailScreen.emailSent'),
                       }}
                     />
