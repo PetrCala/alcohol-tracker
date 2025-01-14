@@ -2,7 +2,7 @@ import {View} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import StatItem from './StatItem';
 
-export type StatData = Array<{
+type StatData = Array<{
   header: string;
   content: string;
 }>;
@@ -11,14 +11,21 @@ type StatsOverviewProps = {
   statsData: StatData;
 };
 
-export const StatsOverview: React.FC<StatsOverviewProps> = ({statsData}) => {
+function StatOverview({statsData}: StatsOverviewProps) {
   const styles = useThemeStyles();
 
   return (
     <View style={styles.statOverviewContainer}>
-      {statsData.map((stat, index) => (
-        <StatItem key={index} header={stat.header} content={stat.content} />
+      {statsData.map(stat => (
+        <StatItem
+          key={stat.header}
+          header={stat.header}
+          content={stat.content}
+        />
       ))}
     </View>
   );
-};
+}
+
+export default StatOverview;
+export type {StatData};

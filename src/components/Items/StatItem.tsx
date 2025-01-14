@@ -7,8 +7,7 @@ type StatItemProps = {
   content: string;
 };
 
-// StatItem component with types
-const StatItem: React.FC<StatItemProps> = ({header, content}) => {
+function StatItem({header, content}: StatItemProps) {
   const styles = useThemeStyles();
 
   return (
@@ -27,6 +26,6 @@ const StatItem: React.FC<StatItemProps> = ({header, content}) => {
       </Text>
     </View>
   );
-};
+}
 
 export default StatItem;

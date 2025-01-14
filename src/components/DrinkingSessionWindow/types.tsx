@@ -25,4 +25,4 @@ type DrinkingSessionWindowProps = {
   type: DrinkingSessionType;
 };
 
-export type {DrinkingSessionWindowProps};
+export default DrinkingSessionWindowProps;
