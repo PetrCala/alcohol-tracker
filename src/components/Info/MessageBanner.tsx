@@ -1,8 +1,8 @@
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
-import stylePropTypes from '@src/styles/stylePropTypes';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {PressableWithFeedback} from '@components/Pressable';
 import Text from '@components/Text';
+import useLocalize from '@hooks/useLocalize';
 
 type MessageBannerProps = {
   text: string;
@@ -10,18 +10,14 @@ type MessageBannerProps = {
   danger?: boolean;
   success?: boolean;
 };
-
-const MessageBanner: React.FC<MessageBannerProps> = ({
-  text,
-  onPress,
-  danger,
-  success,
-}) => {
+function MessageBanner({text, onPress, danger, success}: MessageBannerProps) {
   const styles = useThemeStyles();
   const theme = useTheme();
+  const {translate} = useLocalize();
+
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
+    <PressableWithFeedback
+      accessibilityLabel={translate('homeScreen.currentlyInSessionButton')}
       style={[
         styles.messageBanner,
         danger && styles.buttonDanger,
@@ -31,8 +27,8 @@ const MessageBanner: React.FC<MessageBannerProps> = ({
       <Text style={[styles.buttonHugeText, {color: theme.textLight}]}>
         {text}
       </Text>
-    </TouchableOpacity>
+    </PressableWithFeedback>
   );
-};
+}
 
 export default MessageBanner;

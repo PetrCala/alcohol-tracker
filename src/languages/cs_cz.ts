@@ -817,6 +817,8 @@ export default {
     startNewSessionByClickingPlus:
       'Spusťte novou relaci kliknutím na tlačítko plus v dolní části obrazovky',
     currentlyInSession: 'Právě se nacházíte v relaci!',
+    currentlyInSessionButton:
+      'Tlačítko, které informuje, že se právě nacházíte v relaci',
   },
   liveSessionScreen: {
     saving: 'Ukládám vaši relaci...',

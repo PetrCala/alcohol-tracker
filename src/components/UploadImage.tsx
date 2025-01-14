@@ -156,8 +156,6 @@ function UploadImageComponent({
           onUploadFinish={() => setUploadOngoing(false)}
         />
       )}
-      {/* <WarningMessage warningText={warning} dispatch={dispatch} />
-      <SuccessMessage successText={success} dispatch={dispatch} /> */}
     </View>
   );
 }
