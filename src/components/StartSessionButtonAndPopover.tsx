@@ -11,7 +11,7 @@ import React, {
   useState,
 } from 'react';
 import {View} from 'react-native';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
@@ -27,12 +27,10 @@ import type {DrinkingSessionType} from '@src/types/onyx';
 import Log from '@libs/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import _ from 'lodash';
 import DateUtils from '@libs/DateUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ERRORS from '@src/ERRORS';
-import Text from './Text';
 import PopoverMenu from './PopoverMenu';
 import type {PopoverMenuItem} from './PopoverMenu';
 import FloatingActionButton from './FloatingActionButton';
@@ -96,7 +94,7 @@ function StartSessionButtonAndPopover(
   const createEditDrinkingSession = async (): Promise<void> => {
     try {
       await App.setLoadingText(translate('common.loading'));
-      await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, true);
+      await DS.setIsCreatingNewSession(true);
       const newSession = await DS.getNewSessionToEdit(
         db,
         auth.currentUser,
@@ -113,7 +111,7 @@ function StartSessionButtonAndPopover(
         ),
       );
     } catch (error) {
-      await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+      await DS.setIsCreatingNewSession(false);
       ErrorUtils.raiseAppError(ERRORS.SESSION.START_FAILED, error);
     } finally {
       await App.setLoadingText(null);
@@ -121,22 +119,10 @@ function StartSessionButtonAndPopover(
   };
 
   const renderSessionTypeTooltip = useCallback(
-    () => (
-      <Text>
-        {/* TODO */}
-        {/* <Text style={styles.sessionTypeTooltipTitle}>{translate('sessionType.tooltip.title')}</Text>
-            <Text style={styles.sessionTypeTooltipSubtitle}>{translate('sessionType.tooltip.subtitle')}</Text> */}
-        <Text style={styles.sessionTypeTooltipTitle}>A tooltip!</Text>
-        <Text style={styles.sessionTypeTooltipSubtitle}>
-          A tooltip subtitle
-        </Text>
-      </Text>
-    ),
-    [
-      styles.sessionTypeTooltipTitle,
-      styles.sessionTypeTooltipSubtitle,
-      translate,
-    ],
+    () => null,
+    // styles.sessionTypeTooltipTitle
+    // styles.sessionTypeTooltipSubtitle
+    [],
   );
 
   const selectOption = async (
@@ -168,6 +154,7 @@ function StartSessionButtonAndPopover(
           Log.warn(`Unsupported session type: ${startSession?.sessionType}`);
       }
     },
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
     [startSession?.sessionType, selectOption],
   );
 
@@ -237,8 +224,8 @@ function StartSessionButtonAndPopover(
     }
   };
 
-  const getBaseSessionType = useCallback(
-    (sessionType: DrinkingSessionType) => ({
+  const [ongoingSessionMenuItems, staticSessionTypeMenuItems] = useMemo(() => {
+    const getBaseSessionType = (sessionType: DrinkingSessionType) => ({
       isLabelHoverable: false,
       numberOfLinesDescription: 2,
       tooltipAnchorAlignment: {
@@ -253,71 +240,58 @@ function StartSessionButtonAndPopover(
         await navigateToSessionType(sessionType);
         hideCreateMenu();
       },
-      shouldRenderTooltip: false, // TODO
-      // shouldRenderTooltip: startSession.isFirstSession,
+      shouldRenderTooltip: false, // or whatever your logic might be
       text: translate(DSUtils.getSessionTypeTitle(sessionType)),
-    }),
-    [
-      styles.popoverMenuItem.paddingHorizontal,
-      styles.popoverMenuItem.paddingVertical,
-      styles.sessionTypeTooltipWrapper,
-      renderSessionTypeTooltip,
-      navigateToSessionType,
-      selectOption,
-      renderSessionTypeTooltip,
-    ],
-  );
+    });
 
-  const ongoingSessionMenuItems: PopoverMenuItem[] = useMemo(() => {
     const session = userStatusData?.latest_session;
-    if (!session || !session.ongoing || !session.type) {
-      return [];
+    let ongoingItems: PopoverMenuItem[] = [];
+
+    if (session?.ongoing && session.type) {
+      const sessionStartTime = DateUtils.getLocalizedTime(
+        session.start_time,
+        userData?.timezone?.selected,
+      );
+
+      ongoingItems = [
+        {
+          ...getBaseSessionType(session.type),
+          label: translate('startSession.ongoingSessions'),
+          icon: DSUtils.getIconForSession(session.type),
+          description: translate('startSession.sessionFrom', {
+            startTime: sessionStartTime,
+          }),
+        },
+      ];
     }
 
-    const sessionStartTime = DateUtils.getLocalizedTime(
-      session.start_time,
-      userData?.timezone?.selected,
-    );
-    getBaseSessionType(session.type);
-
-    return [
-      {
-        ...getBaseSessionType(session.type),
-        label: translate('startSession.ongoingSessions'),
-        icon: DSUtils.getIconForSession(userStatusData?.latest_session?.type!),
-        description: translate('startSession.sessionFrom', {
-          startTime: sessionStartTime,
-        }),
-      },
-    ];
-  }, [userStatusData, translate]);
-
-  const staticSessionTypeMenuItems: PopoverMenuItem[] = useMemo(() => {
-    const sessionTypes = _.filter(
-      Object.values(CONST.SESSION.TYPES),
+    const sessionTypes = Object.values(CONST.SESSION.TYPES).filter(
       type =>
-        // Only non-ongoing (static) sessions
-        !userStatusData?.latest_session?.ongoing ||
-        type !== userStatusData?.latest_session?.type,
+        // Only show non-ongoing session types
+        !session?.ongoing || type !== session?.type,
     );
 
-    return _.map(sessionTypes, (sessionType, index) => ({
-      ...getBaseSessionType(sessionType),
-      label:
-        index === 0 ? translate('startSession.startNewSession') : undefined,
-      icon: DSUtils.getIconForSession(sessionType),
-      description: translate(DSUtils.getSessionTypeDescription(sessionType)),
-    }));
+    const staticItems: PopoverMenuItem[] = sessionTypes.map(
+      (sessionType, index) => ({
+        ...getBaseSessionType(sessionType),
+        label:
+          index === 0 ? translate('startSession.startNewSession') : undefined,
+        icon: DSUtils.getIconForSession(sessionType),
+        description: translate(DSUtils.getSessionTypeDescription(sessionType)),
+      }),
+    );
+
+    return [ongoingItems, staticItems];
   }, [
-    translate,
+    userStatusData,
+    userData?.timezone?.selected,
+    hideCreateMenu,
+    navigateToSessionType,
+    renderSessionTypeTooltip,
     styles.popoverMenuItem.paddingHorizontal,
     styles.popoverMenuItem.paddingVertical,
     styles.sessionTypeTooltipWrapper,
-    DSUtils.getSessionTypeTitle,
-    DSUtils.getSessionTypeDescription,
-    DSUtils.getIconForSession,
-    userStatusData,
-    startSession?.sessionType,
+    translate,
   ]);
 
   return (
