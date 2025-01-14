@@ -44,14 +44,15 @@ type UserListProps = {
  * @param orderUsers - If true, the users will be ordered by display priority.
  * @returns A component for lazy data loading and display of a list of users.
  */
-const UserListComponent: React.FC<UserListProps> = ({
+
+function UserListComponent({
   fullUserArray,
   initialLoadSize,
   emptyListComponent,
   userSubset,
   orderUsers,
   isLoading = false,
-}) => {
+}: UserListProps) {
   const {db} = useFirebase();
   const styles = useThemeStyles();
   const {userData} = useDatabaseData();
@@ -116,7 +117,7 @@ const UserListComponent: React.FC<UserListProps> = ({
       }
     }
     fetchUsers();
-  }, [initialLoadSize, fullUserArray]);
+  }, [db, initialLoadSize, fullUserArray, userStatusList]);
 
   // Update the display list when the user status list changes
   useEffect(() => {
@@ -145,7 +146,14 @@ const UserListComponent: React.FC<UserListProps> = ({
     };
 
     updateDisplayArray();
-  }, [userStatusList, userSubset]); // Full array changes change the status list
+  }, [
+    db,
+    userStatusList,
+    userSubset,
+    currentLoadSize,
+    fullUserArray,
+    orderUsers,
+  ]); // Full array changes change the status list
 
   return (
     <ScrollView
@@ -204,7 +212,7 @@ const UserListComponent: React.FC<UserListProps> = ({
       )}
     </ScrollView>
   );
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
