@@ -5,9 +5,7 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import ERRORS from '@src/ERRORS';
 import * as KirokuIcons from './Icon/KirokuIcons';
@@ -26,19 +24,17 @@ type ManageFriendPopoverProps = {
   friendId: string;
 };
 
-const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
+function ManageFriendPopover({
   isVisible,
   onClose,
   friendId,
-}) => {
+}: ManageFriendPopoverProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const fabRef = useRef<HTMLDivElement>(null);
   const {windowHeight} = useWindowDimensions();
-  const {shouldUseNarrowLayout} = useResponsiveLayout();
-  const waitForNavigate = useWaitForNavigation();
   const [unfriendModalVisible, setUnfriendModalVisible] = React.useState(false);
 
   const menuItems = useMemo(() => {
@@ -53,7 +49,7 @@ const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
     ];
 
     return baseMenuItems;
-  }, [styles, translate, waitForNavigate]);
+  }, [translate]);
 
   const handleUnfriend = () => {
     (async () => {
@@ -96,6 +92,6 @@ const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
       />
     </View>
   );
-};
+}
 
 export default ManageFriendPopover;
