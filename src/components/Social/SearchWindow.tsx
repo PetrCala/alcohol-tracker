@@ -1,5 +1,5 @@
 import {Keyboard, View} from 'react-native';
-import {useState, forwardRef, useEffect} from 'react';
+import {useState, forwardRef, useEffect, useCallback} from 'react';
 import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {SearchWindowRef} from '@src/types/various/Search';
@@ -17,18 +17,21 @@ type SearchWindowProps = {
 };
 
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
-  ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
+  ({windowText, onSearch, onResetSearch, searchOnTextChange}) => {
     const styles = useThemeStyles();
     const {db} = useFirebase();
     const {translate} = useLocalize();
     const [searchText, setSearchText] = useState<string>('');
 
-    const handleDoSearch = (searchText: string, database?: Database): void => {
-      onSearch(searchText, database);
-      if (!searchOnTextChange) {
-        Keyboard.dismiss();
-      }
-    };
+    const handleDoSearch = useCallback(
+      (text: string) => {
+        onSearch(text, db);
+        if (!searchOnTextChange) {
+          Keyboard.dismiss();
+        }
+      },
+      [db, onSearch, searchOnTextChange],
+    );
 
     const handleResetSearch = () => {
       onResetSearch();
@@ -36,10 +39,12 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     };
 
     useEffect(() => {
-      if (searchOnTextChange) {
-        handleDoSearch(searchText, db);
+      if (!searchOnTextChange) {
+        return;
       }
-    }, [searchText]);
+
+      handleDoSearch(searchText);
+    }, [searchText, handleDoSearch, searchOnTextChange]);
 
     // useImperativeHandle(parentRef, () => ({
     //   focus: () => {
@@ -66,7 +71,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
         {!searchOnTextChange && (
           <Button
             success
-            onPress={() => handleDoSearch(searchText, db)}
+            onPress={() => handleDoSearch(searchText)}
             text={translate('common.search')}
             style={[styles.borderRadiusSmall, styles.justifyContentCenter]}
           />
