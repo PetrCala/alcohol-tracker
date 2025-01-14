@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import ConfirmModal from '@components/ConfirmModal';
 import useLocalize from '@hooks/useLocalize';
-import Onyx from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
+import * as User from '@userActions/User';
 import type UpdateAppModalProps from './types';
 
 function BaseUpdateAppModal({onSubmit}: UpdateAppModalProps) {
@@ -12,14 +11,14 @@ function BaseUpdateAppModal({onSubmit}: UpdateAppModalProps) {
   /**
    * Execute the onSubmit callback and close the modal.
    */
-  const submitAndClose = async () => {
+  const submitAndClose = () => {
     onSubmit?.();
     setIsModalOpen(false);
   };
 
   const onCancel = () => {
     setIsModalOpen(false);
-    Onyx.merge(ONYXKEYS.APP_UPDATE_DISMISSED, new Date().getTime());
+    User.setAppUpdateDismissed(new Date().getTime());
   };
 
   return (
