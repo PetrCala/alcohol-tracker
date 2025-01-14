@@ -7,9 +7,7 @@ type KeyboardFocusHandlerProps = {
   children?: React.ReactNode;
 };
 
-const KeyboardFocusHandler: React.FC<KeyboardFocusHandlerProps> = ({
-  children,
-}) => {
+function KeyboardFocusHandler({children}: KeyboardFocusHandlerProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Function to dismiss the keyboard
@@ -25,7 +23,7 @@ const KeyboardFocusHandler: React.FC<KeyboardFocusHandlerProps> = ({
     }, []),
   );
 
-  return <>{children}</>;
-};
+  return children;
+}
 
 export default KeyboardFocusHandler;
