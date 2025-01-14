@@ -419,7 +419,7 @@ async function getNewSessionToEdit(
 
 /** Set a value under the isCreatingNewSession onyx key */
 async function setIsCreatingNewSession(val: boolean): Promise<void> {
-  await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, val);
+  await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, val);
 }
 
 /**

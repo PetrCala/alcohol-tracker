@@ -816,7 +816,7 @@ async function fixTimezoneSessions(
 
 /** Based on a session type, return the icon that should be associated with this session */
 function getIconForSession(
-  sessionType: DrinkingSessionType,
+  sessionType: DrinkingSessionType | undefined,
 ): IconAsset | ImageSourcePropType {
   switch (sessionType) {
     case CONST.SESSION.TYPES.LIVE:
