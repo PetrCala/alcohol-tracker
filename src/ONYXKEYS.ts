@@ -105,6 +105,9 @@ const ONYXKEYS = {
   /** Text to show when the app is loading */
   APP_LOADING_TEXT: 'appLoadingText',
 
+  /** Is the test tools modal open? */
+  IS_TEST_TOOLS_MODAL_OPEN: 'isTestToolsModalOpen',
+
   /** Whether we should show the compose input or not */
   SHOULD_SHOW_COMPOSE_INPUT: 'shouldShowComposeInput',
 
@@ -281,6 +284,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;
   //   [ONYXKEYS.APP_PROFILING_IN_PROGRESS]: boolean;
   [ONYXKEYS.IS_LOADING_APP]: boolean;
+  [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;
   [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: boolean;
   [ONYXKEYS.APP_UPDATE_DISMISSED]: Timestamp;
   [ONYXKEYS.VERIFY_EMAIL_SENT]: Timestamp;
