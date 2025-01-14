@@ -27,7 +27,7 @@ import type {CalendarColors} from '@components/SessionsCalendar/types';
 import type {User} from 'firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import ERRORS from '@src/ERRORS';
-import type {DrinkingSessionWindowProps} from './types';
+import type DrinkingSessionWindowProps from './types';
 
 function DrinkingSessionWindow({
   onNavigateBack,

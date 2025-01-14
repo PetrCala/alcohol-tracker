@@ -22,7 +22,7 @@ import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StatData} from '@components/Items/StatOverview';
-import {StatsOverview} from '@components/Items/StatOverview';
+import StatOverview from '@components/Items/StatOverview';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -203,7 +203,7 @@ function HomeScreen({route}: HomeScreenProps) {
         )}
         {drinkingSessionData ? (
           <>
-            <StatsOverview statsData={statsData} />
+            <StatOverview statsData={statsData} />
             <SessionsCalendar
               userID={user.uid}
               visibleDate={visibleDate}

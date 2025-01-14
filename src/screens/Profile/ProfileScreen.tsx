@@ -2,7 +2,7 @@ import {View} from 'react-native';
 import type {DateData} from 'react-native-calendars';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
-import {StatsOverview} from '@components/Items/StatOverview';
+import StatOverview from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import React, {useEffect, useMemo, useState} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
@@ -196,7 +196,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
         </View>
         {drinkingSessionData ? (
           <View style={[]}>
-            <StatsOverview statsData={statsData} />
+            <StatOverview statsData={statsData} />
             <SessionsCalendar
               userID={userID}
               visibleDate={visibleDateData}
