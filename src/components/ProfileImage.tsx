@@ -1,5 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
-import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import type {
+  ImageSourcePropType,
+  ImageStyle,
+  LayoutChangeEvent,
+  StyleProp,
+} from 'react-native';
 import {Image} from 'react-native';
 import type {FirebaseStorage} from 'firebase/storage';
 import getProfilePictureURL from '@src/storage/storageProfile';
@@ -17,22 +22,29 @@ type ProfileImageProps = {
   storage: FirebaseStorage;
   userID: string;
   downloadPath: string | null | undefined;
-  style: any;
+  style: StyleProp<ImageStyle>;
   refreshTrigger?: number; // Likely a number, used to force a refresh
   enlargable?: boolean;
   layout?: ImageLayout;
   onLayout?: (event: LayoutChangeEvent) => void;
 };
 
-function ProfileImage(props: ProfileImageProps) {
-  const {storage, userID, downloadPath, style} = props;
+function ProfileImage({
+  storage,
+  userID,
+  downloadPath,
+  style,
+  refreshTrigger,
+  enlargable,
+  layout,
+  onLayout,
+}: ProfileImageProps) {
   const theme = useTheme();
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userID);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
   const initialDownloadPath = useRef(downloadPath);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState<boolean>(true);
-  const [warning, setWarning] = useState<string>('');
 
   const imageSource: ImageSourcePropType =
     imageUrl && imageUrl !== CONST.NO_IMAGE
@@ -43,73 +55,90 @@ function ProfileImage(props: ProfileImageProps) {
       ? undefined // The source is an URI link
       : theme.icon; // No source given, use default
 
-  const checkAvailableCache = async (url: string | null): Promise<boolean> => {
-    if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
-      // Is a local file
-      setImageUrl(downloadPath);
-      setLoadingImage(false);
-      return true;
-    }
-    if (
-      // Do not merge these two if statements (order matters)
-      url &&
-      url === prevCachedUrl.current &&
-      downloadPath === initialDownloadPath.current && // Only if the download path has not changed
-      !props.refreshTrigger // Only if the refresh trigger is not set
-    ) {
-      // Use cache if available and unchanged
-      setImageUrl(cachedUrl);
-      setLoadingImage(false);
-      return true;
-    }
-    return false;
-  };
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      if (!isCacheChecked) {
-        return;
-      } // Only proceed if cache has been checked
-
-      const cacheUnchanged = await checkAvailableCache(cachedUrl);
-      if (cacheUnchanged) {
-        return;
-      } // Use cache if available and unchanged
-
-      setLoadingImage(true);
-      try {
-        let downloadUrl: string | null = null;
-        if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
-          // if (downloadPath === initialDownloadPath.current) // If the input download path has not changed
-          downloadUrl = await getProfilePictureURL(
-            storage,
-            userID,
-            downloadPath,
-          );
-          await cacheImage(downloadUrl);
-        }
-
-        setImageUrl(downloadUrl);
-      } catch (error) {
-        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH_FAILED, error);
-      } finally {
+  /**
+    Checks if a cached version is available and still valid.
+    If valid, sets the image URL from cache and ends loading.
+    Returns `true` if a valid cache was used, `false` otherwise.
+   */
+  const checkAvailableCache = useCallback(
+    (url: string | null): boolean => {
+      // If path indicates a local file
+      if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
+        setImageUrl(downloadPath);
         setLoadingImage(false);
+        return true;
       }
-    };
 
-    fetchImage();
+      // If we already have a cached URL matching our current state
+      if (
+        url &&
+        url === prevCachedUrl.current &&
+        downloadPath === initialDownloadPath.current && // Download path hasn't changed
+        !refreshTrigger // Not forcing refresh
+      ) {
+        setImageUrl(cachedUrl);
+        setLoadingImage(false);
+        return true;
+      }
+
+      return false;
+    },
+    [downloadPath, refreshTrigger, cachedUrl],
+  );
+
+  /**
+    Actually downloads the image, then caches and sets it.
+   */
+  const fetchImage = useCallback(async () => {
+    setLoadingImage(true);
+    try {
+      let downloadUrl: string | null = null;
+      if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
+        // Fetch from Firebase Storage
+        downloadUrl = await getProfilePictureURL(storage, userID, downloadPath);
+        await cacheImage(downloadUrl);
+      }
+
+      setImageUrl(downloadUrl);
+    } catch (error) {
+      ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH_FAILED, error);
+    } finally {
+      setLoadingImage(false);
+    }
+  }, [storage, userID, downloadPath, cacheImage]);
+
+  /**
+    Single effect that runs after the cache is known to be checked.
+    1) Tries to load from cache if valid.
+    2) If invalid, fetches the image from storage.
+   */
+  useEffect(() => {
+    // Don’t do anything until cache is checked
+    if (!isCacheChecked) {
+      return;
+    }
+
+    // If cache is valid, we’re done
+    const cacheUnchanged = checkAvailableCache(cachedUrl);
+    if (!cacheUnchanged) {
+      // Cache invalid, fetch from storage
+      fetchImage();
+    }
+
+    // Update ref once we’ve done our checks
     prevCachedUrl.current = cachedUrl;
-  }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
+  }, [isCacheChecked, cachedUrl, checkAvailableCache, fetchImage]);
 
   if (loadingImage) {
-    return <FlexibleLoadingIndicator style={[style, {flex: 0}]} />;
+    return <FlexibleLoadingIndicator />;
   }
-  if (!props.enlargable) {
+
+  if (!enlargable) {
     return (
       <Image source={imageSource} style={[style, {tintColor: iconTint}]} />
     );
   }
-  if (!props.layout || !props.onLayout) {
+  if (!layout || !onLayout) {
     return;
   }
 
@@ -117,8 +146,8 @@ function ProfileImage(props: ProfileImageProps) {
     <EnlargableImage
       imageSource={imageSource}
       imageStyle={[style, {tintColor: iconTint}]}
-      imageLayout={props.layout}
-      onImageLayout={props.onLayout}
+      imageLayout={layout}
+      onImageLayout={onLayout}
     />
   );
 }
