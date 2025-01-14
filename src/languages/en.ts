@@ -817,6 +817,8 @@ export default {
     startNewSessionByClickingPlus:
       'Start a new session by clicking the plus button at the bottom of your screen',
     currentlyInSession: 'You are currently in a session!',
+    currentlyInSessionButton:
+      'A button indicating you are currently in session',
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
