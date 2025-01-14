@@ -13,7 +13,7 @@ import type {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@libs/Search';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Profile from '@userActions/Profile';
-import SearchResult from '@components/Social/SearchResult';
+import SearchResult from '@components/Search/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
