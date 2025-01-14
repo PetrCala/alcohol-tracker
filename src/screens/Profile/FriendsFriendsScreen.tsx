@@ -10,7 +10,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import {searchArrayByText, getNicknameMapping} from '@libs/Search';
 import * as Profile from '@userActions/Profile';
-import SearchResult from '@components/Social/SearchResult';
+import SearchResult from '@components/Search/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import GrayHeader from '@components/Header/GrayHeader';
 import {getCommonFriends, getCommonFriendsCount} from '@libs/FriendUtils';
