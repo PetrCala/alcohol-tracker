@@ -41,13 +41,13 @@ type SessionSliderProps = {
   shouldAllowTimezoneChange?: boolean;
 };
 
-const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
+function SessionDetailsWindow({
   sessionId,
   session,
   onBlackoutChange,
   shouldAllowDateChange,
   shouldAllowTimezoneChange,
-}) => {
+}: SessionSliderProps) {
   const {translate} = useLocalize();
   const {singleExecution} = useSingleExecution();
   const waitForNavigate = useWaitForNavigation();
@@ -168,6 +168,6 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
       </View>
     </View>
   );
-};
+}
 
 export default SessionDetailsWindow;
