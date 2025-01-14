@@ -71,8 +71,8 @@ function DatePicker(
 ) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const [selectedDate, setSelectedDate] = useState(
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     value || defaultValue || undefined,
   );
   const {shouldUseNarrowLayout} = useResponsiveLayout();

@@ -11,7 +11,7 @@ import React, {
 } from 'react';
 import type {DimensionValue, StyleProp, ViewStyle} from 'react-native';
 import {Keyboard, PanResponder, View} from 'react-native';
-// import {PickerAvoidingView} from 'react-native-picker-select';
+// import PickerAvoidingView from 'react-native-picker-select';
 import type {EdgeInsets} from 'react-native-safe-area-context';
 import useEnvironment from '@hooks/useEnvironment';
 import useInitialDimensions from '@hooks/useInitialWindowDimensions';
@@ -34,6 +34,7 @@ import KeyboardAvoidingView from './KeyboardAvoidingView';
 import SafeAreaConsumer from './SafeAreaConsumer';
 // import TestToolsModal from './TestToolsModal';
 import withNavigationFallback from './withNavigationFallback';
+import CustomDevMenu from './CustomDevMenu';
 // import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type ScreenWrapperChildrenProps = {
@@ -124,18 +125,18 @@ function ScreenWrapper(
     keyboardAvoidingViewBehavior = 'padding',
     includeSafeAreaPaddingBottom = true,
     shouldEnableKeyboardAvoidingView = true,
-    shouldEnablePickerAvoiding = true,
+    shouldEnablePickerAvoiding = true, // eslint-disable-line @typescript-eslint/no-unused-vars
     headerGapStyles,
     children,
-    shouldShowOfflineIndicator = true,
-    offlineIndicatorStyle,
+    shouldShowOfflineIndicator = true, // eslint-disable-line @typescript-eslint/no-unused-vars
+    offlineIndicatorStyle, // eslint-disable-line @typescript-eslint/no-unused-vars
     style,
     shouldDismissKeyboardBeforeClose = true,
     onEntryTransitionEnd,
     testID,
     navigation: navigationProp,
     shouldAvoidScrollOnVirtualViewport = true,
-    shouldShowOfflineIndicatorInWideScreen = false,
+    shouldShowOfflineIndicatorInWideScreen = false, // eslint-disable-line @typescript-eslint/no-unused-vars
     shouldUseCachedViewportHeight = false,
   }: ScreenWrapperProps,
   ref: ForwardedRef<View>,
@@ -231,7 +232,7 @@ function ScreenWrapper(
       }
     };
     // Rule disabled because this effect is only for component did mount & will component unmount lifecycle event
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, []);
 
   const isAvoidingViewportScroll = useTackInputFocus(
@@ -292,12 +293,15 @@ function ScreenWrapper(
                 behavior={keyboardAvoidingViewBehavior}
                 enabled={shouldEnableKeyboardAvoidingView}>
                 {/* <PickerAvoidingView
-                                    style={isAvoidingViewportScroll ? [styles.h100, {marginTop: 1}] : styles.flex1}
-                                    enabled={shouldEnablePickerAvoiding}
-                                > */}
+                  style={
+                    isAvoidingViewportScroll
+                      ? [styles.h100, {marginTop: 1}]
+                      : styles.flex1
+                  }
+                  enabled={shouldEnablePickerAvoiding}> */}
                 <HeaderGap styles={headerGapStyles} />
                 {/* <TestToolsModal /> */}
-                {/* {isDevelopment && <CustomDevMenu />} */}
+                {isDevelopment && <CustomDevMenu />}
                 <ScreenWrapperStatusContext.Provider value={contextValue}>
                   {
                     // If props.children is a function, call it to provide the insets to the children.
@@ -332,6 +336,7 @@ function ScreenWrapper(
                       </>
                     )} */}
                 </ScreenWrapperStatusContext.Provider>
+                {/* </PickerAvoidingView> */}
               </KeyboardAvoidingView>
             </View>
           </View>
