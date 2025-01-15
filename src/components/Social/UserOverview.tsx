@@ -22,12 +22,12 @@ type UserOverviewProps = {
   timezone?: Timezone;
 };
 
-const UserOverview: React.FC<UserOverviewProps> = ({
+function UserOverview({
   userID,
   profileData,
   userStatusData,
   timezone,
-}) => {
+}: UserOverviewProps) {
   const {storage} = useFirebase();
   const styles = useThemeStyles();
   const theme = useTheme();
@@ -117,6 +117,6 @@ const UserOverview: React.FC<UserOverviewProps> = ({
       </View>
     </View>
   );
-};
+}
 
 export default UserOverview;

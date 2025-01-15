@@ -1,8 +1,7 @@
 import {Keyboard, View} from 'react-native';
-import {useState, forwardRef, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import type {SearchWindowRef} from '@src/types/various/Search';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -16,69 +15,72 @@ type SearchWindowProps = {
   searchOnTextChange?: boolean;
 };
 
-const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
-  ({windowText, onSearch, onResetSearch, searchOnTextChange}) => {
-    const styles = useThemeStyles();
-    const {db} = useFirebase();
-    const {translate} = useLocalize();
-    const [searchText, setSearchText] = useState<string>('');
+function SearchWindow({
+  windowText,
+  onSearch,
+  onResetSearch,
+  searchOnTextChange,
+}: SearchWindowProps) {
+  const styles = useThemeStyles();
+  const {db} = useFirebase();
+  const {translate} = useLocalize();
+  const [searchText, setSearchText] = useState<string>('');
 
-    const handleDoSearch = useCallback(
-      (text: string) => {
-        onSearch(text, db);
-        if (!searchOnTextChange) {
-          Keyboard.dismiss();
-        }
-      },
-      [db, onSearch, searchOnTextChange],
-    );
-
-    const handleResetSearch = () => {
-      onResetSearch();
-      setSearchText('');
-    };
-
-    useEffect(() => {
+  const handleDoSearch = useCallback(
+    (text: string) => {
+      onSearch(text, db);
       if (!searchOnTextChange) {
-        return;
+        Keyboard.dismiss();
       }
+    },
+    [db, onSearch, searchOnTextChange],
+  );
 
-      handleDoSearch(searchText);
-    }, [searchText, handleDoSearch, searchOnTextChange]);
+  const handleResetSearch = () => {
+    onResetSearch();
+    setSearchText('');
+  };
 
-    // useImperativeHandle(parentRef, () => ({
-    //   focus: () => {
-    //     inputRef.current?.focus();
-    //   },
-    // }));
+  useEffect(() => {
+    if (!searchOnTextChange) {
+      return;
+    }
 
-    return (
-      <View style={styles.searchWindowContainer}>
-        <View style={styles.searchWindowTextContainer}>
-          <TextInput
-            accessibilityLabel={translate('textInput.accessibilityLabel')}
-            placeholder={windowText}
-            value={searchText}
-            iconLeft={KirokuIcons.Search}
-            onChangeText={text => setSearchText(text)}
-            shouldShowClearButton
-            containerStyles={styles.flexGrow1}
-            hideFocusedState
-            textInputContainerStyles={styles.noBorder}
-            onClear={handleResetSearch}
-          />
-        </View>
-        {!searchOnTextChange && (
-          <Button
-            success
-            onPress={() => handleDoSearch(searchText)}
-            text={translate('common.search')}
-            style={[styles.borderRadiusSmall, styles.justifyContentCenter]}
-          />
-        )}
+    handleDoSearch(searchText);
+  }, [searchText, handleDoSearch, searchOnTextChange]);
+
+  // useImperativeHandle(parentRef, () => ({
+  //   focus: () => {
+  //     inputRef.current?.focus();
+  //   },
+  // }));
+
+  return (
+    <View style={styles.searchWindowContainer}>
+      <View style={styles.searchWindowTextContainer}>
+        <TextInput
+          accessibilityLabel={translate('textInput.accessibilityLabel')}
+          placeholder={windowText}
+          value={searchText}
+          iconLeft={KirokuIcons.Search}
+          onChangeText={text => setSearchText(text)}
+          shouldShowClearButton
+          containerStyles={styles.flexGrow1}
+          hideFocusedState
+          textInputContainerStyles={styles.noBorder}
+          onClear={handleResetSearch}
+        />
       </View>
-    );
-  },
-);
+      {!searchOnTextChange && (
+        <Button
+          success
+          onPress={() => handleDoSearch(searchText)}
+          text={translate('common.search')}
+          style={[styles.borderRadiusSmall, styles.justifyContentCenter]}
+        />
+      )}
+    </View>
+  );
+}
 
 export default SearchWindow;

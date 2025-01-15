@@ -1,10 +1,7 @@
 import {View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
-import type {
-  SearchWindowRef,
-  UserIDToNicknameMapping,
-} from '@src/types/various/Search';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import type {UserIDToNicknameMapping} from '@src/types/various/Search';
+import React, {useCallback, useEffect, useState} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping, searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -21,7 +18,6 @@ function FriendListScreen() {
   const {userData} = useDatabaseData();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const friendListInputRef = useRef<SearchWindowRef>(null);
   const [friends, setFriends] = useState<UserArray>([]);
   const [friendsToDisplay, setFriendsToDisplay] = useState<UserArray>([]);
   const {profileList} = useProfileList(friends);
@@ -63,7 +59,7 @@ function FriendListScreen() {
   return (
     <View style={styles.flex1}>
       <SearchWindow
-        ref={friendListInputRef}
+        // ref={friendListInputRef}
         windowText={translate('friendListScreen.searchYourFriendList')}
         onSearch={localSearch}
         onResetSearch={resetSearch}

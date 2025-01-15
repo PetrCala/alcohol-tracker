@@ -35,12 +35,12 @@ function FullScreenImageModal({
   const headerHeight = styles.headerBar.height; // Assume always rendered with header visible
 
   const onLayout = (event: LayoutChangeEvent) => {
-    const layout = event.nativeEvent.layout;
+    const currentLayout = event.nativeEvent.layout;
     setLayout({
-      x: layout.x,
-      y: layout.y,
-      width: layout.width,
-      height: layout.height,
+      x: currentLayout.x,
+      y: currentLayout.y,
+      width: currentLayout.width,
+      height: currentLayout.height,
     });
   };
 
