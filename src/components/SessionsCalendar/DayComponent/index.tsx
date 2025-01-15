@@ -1,5 +1,6 @@
-import {TouchableOpacity, View} from 'react-native';
+import {View} from 'react-native';
 import Text from '@components/Text';
+import {PressableWithoutFeedback} from '@components/Pressable';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import type {DayComponentProps} from '@components/SessionsCalendar/types';
@@ -18,8 +19,8 @@ function DayComponent({
   const isToday = state === 'today';
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
+    <PressableWithoutFeedback
+      accessibilityLabel=""
       style={[
         styles.alignItemsCenter,
         styles.justifyContentCenter,
@@ -43,7 +44,7 @@ function DayComponent({
           {!isDisabled ? units : ''}
         </Text>
       </View>
-    </TouchableOpacity>
+    </PressableWithoutFeedback>
   );
 }
 

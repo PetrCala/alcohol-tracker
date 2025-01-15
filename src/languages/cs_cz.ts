@@ -822,6 +822,9 @@ export default {
     currentlyInSessionButton:
       'Tlačítko, které informuje, že se právě nacházíte v relaci',
   },
+  sessionsCalendar: {
+    dayOverviewButton: 'Přehled dne',
+  },
   liveSessionScreen: {
     saving: 'Ukládám vaši relaci...',
     synchronizing: 'Synchronizuji data...',
