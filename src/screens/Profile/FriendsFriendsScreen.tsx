@@ -5,7 +5,7 @@ import type {
   FriendRequestList,
 } from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import {searchArrayByText, getNicknameMapping} from '@libs/Search';
@@ -127,7 +127,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     [db],
   );
 
-  useMemo(() => {
+  useEffect(() => {
     const updateRequestStatuses = (
       friendRequests: FriendRequestList | undefined,
     ): void => {
@@ -180,7 +180,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   }, [friends, updateHooksBasedOnSearchResults]);
 
   // Monitor friend groups
-  useMemo(() => {
+  useEffect(() => {
     let newCommonFriends: string[] = [];
     let newOtherFriends: string[] = [];
     if (friends) {
