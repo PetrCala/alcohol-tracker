@@ -1,5 +1,5 @@
 import React from 'react';
-import type {StyleProp, ViewStyle} from 'react-native';
+import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {ActivityIndicator} from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -18,7 +18,7 @@ type FlexibleLoadingIndicatorProps = {
   text?: string;
 
   /** Custom styles to render the text with */
-  textStyles?: StyleProp<ViewStyle>;
+  textStyles?: StyleProp<TextStyle>;
 };
 
 function FlexibleLoadingIndicator({
@@ -35,7 +35,7 @@ function FlexibleLoadingIndicator({
       <ActivityIndicator
         color={theme.spinner}
         style={[style]}
-        size={size || CONST.ACTIVITY_INDICATOR_SIZE.LARGE}
+        size={size ?? CONST.ACTIVITY_INDICATOR_SIZE.LARGE}
       />
       {text && (
         <Text
@@ -43,6 +43,7 @@ function FlexibleLoadingIndicator({
             styles.textNormalThemeText,
             styles.alignSelfCenter,
             styles.mt3,
+            textStyles,
           ]}>
           {text}
         </Text>

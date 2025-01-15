@@ -132,7 +132,7 @@ function FriendSearchScreen() {
         onBackButtonPress={Navigation.goBack}
       />
       <SearchWindow
-        ref={searchInputRef}
+        // ref={searchInputRef}
         windowText={translate('friendSearchScreen.searchWindow')}
         onSearch={dbSearch}
         onResetSearch={resetSearch}

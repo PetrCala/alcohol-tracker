@@ -1,5 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import type {ImageSourcePropType, ImageStyle, StyleProp} from 'react-native';
+import type {
+  ImageSourcePropType,
+  ImageStyle,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import {Image} from 'react-native';
 import type {FirebaseStorage} from 'firebase/storage';
 import getProfilePictureURL from '@src/storage/storageProfile';
@@ -119,7 +124,7 @@ function ProfileImage({
   }, [isCacheChecked, cachedUrl, checkAvailableCache, fetchImage]);
 
   if (loadingImage) {
-    return <FlexibleLoadingIndicator />;
+    return <FlexibleLoadingIndicator style={style as ViewStyle} />;
   }
 
   if (!enlargable) {
