@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Text from '@components/Text';
@@ -11,11 +11,11 @@ type NoFriendUserOverviewProps = {
   RightSideComponent: React.ReactNode; // Render directly as a ReactNode without JSX syntax
 };
 
-const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
+function NoFriendUserOverview({
   userID,
   profileData,
   RightSideComponent,
-}) => {
+}: NoFriendUserOverviewProps) {
   const {db, storage} = useFirebase();
   const styles = useThemeStyles();
 
@@ -44,6 +44,6 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
       {RightSideComponent}
     </View>
   );
-};
+}
 
 export default NoFriendUserOverview;

@@ -45,6 +45,7 @@ function SplashScreenHider({
     hideHasBeenCalled.current = true;
 
     BootSplash.hide().then(() => {
+      // eslint-disable-next-line
       scale.value = withTiming(0, {
         duration: 200,
         easing: Easing.back(2),

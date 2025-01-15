@@ -822,6 +822,9 @@ export default {
     currentlyInSessionButton:
       'A button indicating you are currently in session',
   },
+  sessionsCalendar: {
+    dayOverviewButton: "Day's overview",
+  },
   liveSessionScreen: {
     saving: 'Saving your session...',
     synchronizing: 'Synchronizing data...',
