@@ -1063,6 +1063,8 @@ const styles = (theme: ThemeColors) =>
       left: 0,
       right: 0,
       bottom: 0,
+      height: '100%',
+      width: '100%',
     },
 
     fullScreenLoading: {
@@ -1077,7 +1079,6 @@ const styles = (theme: ThemeColors) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.appBG,
       overflow: 'hidden',
     },
 

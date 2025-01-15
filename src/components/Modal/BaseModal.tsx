@@ -280,8 +280,8 @@ function BaseModal(
           animationOut={animationOut ?? modalStyleAnimationOut}
           // eslint-disable-next-line react-compiler/react-compiler
           useNativeDriver={useNativeDriverProp && useNativeDriver}
-          // eslint-disable-next-line react-compiler/react-compiler
           useNativeDriverForBackdrop={
+            // eslint-disable-next-line react-compiler/react-compiler
             useNativeDriverForBackdrop && useNativeDriver
           }
           hideModalContentWhileAnimating={hideModalContentWhileAnimating}

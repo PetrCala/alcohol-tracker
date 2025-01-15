@@ -10,9 +10,9 @@ import Image from '@src/components/Image';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import {PressableWithFeedback} from '@components/Pressable';
 import useLocalize from '@hooks/useLocalize';
+import useWindowDimensions from '@hooks/useWindowDimensions';
 
 type EnlargableImageProps = {
   imageSource: ImageSourcePropType;
@@ -21,19 +21,18 @@ type EnlargableImageProps = {
 
 function EnlargableImage({imageSource, imageStyle}: EnlargableImageProps) {
   const styles = useThemeStyles();
-  const [modalVisible, setModalVisible] = useState(false);
   const {translate} = useLocalize();
+  const [modalVisible, setModalVisible] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
-  const positionAnimation = useRef(new Animated.ValueXY()).current;
-  const {windowWidth, windowHeight} = useWindowDimensions();
+  const positionAnimation = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+  const {windowHeight, windowWidth} = useWindowDimensions();
+
   const [layout, setLayout] = useState<ImageLayout>({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
   });
-  const enlargedImageScale = windowWidth / imageStyle.width;
-  const headerHeight = styles.headerBar.height; // Assume always rendered with header visible
 
   const onLayout = (event: LayoutChangeEvent) => {
     const currentLayout = event.nativeEvent.layout;
@@ -48,23 +47,39 @@ function EnlargableImage({imageSource, imageStyle}: EnlargableImageProps) {
   const handleOnLayout = (event: LayoutChangeEvent) => {
     onLayout(event);
     positionAnimation.setValue({
-      x: layout.x,
-      y: layout.y + headerHeight,
+      x: event.nativeEvent.layout.x,
+      y: event.nativeEvent.layout.y,
     });
+    scaleAnimation.setValue(1);
   };
 
-  // TODO
   const handlePress = () => {
+    const coverScale = Math.min(
+      windowWidth / layout.width,
+      windowHeight / layout.height,
+    );
+
+    // If you want it truly centered, compute the offset so that
+    // the enlarged image is horizontally and vertically centered.
+    // Because we are scaling the image around its top-left corner,
+    // we have to shift it to center.
+    const enlargedWidth = layout.width * coverScale;
+    // const enlargedHeight = layout.height * coverScale;
+
+    const offsetX = (windowWidth - enlargedWidth) / 2;
+    // const offsetY = (windowHeight - enlargedHeight) / 2;
+    const offsetY = 0; // For some reason, this makes the image centered
+
     setModalVisible(true);
-    // Animate scale and position simultaneously
+
     Animated.parallel([
       Animated.timing(scaleAnimation, {
-        toValue: enlargedImageScale,
+        toValue: coverScale,
         duration: 300,
         useNativeDriver: true,
       }),
       Animated.timing(positionAnimation, {
-        toValue: {x: 0, y: windowHeight / 9}, // Move to center
+        toValue: {x: offsetX, y: offsetY},
         duration: 300,
         useNativeDriver: true,
       }),
@@ -72,15 +87,15 @@ function EnlargableImage({imageSource, imageStyle}: EnlargableImageProps) {
   };
 
   const closeModal = () => {
-    // Reverse the animation
     Animated.parallel([
+      // Reverse the animation
       Animated.timing(scaleAnimation, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
       }),
       Animated.timing(positionAnimation, {
-        toValue: {x: layout.x, y: layout.y + headerHeight},
+        toValue: {x: layout.x, y: layout.y},
         duration: 300,
         useNativeDriver: true,
       }),
@@ -106,16 +121,15 @@ function EnlargableImage({imageSource, imageStyle}: EnlargableImageProps) {
           style={[
             imageStyle,
             {
+              // The "base" width/height from the original layout
               width: layout.width,
               height: layout.height,
               transform: [
-                {scaleX: scaleAnimation},
-                {scaleY: scaleAnimation},
                 {translateX: positionAnimation.x},
                 {translateY: positionAnimation.y},
+                {scale: scaleAnimation},
               ],
               resizeMode: 'cover',
-              zIndex: 0,
             },
           ]}
         />

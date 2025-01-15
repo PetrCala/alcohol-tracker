@@ -1,10 +1,12 @@
 import type {StyleProp, ViewStyle} from 'react-native';
-import {Dimensions, Modal, PanResponder, View} from 'react-native';
+import {View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
+import Modal from '@components/Modal';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import useTheme from '@hooks/useTheme';
+import CONST from '@src/CONST';
 
 type FullScreenModalProps = {
   visible: boolean;
@@ -14,32 +16,16 @@ type FullScreenModalProps = {
   hideCloseButton?: boolean;
 };
 
-const ScreenWidth = Dimensions.get('window').width;
-const ScreenHeight = Dimensions.get('window').height;
-
-const FullScreenModal: React.FC<FullScreenModalProps> = ({
+function FullScreenModal({
   visible,
   onClose,
   children,
-  hideCloseButton,
+  hideCloseButton = false,
   style,
-}: FullScreenModalProps) => {
+}: FullScreenModalProps) {
   const [modalVisible, setModalVisible] = useState(visible);
   const theme = useTheme();
   const styles = useThemeStyles();
-
-  // Use a pan responsder to dismiss the modal upon swiping up
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (evt, gestureState) => {
-        if (gestureState.dy < -50) {
-          // Swipe up detected
-          handleCloseModal();
-        }
-      },
-    }),
-  ).current;
 
   useEffect(() => {
     setModalVisible(visible);
@@ -51,33 +37,29 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
       onClose();
     }
   };
+
   return (
-    <Modal animationType="fade" transparent={false} visible={modalVisible}>
-      {!hideCloseButton && (
-        <Button
-          onPress={handleCloseModal}
-          icon={KirokuIcons.ThinX}
-          iconFill={theme.textLight}
-          style={styles.closePageButton}
-        />
-      )}
-      <View
-        style={[
-          {
-            width: ScreenWidth,
-            height: ScreenHeight,
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-          styles.appBG,
-          style,
-        ]}
-        {...panResponder.panHandlers} // This applies the swipe up functionality
-      >
+    <Modal
+      type={CONST.MODAL.MODAL_TYPE.CENTERED_UNSWIPEABLE}
+      onClose={handleCloseModal}
+      isVisible={modalVisible}
+      shouldUseModalPaddingStyle={false}
+      fullscreen
+      animationIn="fadeIn"
+      animationOut="fadeOut">
+      <View style={[styles.fullScreenCenteredContent, style]}>
+        {!hideCloseButton && (
+          <Button
+            onPress={handleCloseModal}
+            icon={KirokuIcons.ThinX}
+            iconFill={theme.textLight}
+            style={styles.closePageButton}
+          />
+        )}
         {children}
       </View>
     </Modal>
   );
-};
+}
 
 export default FullScreenModal;
