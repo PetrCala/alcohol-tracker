@@ -2,7 +2,6 @@ import React from 'react';
 import {View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {convertUnitsToColors} from '@libs/DataHandling';
-import type {DrinkingSession} from '@src/types/onyx';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -18,7 +17,7 @@ import DateUtils from '@libs/DateUtils';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {PressableWithFeedback} from '@components/Pressable';
-import type {DrinkingSessionOverviewProps} from './types';
+import type DrinkingSessionOverviewProps from './types';
 
 function DrinkingSessionOverview({
   sessionId,
@@ -34,10 +33,7 @@ function DrinkingSessionOverview({
   );
   const shouldDisplayTime = session.type === CONST.SESSION.TYPES.LIVE;
 
-  const onSessionButtonPress = (
-    sessionId: string,
-    session: DrinkingSession,
-  ) => {
+  const onSessionButtonPress = () => {
     (async () => {
       if (!session?.ongoing) {
         Navigation.navigate(
@@ -64,9 +60,6 @@ function DrinkingSessionOverview({
     sessionColor = 'black';
   }
 
-  {
-    /* // style={[styles.drinkingSessionOverview, {backgroundColor: 'pink'}]} */
-  }
   return (
     <PressableWithFeedback
       accessibilityLabel={translate('dayOverviewScreen.sessionWindow', {

@@ -6,4 +6,4 @@ type DrinkingSessionOverviewProps = {
   isEditModeOn: boolean;
 };
 
-export type {DrinkingSessionOverviewProps};
+export default DrinkingSessionOverviewProps;
