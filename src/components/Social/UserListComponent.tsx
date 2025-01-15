@@ -9,26 +9,23 @@ import {
 } from '@libs/algorithms/DisplayPriority';
 import type {UserStatusList} from '@src/types/onyx';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
-import React, {useState, useEffect} from 'react';
-import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
-import {Keyboard, StyleSheet, View} from 'react-native';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
+import type {ListRenderItemInfo} from 'react-native';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {sleep} from '@libs/TimeUtils';
-import _ from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
+import FlatList from '@components/FlatList';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import Text from '@components/Text';
-import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import UserOverview from './UserOverview';
 
 type UserListProps = {
   fullUserArray: UserArray;
   initialLoadSize: number;
-  emptyListComponent?: React.ReactNode;
+  emptyListComponent?: React.JSX.Element;
   userSubset?: UserArray;
   orderUsers?: boolean;
   isLoading?: boolean;
@@ -64,39 +61,37 @@ function UserListComponent({
     useState<number>(initialLoadSize);
   const {loadingDisplayData, profileList} = useProfileList(displayUserArray);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState<boolean>(false);
-  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
-  const loadMoreUsers = async (additionalCount: number) => {
-    const arrayToSlice = userSubset ?? fullUserArray;
-    const newLoadSize = Math.min(
-      currentLoadSize + additionalCount,
-      arrayToSlice.length,
-    );
-    if (newLoadSize <= currentLoadSize) {
-      return;
-    } // No more users to load
-    setLoadingMoreUsers(true);
-    const additionalUsers = arrayToSlice.slice(currentLoadSize, newLoadSize);
-    setDisplayUserArray([
-      ...new Set([...displayUserArray, ...additionalUsers]),
-    ]);
-    setCurrentLoadSize(newLoadSize);
-    await sleep(500); // Give the user list time to update
-    setLoadingMoreUsers(false);
-  };
+  const loadMoreUsers = useCallback(
+    (additionalCount: number) => {
+      const arrayToSlice = userSubset ?? fullUserArray;
+      const newLoadSize = Math.min(
+        currentLoadSize + additionalCount,
+        arrayToSlice.length,
+      );
+      if (newLoadSize <= currentLoadSize) {
+        return;
+      } // No more users to load
 
-  const handleScroll = async (
-    event: NativeSyntheticEvent<NativeScrollEvent>,
-  ) => {
-    const y = event.nativeEvent.contentOffset.y;
-    const height = event.nativeEvent.layoutMeasurement.height;
-    const contentHeight = event.nativeEvent.contentSize.height;
+      setLoadingMoreUsers(true);
+      const additionalUsers = arrayToSlice.slice(currentLoadSize, newLoadSize);
+      setDisplayUserArray(prev => [...new Set([...prev, ...additionalUsers])]);
+      setCurrentLoadSize(newLoadSize);
+      sleep(500).then(() => setLoadingMoreUsers(false));
+    },
+    [
+      userSubset,
+      fullUserArray,
+      currentLoadSize,
+      setLoadingMoreUsers,
+      setDisplayUserArray,
+      setCurrentLoadSize,
+    ],
+  );
 
-    // Load more users when the user is within 300 pixels from the bottom
-    if (y + height >= contentHeight - 300 && !loadingMoreUsers) {
-      await loadMoreUsers(initialLoadSize);
-    }
-  };
+  const onEndReached = useCallback(() => {
+    loadMoreUsers(initialLoadSize);
+  }, [initialLoadSize, loadMoreUsers]);
 
   const navigateToProfile = (userID: string): void => {
     Navigation.navigate(ROUTES.PROFILE.getRoute(userID));
@@ -123,13 +118,12 @@ function UserListComponent({
   useEffect(() => {
     const updateDisplayArray = () => {
       // No users to display
-      if (!isNonEmptyArray(fullUserArray) || !isNonEmptyArray(userSubset)) {
+      if (
+        !isNonEmptyArray(fullUserArray) ||
+        !isNonEmptyArray(userSubset) ||
+        isEmptyObject(userStatusList)
+      ) {
         setDisplayUserArray([]);
-        setIsInitialLoad(false);
-        return;
-      }
-      // Data not yet initialized during the initial load
-      if (isEmptyObject(userStatusList)) {
         return;
       }
       let arrayToSlice = userSubset ?? fullUserArray;
@@ -142,102 +136,67 @@ function UserListComponent({
       }
       const newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
       setDisplayUserArray(newDisplayArray);
-      setIsInitialLoad(false);
     };
 
     updateDisplayArray();
-  }, [
-    db,
-    userStatusList,
-    userSubset,
-    currentLoadSize,
-    fullUserArray,
-    orderUsers,
-  ]); // Full array changes change the status list
+  }, [userStatusList, userSubset, currentLoadSize, fullUserArray, orderUsers]); // Full array changes change the status list
+
+  const renderItem = useCallback(
+    ({item, index}: ListRenderItemInfo<string>) => {
+      const userID = item;
+      const profileData = profileList[userID] ?? {};
+      const userStatusData = userStatusList[userID] ?? {};
+
+      // Catch the initial load of the user list (profileList and userStatusList are empty objects at first)
+      if (isEmptyObject(profileData) || isEmptyObject(userStatusData)) {
+        return null;
+      }
+
+      return (
+        <PressableWithAnimation
+          key={`${index}-user-button`}
+          style={[]}
+          onPress={() => navigateToProfile(userID)}>
+          <UserOverview
+            key={`${index}-user-overview`}
+            userID={userID}
+            profileData={profileData}
+            userStatusData={userStatusData}
+            timezone={userData?.timezone}
+          />
+        </PressableWithAnimation>
+      );
+    },
+    [profileList, userStatusList, userData?.timezone],
+  );
+
+  const listFooterComponent = useMemo(() => {
+    if (!loadingMoreUsers) {
+      return null;
+    }
+    return <FlexibleLoadingIndicator style={[styles.pt2]} />;
+  }, [loadingMoreUsers, styles.pt2]);
+
+  const listEmptyComponent = useMemo(() => {
+    if (isLoading || loadingDisplayData) {
+      return <FlexibleLoadingIndicator />;
+    }
+    return emptyListComponent;
+  }, [emptyListComponent, isLoading, loadingDisplayData]);
 
   return (
-    <ScrollView
-      style={[styles.flex1, styles.mnw100]}
-      onScrollBeginDrag={Keyboard.dismiss}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      keyboardShouldPersistTaps="handled">
-      {(loadingDisplayData && isInitialLoad) || isLoading ? (
-        <FlexibleLoadingIndicator />
-      ) : isNonEmptyArray(fullUserArray) ? (
-        <>
-          <View style={localStyles.userList}>
-            {isNonEmptyArray(displayUserArray) ? (
-              _.map(displayUserArray, (userID: string) => {
-                const profileData = profileList[userID] ?? {};
-                const userStatusData = userStatusList[userID] ?? {};
-
-                // Catch the initial load of the user list (profileList and userStatusList are empty objects at first)
-                if (
-                  isEmptyObject(profileData) ||
-                  isEmptyObject(userStatusData)
-                ) {
-                  return null;
-                }
-
-                return (
-                  <PressableWithAnimation
-                    key={`${userID}-button`}
-                    style={localStyles.friendOverviewButton}
-                    onPress={() => navigateToProfile(userID)}>
-                    <UserOverview
-                      key={`${userID}-user-overview`}
-                      userID={userID}
-                      profileData={profileData}
-                      userStatusData={userStatusData}
-                      timezone={userData?.timezone}
-                    />
-                  </PressableWithAnimation>
-                );
-              })
-            ) : (
-              <Text style={styles.noResultsText}>
-                {`${translate('userList.noFriendsFound')}\n\n${translate('userList.tryModifyingSearch')}`}
-              </Text>
-            )}
-          </View>
-          {loadingMoreUsers && (
-            <View style={localStyles.loadingMoreUsersContainer}>
-              <FlexibleLoadingIndicator />
-            </View>
-          )}
-        </>
-      ) : (
-        emptyListComponent
-      )}
-    </ScrollView>
+    <FlatList
+      accessibilityLabel={translate('friendListScreen.userList')}
+      data={displayUserArray}
+      renderItem={renderItem}
+      style={[]}
+      contentContainerStyle={[styles.pt1]}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.75}
+      ListEmptyComponent={listEmptyComponent}
+      ListFooterComponent={listFooterComponent}
+    />
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  userList: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingTop: 5,
-  },
-  friendOverviewButton: {
-    width: '100%',
-    maxHeight: 100,
-  },
-  loadingMoreUsersContainer: {
-    width: '100%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-  },
-  loadingMoreUsersText: {
-    fontSize: 18,
-    fontWeight: '400',
-    color: 'black',
-  },
-});
 
 export default UserListComponent;

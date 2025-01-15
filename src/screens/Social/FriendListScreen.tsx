@@ -1,11 +1,12 @@
 import {View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {UserIDToNicknameMapping} from '@src/types/various/Search';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping, searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
+import Text from '@components/Text';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
@@ -20,6 +21,7 @@ function FriendListScreen() {
   const styles = useThemeStyles();
   const [friends, setFriends] = useState<UserArray>([]);
   const [friendsToDisplay, setFriendsToDisplay] = useState<UserArray>([]);
+  const [userHasFriends, setUserHasFriends] = useState<boolean>(false);
   const {profileList} = useProfileList(friends);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -50,16 +52,27 @@ function FriendListScreen() {
     setFriendsToDisplay(friends);
   };
 
+  const emptyListComponent = useMemo(() => {
+    if (!userHasFriends) {
+      return <NoFriendInfo />;
+    }
+    return (
+      <Text style={styles.noResultsText}>
+        {`${translate('userList.noFriendsFound')}\n\n${translate('userList.tryModifyingSearch')}`}
+      </Text>
+    );
+  }, [userHasFriends, styles.noResultsText, translate]);
+
   useEffect(() => {
     const friendsArray = objKeys(userData?.friends);
     setFriends(friendsArray);
     setFriendsToDisplay(friendsArray);
+    setUserHasFriends(friendsArray.length > 0);
   }, [userData]);
 
   return (
     <View style={styles.flex1}>
       <SearchWindow
-        // ref={friendListInputRef}
         windowText={translate('friendListScreen.searchYourFriendList')}
         onSearch={localSearch}
         onResetSearch={resetSearch}
@@ -68,7 +81,7 @@ function FriendListScreen() {
       <UserListComponent
         fullUserArray={friends}
         initialLoadSize={20}
-        emptyListComponent={<NoFriendInfo />}
+        emptyListComponent={emptyListComponent}
         userSubset={friendsToDisplay}
         orderUsers
         isLoading={isLoading}

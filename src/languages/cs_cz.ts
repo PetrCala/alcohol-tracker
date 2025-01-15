@@ -472,6 +472,7 @@ export default {
   },
   friendListScreen: {
     searchYourFriendList: 'Prohledat seznam přátel',
+    userList: 'List vašich přátel',
   },
   notFoundScreen: {
     title: 'Nenalezeno',
