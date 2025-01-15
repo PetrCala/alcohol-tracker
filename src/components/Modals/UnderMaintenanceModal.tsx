@@ -55,8 +55,8 @@ function UnderMaintenanceModal({config}: UnderMaintenanceProps) {
               {translate('maintenance.text')}
             </Text>
             <Text style={[styles.textLarge, styles.textStrong, styles.pb5]}>
-              {startTime || translate('common.unknown')} -
-              {endTime || translate('common.unknown')}
+              {startTime ?? translate('common.unknown')} -
+              {endTime ?? translate('common.unknown')}
             </Text>
             <Image
               style={styles.maintenanceBeaverImage(smallerScreenSize)}

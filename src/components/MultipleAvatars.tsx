@@ -180,7 +180,7 @@ function MultipleAvatars({
             name={icons[0].name}
             type={icons[0].type}
             fallbackIcon={icons[0].fallbackIcon}
-            userID={icons[0].id as any}
+            userID={icons[0].id}
           />
         </View>
       </UserDetailsTooltip>
@@ -237,7 +237,7 @@ function MultipleAvatars({
                 name={icon.name}
                 type={icon.type}
                 fallbackIcon={icon.fallbackIcon}
-                userID={icon.id as any}
+                userID={icon.id}
               />
             </View>
           </UserDetailsTooltip>

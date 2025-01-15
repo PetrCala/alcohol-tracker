@@ -1,7 +1,6 @@
 import React, {useRef} from 'react';
 import type {GestureResponderEvent, View} from 'react-native';
 import useSingleExecution from '@hooks/useSingleExecution';
-import CONST from '@src/CONST';
 import type {MenuItemProps} from './MenuItem';
 import MenuItem from './MenuItem';
 

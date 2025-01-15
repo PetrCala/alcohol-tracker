@@ -1,10 +1,10 @@
+import React from 'react';
 import Modal from '@components/Modal';
 import SafeAreaConsumer from '@components/SafeAreaConsumer';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
-import React from 'react';
 import {View, Linking} from 'react-native';
 import Text from '@components/Text';
 
@@ -17,6 +17,15 @@ function ForceUpdateModal() {
     currentPlatform === CONST.PLATFORM.ANDROID
       ? CONST.STORE_LINKS.ANDROID
       : CONST.STORE_LINKS.IOS;
+
+  const onPress = () => {
+    (async () => {
+      if (!storeLink) {
+        return;
+      }
+      await Linking.openURL(storeLink);
+    })();
+  };
 
   return (
     <SafeAreaConsumer>
@@ -39,9 +48,7 @@ function ForceUpdateModal() {
               {translate('forceUpdate.text', {platform: currentPlatform})}
             </Text>
             {storeLink && (
-              <Text
-                style={[styles.textLarge, styles.link]}
-                onPress={() => Linking.openURL(storeLink)}>
+              <Text style={[styles.textLarge, styles.link]} onPress={onPress}>
                 {translate('forceUpdate.link')}
               </Text>
             )}
