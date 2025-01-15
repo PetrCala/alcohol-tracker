@@ -1,6 +1,5 @@
 import React, {useMemo} from 'react';
 import {withOnyx} from 'react-native-onyx';
-import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import BaseImage from './BaseImage';
 import type {ImageOnyxProps, ImageOwnProps, ImageProps} from './types';
@@ -32,7 +31,7 @@ function Image({
     }
     return propsSource;
     // The session prop is not required, as it causes the image to reload whenever the session changes. For more information, please refer to issue #26034.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, [propsSource, isAuthTokenRequired]);
 
   return (

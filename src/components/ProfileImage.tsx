@@ -5,7 +5,6 @@ import type {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import {Image} from 'react-native';
 import type {FirebaseStorage} from 'firebase/storage';
 import getProfilePictureURL from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
@@ -13,9 +12,10 @@ import CONST from '@src/CONST';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import ERRORS from '@src/ERRORS';
 import useTheme from '@hooks/useTheme';
+import Image from './Image';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
-import FullScreenImageModal from './Buttons/FullScreenImageModal';
+import EnlargableImage from './Buttons/EnlargableImage';
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
@@ -134,7 +134,7 @@ function ProfileImage({
   }
 
   return (
-    <FullScreenImageModal
+    <EnlargableImage
       imageSource={imageSource}
       imageStyle={[style, {tintColor: iconTint}]}
     />
