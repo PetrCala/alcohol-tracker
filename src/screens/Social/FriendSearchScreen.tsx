@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -15,10 +15,7 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Profile from '@userActions/Profile';
 import SearchResult from '@components/Search/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import type {
-  SearchWindowRef,
-  UserSearchResults,
-} from '@src/types/various/Search';
+import type {UserSearchResults} from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -33,7 +30,6 @@ function FriendSearchScreen() {
   const {auth, db, storage} = useFirebase();
   const styles = useThemeStyles();
   const {userData} = useDatabaseData();
-  const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const {translate} = useLocalize();
   const [searchResultData, setSearchResultData] = useState<UserSearchResults>(
