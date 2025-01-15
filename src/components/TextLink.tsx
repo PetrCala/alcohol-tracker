@@ -54,7 +54,7 @@ function TextLink(
   }: TextLinkProps,
   ref: ForwardedRef<RNText>,
 ) {
-  const {environmentURL} = useEnvironment();
+  const {environmentURL} = useEnvironment(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const styles = useThemeStyles();
 
   const openLink = (event: GestureResponderEvent | KeyboardEvent) => {

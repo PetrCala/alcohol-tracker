@@ -11,31 +11,29 @@ type SuccessIndicatorProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({
-  visible,
-  style,
-}) => {
+function SuccessIndicator({visible, style}: SuccessIndicatorProps) {
   const [opacity] = useState(new Animated.Value(0)); // Initial value for opacity: 0
   const styles = useThemeStyles();
 
   useEffect(() => {
-    if (visible) {
-      // Fade in the indicator
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        // After fading in, wait for 1 second, then fade out
-        setTimeout(() => {
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }).start();
-        }, 1000);
-      });
+    if (!visible) {
+      return;
     }
+    // Fade in the indicator
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // After fading in, wait for 1 second, then fade out
+      setTimeout(() => {
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }, 1000);
+    });
   }, [visible, opacity]);
 
   if (!visible) {
@@ -52,6 +50,6 @@ const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({
       ]}
     />
   );
-};
+}
 
 export default SuccessIndicator;
