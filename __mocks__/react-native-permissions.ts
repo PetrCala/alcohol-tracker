@@ -47,10 +47,10 @@ const requestNotifications: jest.Mock<Notification> = jest.fn(
     settings: Object.keys(options)
       .filter((option: string) => notificationOptions.includes(option))
       .reduce(
-        (acc: NotificationSettings, option: string) => ({
-          ...acc,
-          [option]: true,
-        }),
+        (acc: NotificationSettings, option: string) => {
+          acc[option] = true;
+          return acc;
+        },
         {
           lockScreen: true,
           notificationCenter: true,
@@ -61,24 +61,18 @@ const requestNotifications: jest.Mock<Notification> = jest.fn(
 
 const checkMultiple: jest.Mock<ResultsCollection> = jest.fn(
   (permissions: string[]) =>
-    permissions.reduce(
-      (acc: ResultsCollection, permission: string) => ({
-        ...acc,
-        [permission]: RESULTS.GRANTED,
-      }),
-      {},
-    ),
+    permissions.reduce((acc: ResultsCollection, permission: string) => {
+      acc[permission] = RESULTS.GRANTED;
+      return acc;
+    }, {}),
 );
 
 const requestMultiple: jest.Mock<ResultsCollection> = jest.fn(
   (permissions: string[]) =>
-    permissions.reduce(
-      (acc: ResultsCollection, permission: string) => ({
-        ...acc,
-        [permission]: RESULTS.GRANTED,
-      }),
-      {},
-    ),
+    permissions.reduce((acc: ResultsCollection, permission: string) => {
+      acc[permission] = RESULTS.GRANTED;
+      return acc;
+    }, {}),
 );
 
 export {

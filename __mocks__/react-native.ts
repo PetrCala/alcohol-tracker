@@ -44,7 +44,7 @@ jest.doMock('react-native', () => {
     };
   };
 
-  const reactNativeMock: ReactNativeMock = Object.setPrototypeOf(
+  const reactNativeMock = Object.setPrototypeOf(
     {
       NativeModules: {
         ...ReactNative.NativeModules,
@@ -110,7 +110,7 @@ jest.doMock('react-native', () => {
       },
     },
     ReactNative,
-  );
+  ) as ReactNativeMock;
 
   return reactNativeMock;
 });

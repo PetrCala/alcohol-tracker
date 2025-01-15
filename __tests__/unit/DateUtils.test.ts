@@ -145,6 +145,7 @@ describe('DateUtils', () => {
           resolvedOptions: () => ({timeZone: 'America/Chicago'}),
         }) as Intl.DateTimeFormat,
     );
+    // eslint-disable-next-line rulesdir/prefer-actions-set-data
     Onyx.set(ONYXKEYS.USER_DATA_LIST, {
       '999': {
         timezone: {selected: 'Europe/London', automatic: true},
@@ -165,6 +166,7 @@ describe('DateUtils', () => {
           resolvedOptions: () => ({timeZone: UTC}),
         }) as Intl.DateTimeFormat,
     );
+    // eslint-disable-next-line rulesdir/prefer-actions-set-data
     Onyx.set(ONYXKEYS.USER_DATA_LIST, {
       '999': {
         timezone: {selected: 'Europe/London', automatic: true},

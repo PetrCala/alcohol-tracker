@@ -65,6 +65,7 @@ xdescribe('localize', () => {
         },
       ) => {
         expect(Localize.formatList(input)).toBe(expectedOutput);
+        // eslint-disable-next-line rulesdir/prefer-actions-set-data
         return Onyx.set(
           ONYXKEYS.NVP_PREFERRED_LOCALE,
           CONST.LOCALES.CS_CZ,

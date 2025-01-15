@@ -1,14 +1,10 @@
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import type {
-  DrinkingSession,
-  DrinkingSessionArray,
-  DrinkingSessionList,
-  DrinksList,
-  DrinksToUnits,
-} from '@src/types/onyx';
+import type {DrinkingSession, DrinksList, DrinksToUnits} from '@src/types/onyx';
 import CONST from '@src/CONST';
 import {getZeroDrinksList} from '@libs/DataHandling';
 import {createMockSession} from '@src/database/MockDatabase';
+
+/* eslint-disable @typescript-eslint/naming-convention */
 
 describe('determineSessionMostCommonDrink', () => {
   let session: DrinkingSession;

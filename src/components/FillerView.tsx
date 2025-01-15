@@ -6,8 +6,9 @@ type FillerViewProps = {
   styles?: StyleProp<ViewStyle>;
   height?: number;
 };
+
 function FillerView({height, styles}: FillerViewProps) {
-  const fillerHeight = height || 200;
+  const fillerHeight = height ?? 200;
   const theme = useTheme();
   return (
     <View
