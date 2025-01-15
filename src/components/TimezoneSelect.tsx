@@ -19,9 +19,6 @@ type TimezoneSelectProps = {
 
   /** Callback when a timezone is selected */
   onSelectedTimezone?: (timezone: SelectedTimezone) => void;
-
-  /** Id to use for this timezone select */
-  id?: string;
 };
 
 function TimezoneSelect(
@@ -29,9 +26,6 @@ function TimezoneSelect(
     initialTimezone,
 
     onSelectedTimezone,
-
-    id = '',
-    ...rest
   }: TimezoneSelectProps,
   ref: ForwardedRef<SelectionListHandle>,
 ) {
@@ -69,9 +63,10 @@ function TimezoneSelect(
     keyForList: string;
     isSelected: boolean;
   }) => {
-    if (onSelectedTimezone) {
-      onSelectedTimezone(item.text as SelectedTimezone);
+    if (!onSelectedTimezone) {
+      return;
     }
+    onSelectedTimezone(item.text as SelectedTimezone);
   };
 
   return (

@@ -34,7 +34,7 @@ function UploadImagePopup({
   const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
-  const UploadWindow: React.FC = () => {
+  const renderUploadWindow = () => {
     return (
       <View style={[styles.flexColumn, styles.alignItemsCenter]}>
         <Text style={[styles.textAlignCenter, styles.mb2]}>
@@ -45,7 +45,7 @@ function UploadImagePopup({
     );
   };
 
-  const UploadFinishedWindow: React.FC = () => {
+  const renderUploadFinishedWindow = () => {
     const handleUploadFinishConfirm = () => {
       setUploadFinished(false);
       onRequestClose();
@@ -75,7 +75,10 @@ function UploadImagePopup({
 
   useEffect(() => {
     const updateInfoUponUpload = async () => {
-      if (uploadProgress && uploadProgress.includes('100') && user) {
+      if (!uploadProgress || !user) {
+        return;
+      }
+      if (uploadProgress.includes('100')) {
         setUploadFinished(true);
         await AsyncStorage.removeItem(
           CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
@@ -85,7 +88,7 @@ function UploadImagePopup({
     };
 
     updateInfoUponUpload();
-  }, [uploadProgress]);
+  }, [uploadProgress, onUploadFinish, user]);
 
   return (
     <Modal
@@ -93,8 +96,8 @@ function UploadImagePopup({
       type={CONST.MODAL.MODAL_TYPE.CENTERED_SMALL}
       onClose={onRequestClose}>
       <View style={[styles.p4]}>
-        {uploadFinished && <UploadFinishedWindow />}
-        {!!uploadOngoing && <UploadWindow />}
+        {uploadFinished && renderUploadFinishedWindow()}
+        {!!uploadOngoing && renderUploadWindow()}
       </View>
     </Modal>
   );

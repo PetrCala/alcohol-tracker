@@ -1,19 +1,20 @@
 import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import variables from '@src/styles/variables';
 import useLocalize from '@hooks/useLocalize';
+import Text from './Text';
 
 type NoSessionsInfoProps = {
+  /** The message to display to the user */
   message?: string;
+
+  /** The text to display on the button */
   buttonText?: string;
 };
 
 /** A View that informs the users that they have no friends */
-const NoSessionsInfo: React.FC<NoSessionsInfoProps> = ({
-  message,
-  buttonText,
-}) => {
+function NoSessionsInfo({message, buttonText}: NoSessionsInfoProps) {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
@@ -26,13 +27,13 @@ const NoSessionsInfo: React.FC<NoSessionsInfoProps> = ({
           styles.loginHeroHeader,
           StyleUtils.getFontSizeStyle(variables.fontSizeSignInHeroXSmall),
         ]}>
-        {translate('homeScreen.welcomeToKiroku')}
+        {buttonText ?? translate('homeScreen.welcomeToKiroku')}
       </Text>
       <Text style={styles.textHomeScreenNoSessions}>
         {message ?? translate('homeScreen.startNewSessionByClickingPlus')}
       </Text>
     </View>
   );
-};
+}
 
 export default NoSessionsInfo;
