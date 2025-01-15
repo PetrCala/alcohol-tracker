@@ -13,12 +13,10 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
 import useBatchedUpdates from '@hooks/useBatchedUpdates';
 import ScreenWrapper from '@components/ScreenWrapper';
-import SuccessIndicator from '@components/SuccessIndicator';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
 import {computeFirebaseUpdates} from '@database/baseFunctions';
 import useStyleUtils from '@hooks/useStyleUtils';
-import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import Navigation from '@libs/Navigation/Navigation';
 import type {Route} from '@src/ROUTES';
@@ -114,17 +112,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   return (
     <ScreenWrapper testID={LiveSessionScreen.displayName}>
-      {isPending && (
-        <FlexibleLoadingIndicator
-          size="small"
-          style={StyleUtils.getSuccessIndicatorStyle()}
-        />
-      )}
-      <SuccessIndicator visible={dbSyncSuccessful} />
       <DrinkingSessionWindow
         onNavigateBack={onNavigateBack}
         sessionId={sessionId}
         session={session}
+        shouldShowSyncPendingIndicator={isPending}
+        shouldShowSyncSuccessIndicator={dbSyncSuccessful}
         onyxKey={ONYXKEYS.ONGOING_SESSION_DATA}
         type={CONST.SESSION.TYPES.LIVE}
       />

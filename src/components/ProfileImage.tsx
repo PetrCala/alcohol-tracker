@@ -1,22 +1,16 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import type {
-  ImageSourcePropType,
-  ImageStyle,
-  LayoutChangeEvent,
-  StyleProp,
-} from 'react-native';
+import type {ImageSourcePropType, ImageStyle, StyleProp} from 'react-native';
 import {Image} from 'react-native';
 import type {FirebaseStorage} from 'firebase/storage';
 import getProfilePictureURL from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
-import type ImageLayout from '@src/types/various/ImageLayout';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import ERRORS from '@src/ERRORS';
 import useTheme from '@hooks/useTheme';
 import * as KirokuIcons from './Icon/KirokuIcons';
-import EnlargableImage from './Buttons/EnlargableImage';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
+import FullScreenImageModal from './Buttons/FullScreenImageModal';
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
@@ -25,8 +19,6 @@ type ProfileImageProps = {
   style: StyleProp<ImageStyle>;
   refreshTrigger?: number; // Likely a number, used to force a refresh
   enlargable?: boolean;
-  layout?: ImageLayout;
-  onLayout?: (event: LayoutChangeEvent) => void;
 };
 
 function ProfileImage({
@@ -36,8 +28,6 @@ function ProfileImage({
   style,
   refreshTrigger,
   enlargable,
-  layout,
-  onLayout,
 }: ProfileImageProps) {
   const theme = useTheme();
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userID);
@@ -56,9 +46,9 @@ function ProfileImage({
       : theme.icon; // No source given, use default
 
   /**
-    Checks if a cached version is available and still valid.
-    If valid, sets the image URL from cache and ends loading.
-    Returns `true` if a valid cache was used, `false` otherwise.
+   * Checks if a cached version is available and still valid.
+   * If valid, sets the image URL from cache and ends loading.
+   * Returns `true` if a valid cache was used, `false` otherwise.
    */
   const checkAvailableCache = useCallback(
     (url: string | null): boolean => {
@@ -87,7 +77,7 @@ function ProfileImage({
   );
 
   /**
-    Actually downloads the image, then caches and sets it.
+   * Actually downloads the image, then caches and sets it.
    */
   const fetchImage = useCallback(async () => {
     setLoadingImage(true);
@@ -108,12 +98,11 @@ function ProfileImage({
   }, [storage, userID, downloadPath, cacheImage]);
 
   /**
-    Single effect that runs after the cache is known to be checked.
-    1) Tries to load from cache if valid.
-    2) If invalid, fetches the image from storage.
+   * Single effect that runs after the cache is known to be checked.
+   * 1) Tries to load from cache if valid.
+   * 2) If invalid, fetches the image from storage.
    */
   useEffect(() => {
-    // Don’t do anything until cache is checked
     if (!isCacheChecked) {
       return;
     }
@@ -138,16 +127,11 @@ function ProfileImage({
       <Image source={imageSource} style={[style, {tintColor: iconTint}]} />
     );
   }
-  if (!layout || !onLayout) {
-    return;
-  }
 
   return (
-    <EnlargableImage
+    <FullScreenImageModal
       imageSource={imageSource}
       imageStyle={[style, {tintColor: iconTint}]}
-      imageLayout={layout}
-      onImageLayout={onLayout}
     />
   );
 }

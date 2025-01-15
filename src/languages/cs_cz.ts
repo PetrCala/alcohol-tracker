@@ -789,6 +789,7 @@ export default {
     unfriend: 'Odebrat z přátel',
     commonFriendsLabel: ({hasCommonFriends}: CommonFriendsLabelParams) =>
       `${hasCommonFriends ? 'Společní přátelé:' : 'Přátelé:'}`,
+    profileImage: 'Profilový obrázek',
   },
   statisticsScreen: {
     title: 'Statistiky',

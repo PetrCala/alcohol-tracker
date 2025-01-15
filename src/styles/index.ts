@@ -970,6 +970,12 @@ const styles = (theme: ThemeColors) =>
       borderRadius: variables.avatarSizeLarge / 2,
     },
 
+    avatarXLarge: {
+      height: variables.avatarSizeXLarge,
+      width: variables.avatarSizeXLarge,
+      borderRadius: variables.avatarSizeXLarge / 2,
+    },
+
     avatarMargin: {
       marginRight: variables.avatarChatSpacing,
     },
@@ -991,11 +997,11 @@ const styles = (theme: ThemeColors) =>
         position: 'absolute',
         height: variables.avatarSizeXLarge / 3,
         width: variables.avatarSizeXLarge / 3,
-        top: variables.avatarSizeXLarge / 2 + variables.avatarSizeXLarge / 7,
+        top: variables.avatarSizeXLarge / 2 + variables.avatarSizeXLarge / 5,
         left:
           screenWidth / 2 +
           variables.avatarSizeXLarge / 2 -
-          variables.avatarSizeXLarge / 3,
+          variables.avatarSizeXLarge / 4,
         borderRadius: variables.avatarSizeXLarge / 3,
         zIndex: 10,
       }) satisfies ViewStyle,
@@ -1978,6 +1984,27 @@ const styles = (theme: ThemeColors) =>
       width: 20,
       height: 20,
       backgroundColor: theme.buttonDefaultBG,
+    },
+
+    successIndicator: {
+      position: 'absolute',
+      width: variables.successIndicatorSize,
+      height: variables.successIndicatorSize,
+      borderRadius: variables.successIndicatorSize,
+      right: 12,
+      top:
+        variables.contentHeaderHeight / 2 - variables.successIndicatorSize / 2,
+      zIndex: 10,
+    },
+
+    editProfileIndicator: {
+      position: 'absolute',
+      width: variables.successIndicatorSize,
+      height: variables.successIndicatorSize,
+      borderRadius: variables.successIndicatorSize,
+      right: 8,
+      top: 0,
+      zIndex: 10,
     },
 
     textLabel: {

@@ -789,6 +789,7 @@ export default {
     unfriend: 'Unfriend',
     commonFriendsLabel: ({hasCommonFriends}: CommonFriendsLabelParams) =>
       `${hasCommonFriends ? 'Common friends:' : 'Friends:'}`,
+    profileImage: 'Profile Image',
   },
   statisticsScreen: {
     title: 'Statistics',

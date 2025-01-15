@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Animated} from 'react-native';
-import useStyleUtils from '@hooks/useStyleUtils';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type SuccessIndicatorProps = {
   /** Whether the indicator is visible */
@@ -16,7 +16,7 @@ const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({
   style,
 }) => {
   const [opacity] = useState(new Animated.Value(0)); // Initial value for opacity: 0
-  const StyleUtils = useStyleUtils();
+  const styles = useThemeStyles();
 
   useEffect(() => {
     if (visible) {
@@ -45,7 +45,7 @@ const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({
   return (
     <Animated.View
       style={[
-        StyleUtils.getSuccessIndicatorStyle(),
+        styles.successIndicator,
         {backgroundColor: 'green'}, // TODO replace with theme color
         style,
         {opacity},
