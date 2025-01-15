@@ -470,6 +470,7 @@ export default {
   },
   friendListScreen: {
     searchYourFriendList: 'Search your friend list',
+    userList: 'The list of your friends',
   },
   notFoundScreen: {
     title: 'Not Found',
