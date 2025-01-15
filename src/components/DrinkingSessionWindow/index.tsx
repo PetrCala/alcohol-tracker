@@ -237,7 +237,7 @@ function DrinkingSessionWindow({
         />
         <FillerView />
       </ScrollView>
-      <View style={[styles.bottomTabBarContainer, styles.gap4]}>
+      <View style={[styles.bottomTabBarContainer, styles.gap2]}>
         <Button
           large
           text={translate('liveSessionScreen.discardSession', {
