@@ -36,10 +36,11 @@ function ProfileImage({
 }: ProfileImageProps) {
   const theme = useTheme();
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userID);
-  const prevCachedUrl = useRef(cachedUrl); // Crucial
+  const prevCachedUrl = useRef(cachedUrl); // Likely, the cache won't be available here yet, so we make sure to update it later
   const initialDownloadPath = useRef(downloadPath);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState<boolean>(true);
+  const [cacheFound, setCacheFound] = useState<boolean>(false);
 
   const imageSource: ImageSourcePropType =
     imageUrl && imageUrl !== CONST.NO_IMAGE
@@ -57,6 +58,11 @@ function ProfileImage({
    */
   const checkAvailableCache = useCallback(
     (url: string | null): boolean => {
+      if (cacheFound) {
+        // If, during the current render, we've already found a cache, we're done
+        return true;
+      }
+
       // If path indicates a local file
       if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
         setImageUrl(downloadPath);
@@ -73,12 +79,13 @@ function ProfileImage({
       ) {
         setImageUrl(cachedUrl);
         setLoadingImage(false);
+        setCacheFound(true);
         return true;
       }
 
       return false;
     },
-    [downloadPath, refreshTrigger, cachedUrl],
+    [downloadPath, refreshTrigger, cachedUrl, cacheFound],
   );
 
   /**
@@ -111,6 +118,8 @@ function ProfileImage({
     if (!isCacheChecked) {
       return;
     }
+
+    prevCachedUrl.current = cachedUrl; // Crucial!: This is the moment when the cachedUrl is updated and thus first available, so we set the ref here
 
     // If cache is valid, we’re done
     const cacheUnchanged = checkAvailableCache(cachedUrl);
