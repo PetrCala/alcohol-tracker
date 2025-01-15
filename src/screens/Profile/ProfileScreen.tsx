@@ -15,6 +15,7 @@ import {
 import SessionsCalendar from '@components/SessionsCalendar';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -35,6 +36,7 @@ import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import ManageFriendPopover from '@components/ManageFriendPopover';
 import ScrollView from '@components/ScrollView';
 import Text from '@components/Text';
+import useStyleUtils from '@hooks/useStyleUtils';
 
 type ProfileScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
@@ -52,6 +54,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   ];
   const {translate} = useLocalize();
   const styles = useThemeStyles();
+  const StyleUtils = useStyleUtils();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
   const [selfFriends, setSelfFriends] = useState<UserList | null | undefined>();
   const [friendCount, setFriendCount] = useState(0);
@@ -178,6 +181,14 @@ function ProfileScreen({route}: ProfileScreenProps) {
       <ScrollView
         style={[styles.flexGrow1, styles.mnw100]}
         showsVerticalScrollIndicator={false}>
+        {user?.uid === userID && (
+          <Button
+            icon={KirokuIcons.Gear}
+            iconFill={StyleUtils.getIconFillColor()}
+            style={[styles.editProfileIndicator, styles.bgTransparent]}
+            onPress={() => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT)}
+          />
+        )}
         <ProfileOverview
           userID={userID}
           profileData={profileData} // For live propagation of current user

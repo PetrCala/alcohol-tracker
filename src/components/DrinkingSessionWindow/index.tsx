@@ -20,6 +20,8 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import * as App from '@userActions/App';
 import {convertUnitsToColors} from '@libs/DataHandling';
 import ScrollView from '@components/ScrollView';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import SuccessIndicator from '@components/SuccessIndicator';
 import Log from '@libs/Log';
 import DateUtils from '@libs/DateUtils';
 import {isEqual} from 'lodash';
@@ -35,6 +37,8 @@ function DrinkingSessionWindow({
   session,
   onyxKey,
   type,
+  shouldShowSyncPendingIndicator = false,
+  shouldShowSyncSuccessIndicator = false,
 }: DrinkingSessionWindowProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
@@ -187,6 +191,13 @@ function DrinkingSessionWindow({
   return (
     <>
       <HeaderWithBackButton onBackButtonPress={handleBackPress} />
+      {shouldShowSyncPendingIndicator && (
+        <FlexibleLoadingIndicator
+          size="small"
+          style={styles.successIndicator}
+        />
+      )}
+      <SuccessIndicator visible={shouldShowSyncSuccessIndicator} />
       <ScrollView contentContainerStyle={[styles.w100]}>
         <View style={styles.pt2}>
           <View style={styles.alignItemsCenter}>
@@ -256,16 +267,6 @@ function DrinkingSessionWindow({
         confirmText={translate('common.yes')}
         cancelText={translate('common.no')}
         shouldDisableConfirmButtonWhenOffline
-        shouldShowCancelButton
-      />
-      <ConfirmModal
-        title={translate('common.warning')}
-        onConfirm={() => confirmGoBack()} // No changes to the session object
-        onCancel={() => setShouldShowLeaveConfirmation(false)}
-        isVisible={shouldShowLeaveConfirmation}
-        prompt={translate('liveSessionScreen.unsavedChangesWarning')}
-        confirmText={translate('common.yes')}
-        cancelText={translate('common.no')}
         shouldShowCancelButton
       />
       <ConfirmModal
