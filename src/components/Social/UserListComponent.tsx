@@ -48,7 +48,7 @@ function UserListComponent({
   emptyListComponent,
   userSubset,
   orderUsers,
-  isLoading = false,
+  isLoading,
 }: UserListProps) {
   const {db} = useFirebase();
   const styles = useThemeStyles();
@@ -61,6 +61,8 @@ function UserListComponent({
     useState<number>(initialLoadSize);
   const {loadingDisplayData, profileList} = useProfileList(displayUserArray);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState<boolean>(false);
+  const [initialLoadFinished, setInitialLoadFinished] =
+    useState<boolean>(false);
 
   const loadMoreUsers = useCallback(
     (additionalCount: number) => {
@@ -119,11 +121,12 @@ function UserListComponent({
     const updateDisplayArray = () => {
       // No users to display
       if (
-        !isNonEmptyArray(fullUserArray) ||
-        !isNonEmptyArray(userSubset) ||
+        (!isNonEmptyArray(fullUserArray) && fullUserArray) ??
+        (!isNonEmptyArray(userSubset) && userSubset) ??
         isEmptyObject(userStatusList)
       ) {
         setDisplayUserArray([]);
+        setInitialLoadFinished(true);
         return;
       }
       let arrayToSlice = userSubset ?? fullUserArray;
@@ -136,10 +139,18 @@ function UserListComponent({
       }
       const newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
       setDisplayUserArray(newDisplayArray);
+      setInitialLoadFinished(true);
     };
 
     updateDisplayArray();
-  }, [userStatusList, userSubset, currentLoadSize, fullUserArray, orderUsers]); // Full array changes change the status list
+  }, [
+    userStatusList,
+    userSubset,
+    currentLoadSize,
+    fullUserArray,
+    orderUsers,
+    initialLoadFinished,
+  ]); // Full array changes change the status list
 
   const renderItem = useCallback(
     ({item, index}: ListRenderItemInfo<string>) => {
@@ -178,11 +189,11 @@ function UserListComponent({
   }, [loadingMoreUsers, styles.pt2]);
 
   const listEmptyComponent = useMemo(() => {
-    if (isLoading || loadingDisplayData) {
+    if (isLoading ?? loadingDisplayData ?? !initialLoadFinished) {
       return <FlexibleLoadingIndicator />;
     }
     return emptyListComponent;
-  }, [emptyListComponent, isLoading, loadingDisplayData]);
+  }, [emptyListComponent, isLoading, loadingDisplayData, initialLoadFinished]);
 
   return (
     <FlatList
