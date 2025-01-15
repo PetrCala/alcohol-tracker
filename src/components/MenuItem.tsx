@@ -1,6 +1,6 @@
 import type {ImageContentFit} from 'expo-image';
 import type {ReactNode} from 'react';
-import React, {forwardRef, useContext, useMemo} from 'react';
+import React, {forwardRef, useContext} from 'react';
 import type {
   GestureResponderEvent,
   StyleProp,
@@ -13,7 +13,6 @@ import type {ValueOf} from 'type-fest';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import ControlSelection from '@libs/ControlSelection';
 import convertToLTR from '@libs/convertToLTR';
 import * as DeviceCapabilities from '@libs/DeviceCapabilities';
@@ -38,7 +37,6 @@ import {MenuItemGroupContext} from './MenuItemGroup';
 import MultipleAvatars from './MultipleAvatars';
 import type {PressableRef} from './Pressable/GenericPressable/types';
 import PressableWithSecondaryInteraction from './PressableWithSecondaryInteraction';
-import RenderHTML from './RenderHTML';
 import SelectCircle from './SelectCircle';
 import SubscriptAvatar from './SubscriptAvatar';
 import Text from './Text';
@@ -351,6 +349,7 @@ function MenuItem(
     style && Array.isArray(style)
       ? style.includes(styles.offlineFeedback.deleted)
       : false;
+  // eslint-disable-next-line no-nested-ternary
   const descriptionVerticalMargin = shouldUseRowFlexDirection
     ? styles.m0
     : shouldShowDescriptionOnTop
