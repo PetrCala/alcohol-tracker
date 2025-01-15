@@ -6,7 +6,6 @@ import MultipleAvatars from '@components/MultipleAvatars';
 import PressableWithFeedback from '@components/Pressable/PressableWithFeedback';
 import SubscriptAvatar from '@components/SubscriptAvatar';
 import TextWithTooltip from '@components/TextWithTooltip';
-import useLocalize from '@hooks/useLocalize';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -32,7 +31,6 @@ function UserListItem<TItem extends ListItem>({
   const styles = useThemeStyles();
   const theme = useTheme();
   const StyleUtils = useStyleUtils();
-  const {translate} = useLocalize();
 
   const focusedBackgroundColor = styles.sidebarLinkActive.backgroundColor;
   const subscriptAvatarBorderColor = isFocused

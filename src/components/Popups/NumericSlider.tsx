@@ -34,13 +34,14 @@ function NumericSlider({
 
   // Ensure correct initialization
   useEffect(() => {
-    if (visible) {
-      setLocalValue(value);
+    if (!visible) {
+      return;
     }
+    setLocalValue(value);
   }, [value, visible]);
 
-  const handleSliderChange = (value: number) => {
-    const newValue = parseFloat(value.toFixed(1));
+  const handleSliderChange = (val: number) => {
+    const newValue = parseFloat(val.toFixed(1));
     setLocalValue(newValue);
   };
 

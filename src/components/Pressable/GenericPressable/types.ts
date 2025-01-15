@@ -1,10 +1,10 @@
 import type {ElementRef, ForwardedRef, RefObject} from 'react';
-// eslint-disable-next-line no-restricted-imports
 import type {
   GestureResponderEvent,
   HostComponent,
   PressableStateCallbackType,
   PressableProps as RNPressableProps,
+  // eslint-disable-next-line no-restricted-imports
   Text as RNText,
   StyleProp,
   View,

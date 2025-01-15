@@ -830,7 +830,7 @@ function BaseSelectionList<TItem extends ListItem>(
                   if (typeof textInputRef === 'function') {
                     textInputRef(element as RNTextInput);
                   } else {
-                    // eslint-disable-next-line no-param-reassign
+                    // eslint-disable-next-line no-param-reassign, react-compiler/react-compiler
                     textInputRef.current = element as RNTextInput;
                   }
                 }}
