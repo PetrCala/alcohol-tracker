@@ -1,3 +1,4 @@
+/* eslint-disable react-compiler/react-compiler */
 import type {Ref} from 'react';
 import {
   cloneElement,
@@ -16,8 +17,18 @@ import type HoverableProps from './types';
 
 type ActiveHoverableProps = Omit<HoverableProps, 'disabled'>;
 
+type MouseEvents = 'onMouseEnter' | 'onMouseLeave' | 'onMouseMove' | 'onBlur';
+
+type OnMouseEvents = Record<MouseEvents, (e: MouseEvent) => void>;
+
 function ActiveHoverable(
-  {onHoverIn, onHoverOut, shouldHandleScroll, children}: ActiveHoverableProps,
+  {
+    onHoverIn,
+    onHoverOut,
+    shouldHandleScroll,
+    shouldFreezeCapture,
+    children,
+  }: ActiveHoverableProps,
   outerRef: Ref<HTMLElement>,
 ) {
   const [isHovered, setIsHovered] = useState(false);
@@ -30,12 +41,19 @@ function ActiveHoverable(
   const updateIsHovered = useCallback(
     (hovered: boolean) => {
       isHoveredRef.current = hovered;
-      if (shouldHandleScroll && isScrollingRef.current) {
+      // Nullish coalescing operator (`??`) wouldn't be appropriate here because
+      // it's not a matter of providing a default when encountering `null` or `undefined`
+      // but rather making a decision based on the truthy nature of the complete expressions.
+      if (
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        (shouldHandleScroll && isScrollingRef.current) ||
+        shouldFreezeCapture
+      ) {
         return;
       }
       setIsHovered(hovered);
     },
-    [shouldHandleScroll],
+    [shouldHandleScroll, shouldFreezeCapture],
   );
 
   useEffect(() => {
@@ -53,7 +71,7 @@ function ActiveHoverable(
 
     const scrollingListener = DeviceEventEmitter.addListener(
       CONST.EVENTS.SCROLLING,
-      scrolling => {
+      (scrolling: boolean) => {
         isScrollingRef.current = scrolling;
         if (!isScrollingRef.current) {
           setIsHovered(isHoveredRef.current);
@@ -77,9 +95,12 @@ function ActiveHoverable(
      * @param event The hover event object.
      */
     const unsetHoveredIfOutside = (event: MouseEvent) => {
+      // We're also returning early if shouldFreezeCapture is true in order
+      // to not update the hover state but keep it frozen.
       if (
         !elementRef.current ||
-        elementRef.current.contains(event.target as Node)
+        elementRef.current.contains(event.target as Node) ||
+        shouldFreezeCapture
       ) {
         return;
       }
@@ -87,11 +108,11 @@ function ActiveHoverable(
       setIsHovered(false);
     };
 
-    document.addEventListener('mouseover', unsetHoveredIfOutside);
+    document.addEventListener('mouseover', unsetHoveredIfOutside, true);
 
     return () =>
       document.removeEventListener('mouseover', unsetHoveredIfOutside);
-  }, [isHovered, elementRef]);
+  }, [isHovered, elementRef, shouldFreezeCapture]);
 
   useEffect(() => {
     const unsetHoveredWhenDocumentIsHidden = () => {
@@ -120,25 +141,24 @@ function ActiveHoverable(
     [children, isHovered],
   );
 
-  const childOnMouseEnter = child.props.onMouseEnter;
-  const childOnMouseLeave = child.props.onMouseLeave;
-  const childOnMouseMove = child.props.onMouseMove;
+  const {onMouseEnter, onMouseLeave, onMouseMove, onBlur} =
+    child.props as OnMouseEvents;
 
   const hoverAndForwardOnMouseEnter = useCallback(
     (e: MouseEvent) => {
       isVisibiltyHidden.current = false;
       updateIsHovered(true);
-      childOnMouseEnter?.(e);
+      onMouseEnter?.(e);
     },
-    [updateIsHovered, childOnMouseEnter],
+    [updateIsHovered, onMouseEnter],
   );
 
   const unhoverAndForwardOnMouseLeave = useCallback(
     (e: MouseEvent) => {
       updateIsHovered(false);
-      childOnMouseLeave?.(e);
+      onMouseLeave?.(e);
     },
-    [updateIsHovered, childOnMouseLeave],
+    [updateIsHovered, onMouseLeave],
   );
 
   const unhoverAndForwardOnBlur = useCallback(
@@ -147,23 +167,24 @@ function ActiveHoverable(
       // and the wrapperView contains the element that caused the blur and reset isHovered
       if (
         !elementRef.current?.contains(event.target as Node) &&
-        !elementRef.current?.contains(event.relatedTarget as Node)
+        !elementRef.current?.contains(event.relatedTarget as Node) &&
+        !shouldFreezeCapture
       ) {
         setIsHovered(false);
       }
 
-      child.props.onBlur?.(event);
+      onBlur?.(event);
     },
-    [child.props],
+    [onBlur, shouldFreezeCapture],
   );
 
   const handleAndForwardOnMouseMove = useCallback(
     (e: MouseEvent) => {
       isVisibiltyHidden.current = false;
       updateIsHovered(true);
-      childOnMouseMove?.(e);
+      onMouseMove?.(e);
     },
-    [updateIsHovered, childOnMouseMove],
+    [updateIsHovered, onMouseMove],
   );
 
   return cloneElement(child, {
