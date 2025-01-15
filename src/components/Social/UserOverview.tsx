@@ -5,7 +5,6 @@ import commonStyles from '@src/styles/commonStyles';
 import type {Profile, UserStatus} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import DrinkData from '@libs/DrinkData';
-import _, {get} from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import DateUtils from '@libs/DateUtils';
 import type {Timezone} from '@src/types/onyx/UserData';
@@ -35,7 +34,7 @@ function UserOverview({
   const {latest_session} = userStatusData;
   // const activeNow = isRecent(last_online);
   const inSession = latest_session?.ongoing;
-  const lastSessionEndTime = get(latest_session, 'end_time', null);
+  const lastSessionEndTime = latest_session?.end_time ?? null;
   const sessionEndTimeVerbose = getTimestampAge(
     lastSessionEndTime,
     false,
@@ -52,6 +51,16 @@ function UserOverview({
   const mostCommonDrinkIcon = DrinkData.find(
     drink => drink.key === mostCommonDrink,
   )?.icon;
+
+  function getSessionStatus(): string {
+    if (sessionEndTimeVerbose && sessionEndTimeVerbose.trim().length > 0) {
+      return `${sessionEndTimeVerbose}\n${translate('userOverview.sober').toLowerCase()}`;
+    }
+    if (inSession) {
+      return `${translate('userOverview.sessionStarted')}:\n${sessionStartTime}`;
+    }
+    return translate('userOverview.noSessionsYet');
+  }
 
   return (
     <View key={`${userID}-container`} style={styles.userOverviewContainer}>
@@ -107,11 +116,7 @@ function UserOverview({
           <Text
             key={`${userID}-status`}
             style={[styles.textLabelSupporting, styles.textAlignCenter]}>
-            {!_.isEmpty(sessionEndTimeVerbose)
-              ? `${sessionEndTimeVerbose}\n${translate('userOverview.sober').toLowerCase()}`
-              : inSession
-                ? `${translate('userOverview.sessionStarted')}:\n${sessionStartTime}`
-                : `${translate('userOverview.noSessionsYet')}`}
+            {getSessionStatus()}
           </Text>
         )}
       </View>
