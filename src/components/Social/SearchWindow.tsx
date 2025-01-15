@@ -47,7 +47,9 @@ function SearchWindow({
     }
 
     handleDoSearch(searchText);
-  }, [searchText, handleDoSearch, searchOnTextChange]);
+    // Including the handleDoSearch function causes an infinite loop
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
+  }, [searchText, searchOnTextChange]);
 
   // useImperativeHandle(parentRef, () => ({
   //   focus: () => {
