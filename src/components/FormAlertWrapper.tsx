@@ -9,7 +9,6 @@ import FormHelpMessage from './FormHelpMessage';
 import {withNetwork} from './OnyxProvider';
 import RenderHTML from './RenderHTML';
 import Text from './Text';
-import TextLink from './TextLink';
 
 type FormAlertWrapperProps = {
   /** Wrapped child components */
@@ -49,7 +48,7 @@ function FormAlertWrapper({
   isMessageHtml = false,
   message = '',
   network,
-  onFixTheErrorsLinkPressed = () => {},
+  onFixTheErrorsLinkPressed = () => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: FormAlertWrapperProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();

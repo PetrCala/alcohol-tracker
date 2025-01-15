@@ -32,9 +32,9 @@ function HeaderWithBackButton({
   shouldShowBorderBottom = false,
   shouldShowCloseButton = false,
   shouldShowDownloadButton = false,
-  shouldShowGetAssistanceButton = false,
-  shouldDisableGetAssistanceButton = false,
-  shouldShowPinButton = false,
+  shouldShowGetAssistanceButton = false, // eslint-disable-line @typescript-eslint/no-unused-vars
+  shouldDisableGetAssistanceButton = false, // eslint-disable-line @typescript-eslint/no-unused-vars
+  shouldShowPinButton = false, // eslint-disable-line @typescript-eslint/no-unused-vars
   shouldSetModalVisibility = true,
   shouldShowThreeDotsButton = false,
   shouldDisableThreeDotsButton = false,
@@ -46,12 +46,12 @@ function HeaderWithBackButton({
     horizontal: 0,
   },
   threeDotsMenuItems = [],
-  shouldEnableDetailPageNavigation = false,
+  shouldEnableDetailPageNavigation = false, // eslint-disable-line @typescript-eslint/no-unused-vars
   children = null,
   customRightButton = null,
   shouldOverlayDots = false,
   shouldOverlay = false,
-  shouldNavigateToTopMostReport = false,
+  shouldNavigateToTopMostReport = false, // eslint-disable-line @typescript-eslint/no-unused-vars
   progressBarPercentage,
   style,
 }: HeaderWithBackButtonProps) {
@@ -103,16 +103,15 @@ function HeaderWithBackButton({
     StyleUtils,
     isCentralPaneSettings,
     progressBarPercentage,
-    shouldEnableDetailPageNavigation,
     styles.flexGrow1,
     styles.headerProgressBar,
     styles.headerProgressBarContainer,
     styles.headerProgressBarFill,
     styles.textHeadlineH2,
+    styles.justifyContentEnd,
     subtitle,
     title,
     titleColor,
-    translate,
   ]);
 
   return (

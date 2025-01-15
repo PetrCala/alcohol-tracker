@@ -7,7 +7,7 @@ type GrayHeaderProps = {
   headerText: string;
 };
 
-const GrayHeader: React.FC<GrayHeaderProps> = ({headerText}) => {
+function GrayHeader({headerText}: GrayHeaderProps) {
   const styles = useThemeStyles();
 
   return (
@@ -15,6 +15,6 @@ const GrayHeader: React.FC<GrayHeaderProps> = ({headerText}) => {
       <Text style={[styles.headerText, styles.textStrong]}>{headerText}</Text>
     </View>
   );
-};
+}
 
 export default GrayHeader;

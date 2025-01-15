@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo, useRef} from 'react';
 import type {RefObject} from 'react';
-// eslint-disable-next-line no-restricted-imports
 import type {
+  // eslint-disable-next-line no-restricted-imports
   ScrollView as RNScrollView,
   StyleProp,
   View,
@@ -9,7 +9,6 @@ import type {
 } from 'react-native';
 import {Keyboard} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
-import {withOnyx} from 'react-native-onyx';
 import FormAlertWithSubmitButton from '@components/FormAlertWithSubmitButton';
 import FormElement from '@components/FormElement';
 import SafeAreaConsumer from '@components/SafeAreaConsumer';
@@ -123,50 +122,55 @@ function FormWrapper({
   const scrollViewContent = useCallback(
     (
       safeAreaPaddingBottomStyle: SafeAreaChildrenProps['safeAreaPaddingBottomStyle'],
-    ) => (
-      <FormElement
-        key={formID}
-        ref={formContentRef}
-        style={[
-          style,
-          includeSafeAreaPaddingBottom
-            ? safeAreaPaddingBottomStyle.paddingBottom
-              ? safeAreaPaddingBottomStyle
-              : styles.pb5
-            : {},
-        ]}>
-        {children}
-        {isSubmitButtonVisible && (
-          <FormAlertWithSubmitButton
-            buttonText={submitButtonText}
-            isDisabled={isSubmitDisabled}
-            isAlertVisible={
-              ((!isEmptyObject(errors) ||
-                !isEmptyObject(formState?.errorFields)) &&
-                !shouldHideFixErrorsAlert) ||
-              !!errorMessage
-            }
-            isLoading={!!formState?.isLoading}
-            message={
-              isEmptyObject(formState?.errorFields) ? errorMessage : undefined
-            }
-            onSubmit={onSubmit}
-            footerContent={footerContent}
-            onFixTheErrorsLinkPressed={onFixTheErrorsLinkPressed}
-            containerStyles={[
-              styles.mh0,
-              styles.mt5,
-              submitFlexEnabled ? styles.flex1 : {},
-              submitButtonStyles,
-            ]}
-            enabledWhenOffline={enabledWhenOffline}
-            isSubmitActionDangerous={isSubmitActionDangerous}
-            disablePressOnEnter={disablePressOnEnter}
-            enterKeyEventListenerPriority={1}
-          />
-        )}
-      </FormElement>
-    ),
+    ) => {
+      let paddingBottomStyle = {};
+
+      if (includeSafeAreaPaddingBottom) {
+        if (safeAreaPaddingBottomStyle.paddingBottom) {
+          paddingBottomStyle = safeAreaPaddingBottomStyle;
+        } else {
+          paddingBottomStyle = styles.pb5;
+        }
+      }
+
+      return (
+        <FormElement
+          key={formID}
+          ref={formContentRef}
+          style={[style, paddingBottomStyle]}>
+          {children}
+          {isSubmitButtonVisible && (
+            <FormAlertWithSubmitButton
+              buttonText={submitButtonText}
+              isDisabled={isSubmitDisabled}
+              isAlertVisible={
+                ((!isEmptyObject(errors) ||
+                  !isEmptyObject(formState?.errorFields)) &&
+                  !shouldHideFixErrorsAlert) ||
+                !!errorMessage
+              }
+              isLoading={!!formState?.isLoading}
+              message={
+                isEmptyObject(formState?.errorFields) ? errorMessage : undefined
+              }
+              onSubmit={onSubmit}
+              footerContent={footerContent}
+              onFixTheErrorsLinkPressed={onFixTheErrorsLinkPressed}
+              containerStyles={[
+                styles.mh0,
+                styles.mt5,
+                submitFlexEnabled ? styles.flex1 : {},
+                submitButtonStyles,
+              ]}
+              enabledWhenOffline={enabledWhenOffline}
+              isSubmitActionDangerous={isSubmitActionDangerous}
+              disablePressOnEnter={disablePressOnEnter}
+              enterKeyEventListenerPriority={1}
+            />
+          )}
+        </FormElement>
+      );
+    },
     [
       formID,
       style,
@@ -178,6 +182,7 @@ function FormWrapper({
       isSubmitButtonVisible,
       submitButtonText,
       isSubmitDisabled,
+      includeSafeAreaPaddingBottom,
       errors,
       formState?.errorFields,
       formState?.isLoading,
@@ -225,11 +230,4 @@ function FormWrapper({
 
 FormWrapper.displayName = 'FormWrapper';
 
-export default withOnyx<FormWrapperProps, FormWrapperOnyxProps>({
-  formState: {
-    key: props => props.formID as any,
-    selector: (storedValue: any) => {
-      return storedValue;
-    },
-  },
-})(FormWrapper);
+export default FormWrapper;
