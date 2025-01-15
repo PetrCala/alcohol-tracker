@@ -5,7 +5,6 @@ import type {ModalProps} from 'react-native-modal';
 import useArrowKeyFocusManager from '@hooks/useArrowKeyFocusManager';
 import useKeyboardShortcut from '@hooks/useKeyboardShortcut';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import CONST from '@src/CONST';
 import type {AnchorPosition} from '@src/styles';
 import type AnchorAlignment from '@src/types/utils/AnchorAlignment';
@@ -94,7 +93,7 @@ function PopoverMenu({
   shouldSetModalVisibility = true,
 }: PopoverMenuProps) {
   const styles = useThemeStyles();
-  const {isSmallScreenWidth} = useResponsiveLayout();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
   const selectedItemIndex = useRef<number | null>(null);
 
   const [currentMenuItems, setCurrentMenuItems] = useState(menuItems);
@@ -201,7 +200,7 @@ function PopoverMenu({
       fromSidebarMediumScreen={fromSidebarMediumScreen}
       withoutOverlay={withoutOverlay}
       shouldSetModalVisibility={shouldSetModalVisibility}>
-      <View style={isSmallScreenWidth ? {} : styles.createMenuContainer}>
+      <View style={shouldUseNarrowLayout ? {} : styles.createMenuContainer}>
         {!!headerText && (
           <Text style={[styles.createMenuHeaderText, styles.ml3]}>
             {headerText}

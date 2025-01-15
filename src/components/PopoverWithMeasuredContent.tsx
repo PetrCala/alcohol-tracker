@@ -4,7 +4,6 @@ import type {LayoutChangeEvent} from 'react-native';
 import {View} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import ComposerFocusManager from '@libs/ComposerFocusManager';
 import PopoverWithMeasuredContentUtils from '@libs/PopoverWithMeasuredContentUtils';
 import CONST from '@src/CONST';
 import type {AnchorDimensions, AnchorPosition} from '@src/styles';
@@ -161,7 +160,7 @@ function PopoverWithMeasuredContent({
 
   return isContentMeasured ? (
     <Popover
-      //   shouldHandleNavigationBack={shouldHandleNavigationBack}
+      shouldHandleNavigationBack={shouldHandleNavigationBack}
       popoverDimensions={popoverDimensions}
       anchorAlignment={anchorAlignment}
       isVisible={isVisible}

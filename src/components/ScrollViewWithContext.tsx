@@ -6,10 +6,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-// eslint-disable-next-line no-restricted-imports
 import type {
   NativeScrollEvent,
   NativeSyntheticEvent,
+  // eslint-disable-next-line no-restricted-imports
   ScrollView as RNScrollView,
   ScrollViewProps,
 } from 'react-native';
@@ -76,9 +76,9 @@ function ScrollViewWithContext(
       {...restProps}
       ref={scrollViewRef}
       onScroll={setContextScrollPosition}
-      // It's possible for scrollEventThrottle to be 0, so we must use "||" to fallback to MIN_SMOOTH_SCROLL_EVENT_THROTTLE.
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       scrollEventThrottle={
+        // It's possible for scrollEventThrottle to be 0, so we must use "||" to fallback to MIN_SMOOTH_SCROLL_EVENT_THROTTLE.
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         scrollEventThrottle || MIN_SMOOTH_SCROLL_EVENT_THROTTLE
       }>
       <ScrollContext.Provider value={contextValue}>

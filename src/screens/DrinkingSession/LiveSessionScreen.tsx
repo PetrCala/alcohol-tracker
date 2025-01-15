@@ -16,7 +16,6 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
 import {computeFirebaseUpdates} from '@database/baseFunctions';
-import useStyleUtils from '@hooks/useStyleUtils';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import Navigation from '@libs/Navigation/Navigation';
 import type {Route} from '@src/ROUTES';
@@ -32,7 +31,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {sessionId, backTo} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const StyleUtils = useStyleUtils();
   const {isOnline} = useUserConnection();
   const [session] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const sessionRef = useRef<DrinkingSession | undefined>(undefined);
