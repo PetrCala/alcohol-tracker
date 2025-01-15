@@ -1,5 +1,10 @@
 import React, {useState, useRef} from 'react';
-import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
+import type {
+  ImageSourcePropType,
+  LayoutChangeEvent,
+  StyleProp,
+  ImageStyle,
+} from 'react-native';
 import {Animated} from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import type ImageLayout from '@src/types/various/ImageLayout';
@@ -8,12 +13,14 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 
 type FullScreenImageModalProps = {
   imageSource: ImageSourcePropType;
-  imageStyle: any;
+  imageStyle: StyleProp<ImageStyle>;
 };
 
-const FullScreenImageModal: React.FC<FullScreenImageModalProps> = props => {
+function FullScreenImageModal({
+  imageSource,
+  imageStyle,
+}: FullScreenImageModalProps) {
   const styles = useThemeStyles();
-  const {imageSource, imageStyle} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
   const positionAnimation = useRef(new Animated.ValueXY()).current;
@@ -106,7 +113,7 @@ const FullScreenImageModal: React.FC<FullScreenImageModalProps> = props => {
       />
     </FullScreenModal>
   );
-};
+}
 
 export default FullScreenImageModal;
 export type {FullScreenImageModalProps};
