@@ -13,10 +13,7 @@ type ProfileOverviewProps = {
   profileData: Profile;
 };
 
-const ProfileOverview: React.FC<ProfileOverviewProps> = ({
-  userID,
-  profileData,
-}) => {
+function ProfileOverview({userID, profileData}: ProfileOverviewProps) {
   const {auth, storage} = useFirebase();
   const styles = useThemeStyles();
   const user = auth.currentUser;
@@ -50,6 +47,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       </View>
     </View>
   );
-};
+}
 
 export default ProfileOverview;

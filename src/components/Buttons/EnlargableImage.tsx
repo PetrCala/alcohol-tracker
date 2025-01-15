@@ -6,22 +6,23 @@ import type {
   ImageStyle,
 } from 'react-native';
 import {Animated} from 'react-native';
+import Image from '@src/components/Image';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
+import {PressableWithFeedback} from '@components/Pressable';
+import useLocalize from '@hooks/useLocalize';
 
-type FullScreenImageModalProps = {
+type EnlargableImageProps = {
   imageSource: ImageSourcePropType;
   imageStyle: StyleProp<ImageStyle>;
 };
 
-function FullScreenImageModal({
-  imageSource,
-  imageStyle,
-}: FullScreenImageModalProps) {
+function EnlargableImage({imageSource, imageStyle}: EnlargableImageProps) {
   const styles = useThemeStyles();
   const [modalVisible, setModalVisible] = useState(false);
+  const {translate} = useLocalize();
   const scaleAnimation = useRef(new Animated.Value(1)).current;
   const positionAnimation = useRef(new Animated.ValueXY()).current;
   const {windowWidth, windowHeight} = useWindowDimensions();
@@ -89,31 +90,39 @@ function FullScreenImageModal({
   };
 
   return (
-    <FullScreenModal
-      visible={modalVisible}
-      onClose={closeModal}
-      style={styles.bgDark}>
-      <Animated.Image
-        source={imageSource}
-        style={[
-          imageStyle,
-          {
-            width: layout.width,
-            height: layout.height,
-            transform: [
-              {scaleX: scaleAnimation},
-              {scaleY: scaleAnimation},
-              {translateX: positionAnimation.x},
-              {translateY: positionAnimation.y},
-            ],
-            resizeMode: 'cover',
-            zIndex: 0,
-          },
-        ]}
-      />
-    </FullScreenModal>
+    <>
+      <PressableWithFeedback
+        accessibilityLabel={translate('profileScreen.profileImage')}
+        onPress={handlePress}
+        onLayout={handleOnLayout}>
+        <Image source={imageSource} style={imageStyle} />
+      </PressableWithFeedback>
+      <FullScreenModal
+        visible={modalVisible}
+        onClose={closeModal}
+        style={styles.bgDark}>
+        <Animated.Image
+          source={imageSource}
+          style={[
+            imageStyle,
+            {
+              width: layout.width,
+              height: layout.height,
+              transform: [
+                {scaleX: scaleAnimation},
+                {scaleY: scaleAnimation},
+                {translateX: positionAnimation.x},
+                {translateY: positionAnimation.y},
+              ],
+              resizeMode: 'cover',
+              zIndex: 0,
+            },
+          ]}
+        />
+      </FullScreenModal>
+    </>
   );
 }
 
-export default FullScreenImageModal;
-export type {FullScreenImageModalProps};
+export default EnlargableImage;
+export type {EnlargableImageProps};
